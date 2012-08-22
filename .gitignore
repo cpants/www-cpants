@@ -1,0 +1,16 @@
+MYMETA.*
+pm_to_blib
+blib/
+*.bak
+*.old
+*.db
+tempan/
+xt/
+Makefile
+log.txt
+db.txt
+Debian_CPANTS.txt
+db_backup/
+cover_db/
+docs/
+test_mirror/
