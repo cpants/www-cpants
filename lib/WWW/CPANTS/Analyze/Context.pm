@@ -91,7 +91,11 @@ sub tmpdir {
 sub tmpfile {
   my $self = shift;
   my $file = file($self->tmpdir, $self->tarball);
-  unless (file($self->dist)->copy_to($file)) {
+  my $dist = file($self->dist);
+  $self->set(released_epoch => $dist->mtime);
+
+  unless ($dist->copy_to($file)) {
+    $self->log(error => "Can't create tmpfile: $!");
     $self->set_error(cpants => "Can't create tmpfile: $!");
     $self->set(extractable => 0);
     return;
@@ -109,20 +113,48 @@ sub extract {
   my $tmpdir  = $self->tmpdir;
 
   my $archive;
+  my @warnings;
+  my @link_errors;
   eval {
     local $Archive::Zip::ErrorHandler = sub { die @_ };
-    local $SIG{__WARN__} = sub { die @_ };
+    local $SIG{__WARN__} = sub {
+      if ($_[0] =~ /^Making (?:hard|symbolic) link from '([^']+)'/) {
+        push @link_errors, $1;
+        return;
+      }
+      if ($_[0] =~ /^Invalid header/) {
+        push @warnings, $_[0];
+        return;
+      }
+      die @_;
+    };
 
+    # NOTE
+    # $Archive::Tar::CHMOD is turned off by CPAN::ParseDistribution,
+    # which is nice and secure in general, but we need it to be true
+    # here to check buildtool_not_executable.
+    local $Archive::Tar::CHMOD = 1;
     $archive = Archive::Any::Lite->new($tmpfile) or die "Can't extract $tmpfile";
     $archive->extract($tmpdir);
   };
   if (my $error = $@) {
     $self->set(extractable => 0);
-    $self->set_error(extract => $error);
+    $self->set_error(extractable => $error);
     $self->set_kwalitee(extractable => 0);
     return;
   }
-  $self->set(extractable => 1);
+  if (@link_errors or @warnings) {
+    # broken but some of the files may probably be extracted
+    $self->set(extractable => 0);
+    my %errors;
+    $errors{link_errors} = \@link_errors if @link_errors;
+    $errors{warnings} = \@warnings if @warnings;
+    $self->set_error(extractable => \%errors) if %errors;
+    $self->set_kwalitee(extractable => 0);
+  }
+  else {
+    $self->set(extractable => 1);
+  }
 
   unlink $tmpfile;
 
@@ -130,7 +162,15 @@ sub extract {
     my @entities = grep /\w/, readdir $dh;
     if (@entities == 1) {
       $self->distdir($tmpdir, $entities[0]);
-      $self->set(extracts_nicely => ($self->distvname eq $entities[0] ? 1 : 0));
+      if (-d $self->distdir) {
+        my $distvname = $self->distvname;
+        $distvname =~ s/\-withoutworldwritables//;
+        $self->set(extracts_nicely => ($distvname eq $entities[0] ? 1 : 0));
+      }
+      else {
+        $self->distdir($tmpdir);
+        $self->set(extracts_nicely => 0);
+      }
     }
     else {
       $self->distdir($tmpdir);
@@ -139,6 +179,7 @@ sub extract {
   }
   else {
     $self->set(extractable => 0);
+    $self->log(error => "Can't open $tmpdir: $!");
     $self->set_error(cpants => "Can't open $tmpdir: $!");
     $self->set_kwalitee(extractable => 0);
     return;
@@ -189,7 +230,7 @@ sub DESTROY {
   my $self = shift;
   $self->stop_capturing;
   if ($self->{tmpdir}) {
-    unless ($self->{stash}{error}{cpants}) {
+    unless ($self->{stash}{error}{cpants} && $self->{debug}) {
       $self->{tmpdir}->remove;
     }
   }
@@ -210,6 +251,27 @@ WWW::CPANTS::Analyze::Context
 =head1 METHODS
 
 =head2 new
+=head2 dump_stash
+=head2 extract
+=head2 set
+=head2 set_error
+=head2 set_kwalitee
+=head2 stash
+=head2 stop_capturing
+
+=head2 d
+=head2 dist
+=head2 distdir
+=head2 distvname
+=head2 capture_stdout
+=head2 capture_stderr
+=head2 mck
+=head2 opts
+=head2 tarball
+=head2 testdir
+=head2 testfile
+=head2 tmpdir
+=head2 tmpfile
 
 =head1 AUTHOR
 

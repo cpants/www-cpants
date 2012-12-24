@@ -4,6 +4,7 @@ blib/
 *.bak
 *.old
 *.db
+*.db-journal
 tempan/
 xt/
 Makefile
@@ -14,3 +15,10 @@ db_backup/
 cover_db/
 docs/
 test_mirror/
+data/
+log/
+tmp/
+*.gz
+pids/
+*$~*
+conf.pl

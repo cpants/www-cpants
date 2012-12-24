@@ -4,47 +4,37 @@ use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
-sub dbname { 'dist_modules.db' }
-sub schema { return <<'SCHEMA';
-create table if not exists dist_modules (
-  dist text,
-  distv text,
-  module text,
-  version text,
-  released integer
-);
+sub _columns {(
+  [dist => 'text'],
+  [distv => 'text', {bulk_key => 1}],
+  [module => 'text', {bulk_key => 1}],
+  [version => 'text'],
+  [file => 'text'],
+  [released => 'integer'],
+)}
 
-create index if not exists dist_idx on dist_modules (dist);
+sub _indices {(
+  ['dist'],
+  ['module'],
+  unique => ['distv', 'module'],
+)}
 
-create index if not exists module_idx on dist_modules (module);
+# - Process::Kwalitee::PrereqDist, Process::Kwalitee::UsedModuleDist -
 
-create unique index if not exists check_idx on dist_modules (distv, module);
-SCHEMA
-}
-
-sub bulk_insert {
-  my ($self, $bind) = @_;
-
-  my $rows = $self->{_insert_bind} ||= [];
-  if (@$rows > 100) {
-    $self->bulk('insert or replace into dist_modules (dist, distv, module, version, released) values (?, ?, ?, ?, ?)', $rows);
-    @$rows = ();
-  }
-  push @$rows, [@$bind{qw/dist distv module version released/}];
-}
-
-sub finalize_bulk_insert {
-  my $self = shift;
-  $self->bulk('insert or replace into dist_modules (dist, distv, module, version, released) values (?, ?, ?, ?, ?)', $self->{_insert_bind}) if $self->{_insert_bind};
-  delete $self->{_insert_bind};
-}
-
-sub dists_by_modules {
+sub fetch_dists_by_modules {
   my ($self, $modules) = @_;
 
   # XXX: need to take dist/module versions into consideration?
-  my $params = $self->in_params($modules);
+  my $params = $self->_in_params($modules);
   $self->fetchall_1("select distinct(dist) from (select dist, module from dist_modules where module in ($params) order by released asc) group by module order by dist");
+}
+
+# - Page::Dist::Provides -
+
+sub fetch_dist_modules {
+  my ($self, $distv) = @_;
+
+  $self->fetchall("select * from dist_modules where distv = ?", $distv);
 }
 
 1;
@@ -61,7 +51,8 @@ WWW::CPANTS::DB::DistModules
 
 =head1 METHODS
 
-=head2 new
+=head2 fetch_dists_by_modules
+=head2 fetch_dist_modules
 
 =head1 AUTHOR
 

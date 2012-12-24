@@ -13,6 +13,7 @@ my %MAPPING;
 our @EXPORT = qw/
   metrics_file kwalitee_metrics sorted_metrics
   is_valid_metric load_metrics save_metrics
+  metric_info
 /;
 
 sub import {
@@ -30,21 +31,24 @@ sub metrics_file { json_file('kwalitee_metrics') }
 sub kwalitee_metrics { @{ $METRICS || []} }
 sub load_metrics {
   $METRICS = slurp_json('kwalitee_metrics');
-  %MAPPING = map {($_->{name} => 1)} @{$METRICS || []};
+  %MAPPING = map {($_->{name} => $_)} @{$METRICS || []};
   $METRICS;
 }
+
+sub metric_info { $MAPPING{$_[0]} }
 
 sub save_metrics {
   require Module::CPANTS::Kwalitee;
   my $kwalitee = Module::CPANTS::Kwalitee->new;
-  my @indicators = map {
+  my @indicators = grep { !$_->{is_disabled} } map {
     my $i = $_;
     +{
       map { $_ => $i->{$_} }
-      qw/name error remedy is_extra is_experimental/
+      qw/name error remedy is_extra is_experimental is_disabled/
     }
   } $kwalitee->get_indicators;
   $METRICS = \@indicators;
+  %MAPPING = map {($_->{name} => $_)} @{$METRICS || []};
   save_json('kwalitee_metrics', \@indicators);
 }
 
@@ -80,8 +84,8 @@ sub sorted_metrics {
     push @{$categories{$type} ||= []}, $entry;
   }
   wantarray
-    ? ($categories{core}, $categories{extra})
-    : [@{$categories{core}}, @{$categories{extra}}];
+    ? ($categories{core}, $categories{extra}, $categories{experimental})
+    : [@{$categories{core}}, @{$categories{extra}}, @{$categories{experimental}}];
 }
 
 1;
@@ -104,6 +108,7 @@ WWW::CPANTS::Kwalitee
 =head2 is_valid_metric
 =head2 kwalitee_metrics
 =head2 sorted_metrics
+=head2 metric_info
 
 =head1 AUTHOR
 

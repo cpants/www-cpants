@@ -1,0 +1,121 @@
+% layout 'layout';
+% my $dist = stash('dist') || {};
+% my ($core, $extra, $experimental) = @{ stash('kwalitee') || [] };
+% my @core_fails = grep { !$_->{value} } @{$core || []};
+% my @extra_fails = grep { !$_->{value} } @{$extra || []};
+% my @exp_fails = grep { !$_->{value} } @{$experimental || []};
+% my $distname = stash('distname');
+% my $distv = $dist->{distv};
+% my @recent = @{ stash('recent') || [] };
+<div class="page-header">
+<h1><%= $dist->{dist} %></h1>
+
+%= include 'dist/_subnav';
+
+</div>
+
+<section>
+<table class="table-bordered table-striped table-condensed">
+<tr><th>Author/Maintainer</th><td><a href="/author/<%= lc $dist->{author} %>"><%= $dist->{author} %></a></td></tr>
+<tr><th>Version</th><td>
+<div class="dropdown"><%= $dist->{version} %><%= $dist->{is_latest} ?  " (latest)" : "" %>
+<a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
+% if (@recent) {
+<ul class="dropdown-menu">
+%   my $has_more = (@recent > 10) ? pop @recent : undef;
+%   for (@recent) {
+<li><a href="/dist/<%= $_->{distv} %>"><%= $_->{version} %> (released by <%= $_->{author} %> on <%= $_->{date} %>)</a></li>
+%   }
+%   if ($has_more) {
+<li><a href="/dist/<%= $distname %>/releases">More</a></li>
+%   }
+<ul>
+% }
+</div>
+</td></tr>
+<tr><th>Release Date</th><td><%= WWW::CPANTS::Utils::date($dist->{released}) %></td></tr>
+<tr><th>Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %></td></tr>
+<tr><th>Core Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></td></tr>
+<tr><th>External Links</th><td>
+<ul class="unstyled">
+<li><a href="http://metacpan.org/release/<%= $distname %>">metacpan.org</a></li>
+<li><a href="http://search.cpan.org/dist/<%= $distname %>">search.cpan.org</a></li>
+<li><a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=<%= $distname %>">rt.cpan.org</a></li>
+<li><a href="http://www.cpantesters.org/distro/<%= substr($distname, 0, 1) %>/<%= $distname %>.html">www.cpantesters.org</a>
+<li><a href="http://cpanratings.perl.org/dist/<%= $distname %>">cpanratings.perl.org</a></li>
+</ul>
+</td></tr>
+</table>
+</section>
+
+<section>
+% if (@core_fails or @extra_fails or @exp_fails) {
+<h2>Kwalitee Fails</h2>
+
+% if (@core_fails) {
+<table class="tablesorter table-condensed table-bordered table-striped">
+<caption>Core fails</caption>
+<thead>
+<tr><th class="span2">metric</th><th>remedy</th></tr>
+</thead>
+<tbody>
+% for my $metric (@core_fails) {
+<tr><td><%= $metric->{name} %></td>
+<td>
+<p><%= $metric->{error} %></p>
+<p><%= $metric->{remedy} %></p>
+</td></tr>
+% }
+</tbody>
+</table>
+% }
+
+% if (@extra_fails) {
+<table class="tablesorter table-condensed table-bordered table-striped">
+<caption>Extra fails</caption>
+<thead>
+<tr><th class="span2">metric</th><th>remedy</th></tr>
+</thead>
+<tbody>
+% for my $metric (@extra_fails) {
+<tr><td><%= $metric->{name} %></td>
+<td>
+<p><%= $metric->{error} %></p>
+<p><%= $metric->{remedy} %></p>
+</td></tr>
+% }
+</tbody>
+</table>
+% }
+
+% if (@exp_fails) {
+<table class="tablesorter table-condensed table-bordered table-striped">
+<caption>Experimental fails</caption>
+<thead>
+<tr><th class="span2">metric</th><th>remedy</th></tr>
+</thead>
+<tbody>
+% for my $metric (@exp_fails) {
+<tr><td><%= $metric->{name} %></td>
+<td>
+<p><%= $metric->{error} %></p>
+<p><%= $metric->{remedy} %></p>
+</td></tr>
+% }
+</tbody>
+</table>
+% }
+</section>
+% }
+
+<section>
+<h2>History</h2>
+<div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</section>
+<script>
+$(function(){
+  var chart = cpants.init_linechart('chart');
+  cpants.load_chart(chart, '/api/chart/dist/<%= $dist->{dist} %>');
+});
+</script>
+</section>

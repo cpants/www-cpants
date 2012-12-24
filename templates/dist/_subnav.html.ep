@@ -1,0 +1,13 @@
+% my $active = stash('active') || 'overview';
+% my %name = (
+%  prereq => 'Prerequisites',
+%  used_by => 'Used By',
+% );
+% my @tabs = qw/overview prereq used_by provides metadata releases/;
+<div class="subnav">
+<ul class="nav nav-tabs" data-toggle="nav-pills">
+% for (@tabs) {
+<li<% if ($active eq $_) { %> class="active"<% } %>><a href="/dist/<%= $distname . ($_ eq 'overview' ? '' : "/$_") %>"><%= $name{$_} || ucfirst $_ %></a></li>
+% }
+</ul>
+</div>

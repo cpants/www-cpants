@@ -4,61 +4,39 @@ use strict;
 use warnings;
 use Exporter::Lite;
 use WWW::CPANTS::AppRoot;
+use Module::Find;
 
-our @EXPORT = qw/db/;
+our @EXPORT = qw/db db_r/;
 
-my %cache;
+my %loaded;
 
 sub db {
   my $name = shift;
-  unless ($cache{$name}) {
+  unless ($loaded{$name}) {
     my $package = "WWW::CPANTS::DB::$name";
     eval "require $package; 1" or die $@;
-    my $db = $package->new;
-    my $dbfile = $db->dbfile;
-    warn "$dbfile does not exist\n" unless $dbfile->exists;
-    $cache{$name} = $db;
+    $loaded{$name} = $package;
   }
-  if (@_) {
-    my %args = ref $_[0] eq ref {} ? %{$_[0]} : @_;
-    $cache{$name}{$_} = $args{$_} for keys %args;
-  }
-  $cache{$name};
+  $loaded{$name}->new(@_);
 }
 
-sub fetch {
-  my $class = shift;
-
-  my ($opts, @names);
-  for (@_) {
-    if (ref $_) {
-      $opts = $_;
-    }
-    else {
-      push @names, $_;
-    }
+sub db_r {
+  my $db = db(@_, readonly => 1);
+  unless (-s $db->dbfile) {
+    unlink $db->dbfile if -f $db->dbfile;
+    die $db->dbname." does not exist\n";
   }
-  @names = qw/CPANTS Uploads/ unless @names;
-  $opts ||= {};
+  $db;
+}
 
-  require LWP::UserAgent;
-  require IO::Uncompress::Gunzip;
-  my $ua = LWP::UserAgent->new(env_proxy => 1);
-  $ua->show_progress(1) if $opts->{verbose};
-
-  for my $name (@names) {
-    my $db = db($name);
-    my $dbfile = file('db', $db->dbname)->path;
-    print STDERR "downloading $dbfile.gz from ".$db->url."\n";
-    my $res = $ua->mirror($db->url, "$dbfile.gz");
-    die $res->status_line."\n" if $res->is_error;
-
-    IO::Uncompress::Gunzip::gunzip(
-      "$dbfile.gz" => $dbfile,
-      BinModeOut => 1,
-    ) or die "gunzip failed: $IO::Uncompress::Gunzip::GunzipError";
+sub load_all {
+  for my $package (usesub 'WWW::CPANTS::DB') {
+    my ($name) = $package =~ /::(\w+)$/;
+    $loaded{$name} = $package;
   }
 }
+
+sub loaded { sort keys %loaded }
 
 1;
 
@@ -66,7 +44,7 @@ __END__
 
 =head1 NAME
 
-WWW::Acme::CPANAuthors::DB
+WWW::CPANTS::DB
 
 =head1 SYNOPSIS
 
@@ -74,8 +52,9 @@ WWW::Acme::CPANAuthors::DB
 
 =head1 METHODS
 
-=head2 db
-=head2 fetch
+=head2 db, db_r
+=head2 load_all
+=head2 loaded
 
 =head1 AUTHOR
 

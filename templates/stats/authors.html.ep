@@ -1,0 +1,48 @@
+% layout 'layout';
+% my $total = stash('total') || '';
+% my $contributed = stash('contributed') || '';
+% my $contribution_rate = stash('contribution_rate') || '';
+% my $active_authors_per_year = stash('active_authors_per_year') || [];
+% my $most_contributed_authors = stash('most_contributed_authors') || [];
+
+<div class="page-header">
+<h1>Stats on CPAN authors</h1>
+</div>
+
+<section>
+<p>
+We have <%= $total %> CPAN authors now, and <%= $contributed %> authors (<%= $contribution_rate %> %) have actually contributed one or more distributions so far.
+</p>
+</section>
+
+<section>
+<h2>Active CPAN authors per year</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Year</th><th>Active Authors</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$active_authors_per_year) {
+<tr><td><%= $_->{year} %></td><td><%= $_->{authors} %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>100 Most Contributed Authors</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Rank</th><th>Name</th><th>Number of Distributions</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$most_contributed_authors) {
+<tr><td><%= $_->{rank} %></td><td><a href="/author/<%= $_->{pauseid} %>"><%= $_->{name} %></a> (<%= $_->{pauseid} %>)</td><td><%= $_->{num_dists} %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>

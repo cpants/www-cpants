@@ -4,13 +4,18 @@ use strict;
 use warnings;
 use base 'CLI::Dispatch::Command';
 use WWW::CPANTS::AppRoot;
+use WWW::CPANTS::Config;
 use WWW::CPANTS::Log;
 use Time::Piece;
 use Time::Seconds;
+use Scope::OnExit;
+
+our $FORCE_DEBUG = 0;
+our $VERBOSE = $^O eq 'MSWin32' ? 1 : 0;
 
 sub options {
   my $self = shift;
-  my @options = qw//;
+  my @options = qw/trace profile/;
   if ($self->can('_options')) {
     push @options, $self->_options;
   }
@@ -19,33 +24,54 @@ sub options {
 
 sub run {
   my $self = shift;
-  if (1 or $self->{verbose}) {
-    $self->logger(1);
+
+  local $SIG{INT} = sub { warn "Terminating on SIGINT"; exit };
+
+  $self->{cpan}    ||= WWW::CPANTS::Config->cpan;
+  $self->{backpan} ||= WWW::CPANTS::Config->backpan;
+
+  my ($class) = lc(ref $self || $self) =~ /::([^:]+)$/;
+  my $pidfile = file("pids/$class.pid");
+  die "another process is running\n" if $pidfile->exists;
+  $pidfile->save($$, {mkdir => 1});
+
+  on_scope_exit {
+    my $pid = $pidfile->exists ? $pidfile->slurp : undef;
+    $pidfile->remove if $pid && $pid eq $$;
+  };
+
+  $self->logger(1);
+  if ($VERBOSE or $self->{verbose}) {
     $self->logger->add(
       screen => {
         maxlevel => 'debug',
         minlevel => 'emergency',
-        message_layout => '%L %m',
+        message_layout => '%L [%P] %m',
       },
     );
   }
-  if (1 or $self->{debug}) {
+  if ($FORCE_DEBUG or $self->{debug}) {
     $self->logger->add(
       file => {
         filename => dir('log')->file('debug.log')->path,
         maxlevel => 'debug',
         minlevel => 'debug',
         timeformat => '%Y-%m-%d %H:%M:%S',
-        message_layout => '%T %L %m',
+        message_layout => '%T %L [%P] %m',
       },
     );
   }
+
+  my ($name) = (ref $self) =~ /::(\w+)$/;
+
+  $self->log(info => "$name: started");
 
   my $start = time;
   $self->_run(@_);
   my $end = time;
 
-  my ($name) = (ref $self) =~ /::(\w+)$/;
+  $self->log(info => "$name: ended");
+
   $self->log(
     info => "$name:",
       localtime($start)->strftime('%Y-%m-%d %H:%M:%S'),
@@ -70,7 +96,8 @@ WWW::CPANTS::Script::Base - a base class; not to run
 
 =head1 METHODS
 
-=head2 new
+=head2 options
+=head2 run
 
 =head1 AUTHOR
 

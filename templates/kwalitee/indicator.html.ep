@@ -1,0 +1,69 @@
+% layout 'layout';
+% my $info = stash('info') || {};
+% my $stats = stash('stats') || {};
+% my @fails = @{ stash('fails') || [] };
+<div class="page-header">
+<h1><%= $info->{name} %></h1>
+</div>
+
+<section>
+<h2>Description</h2>
+<p><%= $info->{error} %></p>
+</section>
+
+<section>
+<h2>Remedy</h2>
+<p><%= $info->{remedy} %></p>
+</section>
+
+<section>
+<h2>Stats</h2>
+<table class="tablesorter table-condensed table-bordered table-striped">
+<thead>
+<tr><th>Year</th><th>Total Uploads</th><th>Pass</th><th>Fail (Latest)</th><th>Fail (CPAN)</th><th>Fail (BackPAN)</th></tr>
+</thead>
+<tbody>
+% for my $year (sort keys %$stats) {
+<tr>
+<td><%= $year %></td>
+<td><%= $stats->{$year}{total}{backpan} %></td>
+<td><%= $stats->{$year}{pass} %></td>
+<td sort="<%= $stats->{$year}{fail}{latest} %>"><%= $stats->{$year}{fail}{latest} %> (<%= $stats->{$year}{rate}{latest} %> %)</td>
+<td sort="<%= $stats->{$year}{fail}{cpan} %>"><%= $stats->{$year}{fail}{cpan} %> (<%= $stats->{$year}{rate}{cpan} %> %)</td>
+<td sort="<%= $stats->{$year}{fail}{backpan} %>"><%= $stats->{$year}{fail}{backpan} %> (<%= $stats->{$year}{rate}{backpan} %> %)</td>
+</tr>
+% }
+</tbody>
+</table>
+</section>
+
+<section>
+<div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</section>
+
+% if (@fails) {
+<section>
+<h2><%= scalar @fails %> Latest Failing Dists</h2>
+<table class="tablesorter table-condensed table-bordered table-striped">
+<thead>
+<tr><th>Distribution</th><th>Author</th><th>Released</th></tr>
+</thead>
+<tbody>
+% for my $dist (@fails) {
+<tr>
+<td><a href="/dist/<%= $dist->{distv} %>"><%= $dist->{distv} %></a></td>
+<td><a href="/author/<%= $dist->{author} %>"><%= $dist->{author} %></a></td>
+<td><%= WWW::CPANTS::Utils::date($dist->{released}) %></td>
+</tr>
+% }
+</tbody>
+</table>
+</section>
+% }
+
+<script>
+$(function(){
+  var chart = cpants.init_columnchart('chart');
+  cpants.load_chart(chart, '/api/chart/kwalitee/<%= $info->{name} %>');
+});
+</script>

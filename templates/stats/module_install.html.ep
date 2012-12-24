@@ -1,0 +1,36 @@
+% layout 'layout';
+% my $stats = stash('stats') || [];
+
+<div class="page-header">
+<h1>Stats on Module::Install</h1>
+</div>
+
+<section>
+<p>Unlike other toolchain modules, Module::Install's issues tend to linger until authors who choosed to use Module::Install upgrade their distributions. Here's statistics on who uses which versions of Module::Install.</p>
+</section>
+
+<section>
+<h2>Stats</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Module::Install</th><th>Distributions using this (Latest)</th><th>Distributions using this (CPAN)</th><th>Distributions using this (BackPAN)</th><th>Authors who have latest distributions using this version of Module::Install</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$stats) {
+<tr>
+<td><%= $_->{version} %></td>
+<td><%= $_->{latest} %></td>
+<td><%= $_->{cpan} %></td>
+<td><%= $_->{backpan} %></td>
+<td>
+% for my $author (sort split ',', $_->{authors} || '') {
+<a href="/author/<%= $author %>"><%= $author %></a>
+% }
+</td>
+</tr>
+%   }
+% }
+</tbody>
+</table>
+</section>

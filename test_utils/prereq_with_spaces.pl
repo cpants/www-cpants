@@ -11,7 +11,7 @@ my $analysis_db = WWW::CPANTS::DB::Analysis->new;
 
 my @paths;
 for (@$distvs) {
-  push @paths, $analysis_db->fetch_path_by_distv($_);
+	push @paths, $analysis_db->fetch_path_by_distv($_);
 }
 
 print "$_\n" for @paths;

@@ -22,8 +22,7 @@ sub logger {
     else {
       # default logger
 
-      $logger ||= Log::Handler->new;
-      $logger->add(
+      $logger ||= Log::Handler->new(
         file => {
           filename => $logdir->file('info.log')->path,
           maxlevel => 'info',
@@ -36,14 +35,21 @@ sub logger {
           maxlevel => 'warning',
           minlevel => 'warning',
           timeformat => '%Y-%m-%d %H:%M:%S',
-          message_layout => '%T %L %m (%C)',
+          message_layout => '%T %m',
         },
         file => {
           filename => $logdir->file('error.log')->path,
           maxlevel => 'error',
-          minlevel => 'emergency',
+          minlevel => 'error',
           timeformat => '%Y-%m-%d %H:%M:%S',
-          message_layout => '%T %L %m (%C)',
+          message_layout => '%T %m',
+        },
+        # only used for AxsLog which sends formatted message
+        file => {
+          filename => $logdir->file('alert.log')->path,
+          maxlevel => 'alert',
+          minlevel => 'alert',
+          message_layout => '%m',
         },
       );
     }
@@ -68,6 +74,8 @@ WWW::CPANTS::Log
 =head1 METHODS
 
 =head2 new
+=head2 log
+=head2 logger
 
 =head1 AUTHOR
 

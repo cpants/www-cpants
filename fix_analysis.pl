@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
-
 use strict;
 use warnings;
-use lib "lib";
+use FindBin;
+use lib "$FindBin::Bin/lib";
 
 WWW::CPANTS::Script::FixAnalysis->run_directly;
 
@@ -34,7 +34,7 @@ sub _run {
 
   my $worepan = WorePAN->new(
     root => appdir('tmp/analyze/'.time)->mkdir->path,
-    local_mirror => $self->{cpan} || '/home/ishigaki/cpan_mirror',
+    local_mirror => $self->{cpan},
     files => \@files,
     no_network => 0,
     use_backpan => 1,
@@ -46,8 +46,8 @@ sub _run {
   $self->{logger} = 1;
   $self->{force} = 1;
 
-  WWW::CPANTS::Process::Queue->new->enqueue_cpan(%$self, force => 1);
-  WWW::CPANTS::Process::Analysis->new->process_queue(%$self);
+  WWW::CPANTS::Process::Queue->new(%$self, force => 1)->enqueue_cpan;
+  WWW::CPANTS::Process::Analysis->new(%$self)->process_queue;
 
   $worepan->root->remove;
 }

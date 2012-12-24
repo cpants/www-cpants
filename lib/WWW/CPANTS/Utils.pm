@@ -8,6 +8,7 @@ use Time::Piece;
 our @EXPORT = qw/
   date datetime
   decimal percent
+  kb
 /;
 
 sub date {
@@ -22,12 +23,24 @@ sub datetime {
 
 sub decimal {
   my $decimal = shift;
-  sprintf '%0.2f', $decimal;
+  sprintf '%0.2f', int($decimal * 100 + 0.5) / 100;
 }
 
 sub percent {
   my ($numerator, $denominator) = @_;
   decimal($numerator / ($denominator || 100) * 100);
+}
+
+sub kb {
+  my $byte = shift;
+  my $kb = 1000; # or better use Kibibyte?
+  if ($byte > $kb * $kb) {
+    return decimal($byte / ($kb * $kb)) . ' MB'
+  }
+  elsif ($byte > $kb) {
+    return decimal($byte / $kb) . ' KB';
+  }
+  return $byte . ' bytes';
 }
 
 1;
@@ -47,6 +60,7 @@ WWW::CPANTS::Utils
 =head2 date, datetime
 =head2 decimal
 =head2 percent
+=head2 kb
 
 =head1 AUTHOR
 

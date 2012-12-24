@@ -1,27 +1,35 @@
 use strict;
 use warnings;
-use lib "lib";
+use FindBin;
+use lib "$FindBin::Bin/lib";
 
-WWW::CPANTS::Script::process_cpan->run_directly;
+WWW::CPANTS::Script::run->run_directly;
 
-package WWW::CPANTS::Script::process_cpan;
+package WWW::CPANTS::Script::run;
 use base 'WWW::CPANTS::Script::Base';
+use WWW::CPANTS::Process::Uploads;
+use WWW::CPANTS::Process::CPAN;
 use WWW::CPANTS::Process::Queue;
 use WWW::CPANTS::Process::Analysis;
-use Time::Piece;
+use WWW::CPANTS::Process::Kwalitee;
+use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Pages;
 
-sub _options {qw/workers=n cpan=s force/}
+sub _options {qw/workers=n cpan=s backpan=s force profile trace/}
 
 sub _run {
   my ($self, @args) = @_;
-
-  $self->{cpan} ||= '/home/ishigaki/cpan_mirror';
 
   die $self->usage unless $self->{cpan};
 
   $self->{verbose} = 1;
   $self->{logger} = 1;
 
-  WWW::CPANTS::Process::Queue->new->enqueue_cpan(%$self);
-  WWW::CPANTS::Process::Analysis->new->process_queue(%$self);
+  save_metrics();
+  WWW::CPANTS::Process::Uploads->new(%$self)->update;
+  WWW::CPANTS::Process::CPAN->new(%$self)->update;
+  WWW::CPANTS::Process::Queue->new(%$self)->enqueue_cpan;
+  WWW::CPANTS::Process::Analysis->new(%$self)->process_queue;
+  WWW::CPANTS::Process::Kwalitee->new(%$self)->update;
+  WWW::CPANTS::Pages->update;
 }

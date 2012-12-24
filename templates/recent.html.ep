@@ -1,0 +1,20 @@
+% layout 'layout';
+% my @recent = @{ stash('recent') || {} };
+<div class="page-header">
+<h1>Recent Uploads</h1>
+</div>
+
+% for my $uploads (@recent) {
+<section>
+<h3><%= $uploads->{date} %></h3>
+<ul>
+%   for my $dist (@{$uploads->{items} || []}) {
+%     if ($dist->{kwalitee}) {
+<li><a href="/dist/<%= $dist->{distv} %>"><%= $dist->{distv} %></a> (<a href="/author/<%= $dist->{author} %>"><%= $dist->{author} %></a>; kwalitee: <%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %>)</li>
+%     } else {
+<li><%= $dist->{distv} %> (<a href="/author/<%= $dist->{author} %>"><%= $dist->{author} %></a>)</li>
+%     }
+%   }
+</ul>
+</section>
+% }

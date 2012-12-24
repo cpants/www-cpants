@@ -1,0 +1,52 @@
+% layout 'layout';
+<div class="page-header">
+<h1>Search CPAN Author</h1>
+</div>
+
+<section>
+<form method="post" id="search_form" autocomplete="off" class="form-inline">
+<input type="text" name="name" id="search" value="<%= param('name') %>" > <input type="submit" class="btn" name="submit" value="Search" />
+</form>
+<div id="results">
+<ul class="unstyled">
+% for(@{$authors}) {
+<li><a href="/author/<%= $_->{pauseid} %>"><%= $_->{pauseid} %></a> (<%= $_->{name} %>)</li>
+% }
+</ul>
+</div>
+</section>
+
+<script>
+$(function(){
+  var last = '',
+      in_process = 0;
+  $('#search').keyup(function(){
+    var current = this.value;
+    if (in_process) return;
+    if (!current.length) {
+      $('#results ul').empty();
+      in_process = 0;
+      last = '';
+    } else if (last != current) {
+      last = current;
+      in_process = 1;
+      $.ajax({
+        url: "/api/authors",
+        type: "POST",
+        data: {name: current},
+        success: function(data, dataType) {
+          var html = "",
+              authors = data.authors,
+              ul = $('#results ul').empty();
+          for (var i = 0, m = authors.length; i < m; i++) {
+            var author = authors[i];
+            html += '<li><a href="/author/' + author.pauseid + '">' + author.pauseid + ' (' + author.name + ')</a></li>';
+          }
+          ul.html(html);
+        },
+        complete: function(xhr, status) { in_process = 0 }
+      });
+    }
+  });
+});
+</script>

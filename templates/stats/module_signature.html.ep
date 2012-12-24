@@ -1,0 +1,31 @@
+% layout 'layout';
+% my $results = stash('results') || [];
+
+<div class="page-header">
+<h1>Stats on Module::Signature</h1>
+</div>
+
+<section>
+<p>Here's additional statistics on the result of the signature verification.</p>
+</section>
+
+<section>
+<h2>Stats</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Result</th><th>Latest</th><th>CPAN</th><th>BackPAN</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$results) {
+<tr>
+<td><%= $_->{result} %></td>
+<td sort="<%= $_->{latest} %>"><%= $_->{latest} %> (<%= $_->{latest_rate} %> %)</td>
+<td sort="<%= $_->{cpan} %>"><%= $_->{cpan} %> (<%= $_->{cpan_rate} %> %)</td>
+<td sort="<%= $_->{backpan} %>"><%= $_->{backpan} %> (<%= $_->{backpan_rate} %> %)</td>
+</tr>
+%   }
+% }
+</tbody>
+</table>
+</section>

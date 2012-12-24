@@ -1,0 +1,30 @@
+% layout 'layout';
+% my $dist = stash('dist') || {};
+% my $distname = $dist->{dist};
+% my $deps = stash('deps') || [];
+<div class="page-header">
+<h1><%= $distname %></h1>
+
+%= include 'dist/_subnav', active => 'used_by'
+
+</div>
+
+<section>
+<h2>Used by</h2>
+
+<p class="section-lead"><%= $distname %> is used (required) in the following <%= scalar @$deps %> distribution(s).</p>
+
+% if (@$deps) {
+<table class="tablesorter table-condensed table-bordered table-striped">
+<thead>
+<tr><th class="span3">name</th><th class="span2">author</th><th class="span2">kwalitee</th></tr>
+</thead>
+<tbody>
+% for my $dep (@$deps) {
+<tr><td><a href="/dist/<%= $dep->{dist} %>"><%= $dep->{dist} %></a></td><td><a href="/author/<%= $dep->{author} %>"><%= $dep->{author} %></a></td><td><%= WWW::CPANTS::Utils::decimal($dep->{kwalitee}) %></td></tr>
+% }
+</tbody>
+</table>
+% }
+
+</section>

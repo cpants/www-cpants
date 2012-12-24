@@ -1,0 +1,19 @@
+% layout 'layout';
+<div class="page-header">
+<h1>Stats</h1>
+</div>
+
+<section>
+<p>Here's statistics on various aspects of CPAN distributions and authors.</p>
+
+<ul>
+<li><a href="/stats/uploads">On the number of CPAN uploads</a></li>
+<li><a href="/stats/authors">On the number of active CPAN authors</a></li>
+<li><a href="/stats/dist_size">On the size of distributions</a></li>
+<li><a href="/stats/dependencies">On the number of dependencies</a></li>
+<li><a href="/stats/module_install">On Module::Install</a></li>
+<li><a href="/stats/module_signature">On Module::Signature</a></li>
+%# <li><a href="/stats/files">On the number of files in a distribution</a></li>
+</ul>
+
+</section>

@@ -1,6 +1,8 @@
+#!/usr/bin/env perl
 use strict;
 use warnings;
-use lib "lib";
+use FindBin;
+use lib "$FindBin::Bin/lib";
 
 WWW::CPANTS::Script::analyze->run_directly;
 

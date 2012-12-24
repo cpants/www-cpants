@@ -25,19 +25,29 @@ sub analyze {
   my $context = WWW::CPANTS::Analyze::Context->new(%args) or return;
 
   if ($context->extract) {
+    my %elapsed;
     eval {
       local $SIG{ALRM} = sub { die "timeout\n" };
       alarm($args{timeout} || 0);
 
       for my $module (@{ $self->{kwalitee}->generators }) {
-        eval { $module->analyse($context) };
+        my $started = time;
+        my @warnings;
+        eval {
+          local $SIG{__WARN__} = sub { push @warnings, @_ };
+          $module->analyse($context)
+        };
+        $elapsed{$module} = time - $started;
+        if (@warnings) {
+          $context->set_error(cpants_warnings => "$args{dist}: ".join '', @warnings);
+        }
         if (my $error = $@) {
           if ($error eq "timeout\n") {
             die $error;
           }
           else {
             $context->set_error($module => $error);
-            $self->log(warn => "$args{dist}: $error");
+            $self->log(error => "$args{dist}: $error");
           }
         }
       }
@@ -49,8 +59,16 @@ sub analyze {
 
       if ($error eq "timeout\n") {
         $context->set_error(timeout => 1);
+        my $elapsed_str =
+          join ',',
+          map  {"$_: $elapsed{$_}"}
+          sort {$elapsed{$b} <=> $elapsed{$a}}
+          grep {$elapsed{$_}}
+          keys %elapsed;
+        $self->log(error => "$args{dist}: timeout ($elapsed_str)");
       }
       else {
+        $self->log(error => "$args{dist}: $error");
         $context->set_error(cpants => $error);
       }
 
@@ -66,9 +84,11 @@ sub analyze {
       eval { $module->analyse($context); };
       if (my $error = $@) {
         $context->set_error($module => $error);
-        $self->log(warn => "$args{dist}: $error");
+        $self->log(error => "$args{dist}: $error");
       }
     }
+    # for statistics
+    $context->d->{released_epoch} = (stat($context->dist))[9];
   }
 
   # remove redundant information that can be easily generated.
@@ -88,7 +108,9 @@ sub calc_kwalitee {
   for my $module (@{ $self->{kwalitee}->generators }) {
     for my $indicator (@{ $module->kwalitee_indicators }) {
       next if $indicator->{needs_db};
+      next if $indicator->{is_disabled};
       my $ret = $indicator->{code}($context->stash, $indicator);
+      $ret = $ret > 0 ? 1 : 0;  # normalize
       $context->set_kwalitee($indicator->{name} => $ret);
       next if $indicator->{is_experimental};
       $kwalitee += $ret;
@@ -125,6 +147,8 @@ WWW::CPANTS::Analyze
 =head1 METHODS
 
 =head2 new
+=head2 analyze
+=head2 calc_kwalitee
 
 =head1 AUTHOR
 

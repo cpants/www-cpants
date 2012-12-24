@@ -31,14 +31,14 @@ my $mirror = setup_mirror();
     note $@ if $@;
 
     my $queue = WWW::CPANTS::DB::Queue->new;
-    my $id = $queue->get_first_id;
+    my $id = $queue->fetch_first_id;
     ok $id, "first id in the queue";
-    my $path = $queue->get_path($id);
+    my $path = $queue->fetch_path($id);
     ok $path, "path: $path";
 
     $id = $queue->mark;
     ok $id, "$id is marked";
-    ok !$queue->get_first_id, "no ids are left in the queue";
+    ok !$queue->fetch_first_id, "no ids are left in the queue";
     $queue->mark_done($id);
   }
 }

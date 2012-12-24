@@ -4,57 +4,56 @@ use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
-sub dbname { 'used.db' }
-sub schema { return <<'SCHEMA';
-create table if not exists used_modules (
-  distv text,
-  module text,
-  module_dist text,
-  in_code integer default 0,
-  in_tests integer default 0
-);
+sub _columns {(
+  [dist => 'text'],
+  [distv => 'text', {bulk_key => 1}],
+  [module => 'text', {bulk_key => 1}],
+  [module_dist => 'text'],
+  [in_code => 'integer default 0'],
+  [in_tests => 'integer default 0'],
+)}
 
-create index if not exists distv_idx on used_modules (distv);
+sub _indices {(
+  ['distv'],
+  ['module'],
+  ['module_dist'],
+  unique => ['distv', 'module'],
+)}
 
-create index if not exists module_idx on used_modules (module);
-
-create unique index if not exists check_idx on used_modules (distv, module);
-SCHEMA
-}
-
-sub bulk_insert {
-  my ($self, $bind) = @_;
-
-  my $rows = $self->{_insert_bind} ||= [];
-  if (@$rows > 100) {
-    $self->bulk('insert or replace into used_modules (distv, module, in_code, in_tests) values (?, ?, ?, ?)', $rows);
-    @$rows = ();
-  }
-  push @$rows, [@$bind{qw/distv module in_code in_tests/}];
-}
-
-sub finalize_bulk_insert {
-  my $self = shift;
-  $self->bulk('insert or replace into used_modules (distv, module, in_code, in_tests) values (?, ?, ?, ?)', $self->{_insert_bind}) if $self->{_insert_bind};
-  delete $self->{_insert_bind};
-}
-
-sub fetch_all_used_modules {
-  my $self = shift;
-  $self->fetchall_1('select distinct(module) from used_modules');
-}
-
-sub update_used_module_dist {
-  my ($self, $module, $dist) = @_;
-  $self->do('update used_modules set module_dist = ? where module = ?', $dist, $module);
-}
+# - Process::Kwalitee::PrereqMatchesUse, Page::Dist::Prereq -
 
 sub fetch_used_modules_of {
   my ($self, $distv) = @_;
   $self->fetchall('select module, module_dist, in_code, in_tests from used_modules where distv = ?', $distv);
 }
 
-sub fetch_orphan_modules {
+# - Process::Kwalitee::UsedModuleDist -
+
+sub fetch_all_used_modules {
+  my $self = shift;
+  $self->fetchall('select distinct(module), module_dist from used_modules');
+}
+
+sub update_used_module_dist {
+  my ($self, $module, $dist) = @_;
+  $self->bulk(update_used_module_dist => 'update used_modules set module_dist = ? where module = ?', $dist, $module);
+}
+
+sub finalize_update_used_module_dist {
+  shift->finalize_bulk('update_used_module_dist');
+}
+
+sub update_stray_used_module_dist {
+  my ($self, $modules) = @_;
+  while (my @m = splice @$modules, 0, 100) {
+    my $params = $self->_in_params(\@m);
+    $self->do("update used_modules set module_dist = '' where module in ($params)");
+  }
+}
+
+# - for testing only -
+
+sub fetch_stray_modules {
   my $self = shift;
   $self->fetchall_1('select module from used_modules where module_dist = ""');
 }
@@ -73,7 +72,12 @@ WWW::CPANTS::DB::UsedModules
 
 =head1 METHODS
 
-=head2 new
+=head2 fetch_all_used_modules
+=head2 fetch_stray_modules
+=head2 fetch_used_modules_of
+=head2 update_used_module_dist
+=head2 finalize_update_used_module_dist
+=head2 update_stray_used_module_dist
 
 =head1 AUTHOR
 

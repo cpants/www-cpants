@@ -1,18 +1,23 @@
 WWW-CPANTS
+==========
+
+Yet another CPANTS frontend.
 
 HOW TO USE
+----------
 
 1. Clone git://github.com/charsbar/www-cpants into somewhere.
 2. Run "perl Makefile.PL" there and install dependencies.
-3. Run "perl bin/setup.pl" to setup databases and external libs.
-4. Run "prove -l t/" to make sure if it works.
-5. Run "perl bin/process_cpan.pl --cpan path/to/cpan/mirror".
-6. Run "plackup (or starman, etc)".
-7. Register process_cpan.pl to your crontab.
+3. Run "perl bin/configure.pl" to create a config file.
+4. Run "prove -lwr t/" to make sure if it works.
+5. Run "perl bin/run.pl --workers 3 --target backpan".
+6. Run "plackup (or starman, etc) cpants.psgi".
+7. Register bin/run.pl to your crontab.
 
 I advise you not to "install" this into your Perl lib directories.
 
 COPYRIGHT AND LICENSE
+---------------------
 
 Copyright (C) 2012 Kenichi Ishigaki
 

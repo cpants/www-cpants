@@ -1,110 +1,85 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::DB::DistModules;
+use WWW::CPANTS::DB;
 
 {
-  my $db = WWW::CPANTS::DB::DistModules->new(explain => 1);
-  $db->setup;
-
-  my @data = (
-    {
-      dist => 'DistA',
-      distv => 'DistA-0.01',
-      modules => [qw/ModuleA ModuleB ModuleC/],
-      released => 100,
-    },
-    {
-      dist => 'DistB',
-      distv => 'DistB-0.01',
-      modules => [qw/ModuleE/],
-      released => 150,
-    },
-    {
-      dist => 'DistA',
-      distv => 'DistA-0.02',
-      modules => [qw/ModuleA ModuleB ModuleC ModuleD/],
-      released => 200,
-    },
-    {
-      dist => 'DistB',
-      distv => 'DistB-0.02',
-      modules => [qw/ModuleA ModuleE/],
-      released => 250,
-    },
-    {
-      dist => 'DistA',
-      distv => 'DistA-0.03',
-      modules => [qw/ModuleB ModuleC ModuleD/],
-      released => 300,
-    },
-  );
+  my $db = db('DistModules', explain => 1);
 
   for (0..1) { # repetition doesn't break things?
-    for my $dist (@data) {
-      for (@{$dist->{modules}}) {
-        $db->bulk_insert({
-          dist  => $dist->{dist},
-          distv => $dist->{distv},
-          module => $_,
-          released => $dist->{released},
-        });
-      }
-    }
-    $db->finalize_bulk_insert;
+    $db->set_test_data(
+      cols => [qw/dist distv module released/],
+      rows => [
+        [qw/DistA DistA-0.01 ModuleA 100/],
+        [qw/DistA DistA-0.01 ModuleB 100/],
+        [qw/DistA DistA-0.01 ModuleC 100/],
+        [qw/DistB DistB-0.01 ModuleE 150/],
+        [qw/DistA DistA-0.02 ModuleA 200/],
+        [qw/DistA DistA-0.02 ModuleB 200/],
+        [qw/DistA DistA-0.02 ModuleC 200/],
+        [qw/DistA DistA-0.02 ModuleD 200/],
+        [qw/DistB DistB-0.02 ModuleA 250/],
+        [qw/DistB DistB-0.02 ModuleE 250/],
+        [qw/DistA DistA-0.03 ModuleB 300/],
+        [qw/DistA DistA-0.03 ModuleC 300/],
+        [qw/DistA DistA-0.03 ModuleD 300/],
+      ],
+    );
 
-    {
-      my $dists = $db->dists_by_modules([qw/ModuleA/]);
+    no_scan_table {
+      my $dists = $db->fetch_dists_by_modules([qw/ModuleA/]);
       eq_or_diff $dists => [qw/DistB/], "ModuleA belongs to DistB now";
-    }
+    };
 
-    {
-      my $dists = $db->dists_by_modules([qw/ModuleB/]);
+    no_scan_table {
+      my $dists = $db->fetch_dists_by_modules([qw/ModuleB/]);
       eq_or_diff $dists => [qw/DistA/], "ModuleB belongs to DistA";
-    }
+    };
 
-    {
-      my $dists = $db->dists_by_modules([qw/ModuleB ModuleC/]);
+    no_scan_table {
+      my $dists = $db->fetch_dists_by_modules([qw/ModuleB ModuleC/]);
       eq_or_diff $dists => [qw/DistA/], "Both ModuleB and ModuleC belong to DistA";
-    }
+    };
 
-    {
-      my $dists = $db->dists_by_modules([qw/ModuleA ModuleC/]);
+    no_scan_table {
+      my $dists = $db->fetch_dists_by_modules([qw/ModuleA ModuleC/]);
       eq_or_diff $dists => [qw/DistA DistB/], "ModuleA belongs to DistB and ModuleC belong to DistA";
-    }
+    };
 
-    {
-      my $dists = $db->dists_by_modules([qw/ModuleA ModuleE/]);
+    no_scan_table {
+      my $dists = $db->fetch_dists_by_modules([qw/ModuleA ModuleE/]);
       eq_or_diff $dists => [qw/DistB/], "Both ModuleA and ModuleD belong to DistB";
-    }
-  }
+    };
 
-  $db->remove;
-}
-
-{
-  my $db = WWW::CPANTS::DB::DistModules->new(explain => 1);
-  $db->setup;
-
-  {
-    my $count = $db->fetch_1('select count(*) from dist_modules');
-    is $count => 0, "num of rows is correct";
-  }
-
-  for (0..2000) {
-    $db->bulk_insert({
-      dist => 'DistA',
-      distv => 'DistA-0.01',
-      module => "Module$_",
-      version => 0,
-      released => 0,
-    });
-  }
-  $db->finalize_bulk_insert;
-
-  {
-    my $count = $db->fetch_1('select count(*) from dist_modules');
-    is $count => 2001, "num of rows is correct: $count";
+    no_scan_table {
+      my $modules = $db->fetch_dist_modules('DistA-0.03');
+      eq_or_diff $modules => [
+        {
+          dist => 'DistA',
+          distv => 'DistA-0.03',
+          file => undef,
+          module => 'ModuleB',
+          released => 300,
+          version => undef,
+        },
+        {
+          dist => 'DistA',
+          distv => 'DistA-0.03',
+          file => undef,
+          module => 'ModuleC',
+          released => 300,
+          version => undef,
+        },
+        {
+          dist => 'DistA',
+          distv => 'DistA-0.03',
+          file => undef,
+          module => 'ModuleD',
+          released => 300,
+          version => undef,
+        },
+      ], "dist_modules";
+    };
   }
 
   $db->remove;

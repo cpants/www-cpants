@@ -27,3 +27,6 @@ test_mirror/
 docs/
 db/
 \.gz$
+xt/
+design/
+conf\.pl

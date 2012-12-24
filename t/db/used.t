@@ -1,69 +1,31 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::DB::UsedModules;
+use WWW::CPANTS::DB;
 
 {
-  my $db = WWW::CPANTS::DB::UsedModules->new(explain => 1);
-  $db->setup;
-
-  my @data = (
-    {
-      distv => 'DistA-0.01',
-      module => 'ModuleA',
-      in_code => 1,
-      in_tests => 1,
-    },
-    {
-      distv => 'DistA-0.01',
-      module => 'ModuleB',
-      in_code => 1,
-      in_tests => 0,
-    },
-    {
-      distv => 'DistA-0.01',
-      module => 'Test::ModuleC',
-      in_code => 0,
-      in_tests => 2,
-    },
-    {
-      distv => 'DistB-0.01',
-      module => 'ModuleA',
-      in_code => 1,
-      in_tests => 1,
-    },
-    {
-      distv => 'DistB-0.01',
-      module => 'ModuleD',
-      in_code => 1,
-      in_tests => 0,
-    },
-    {
-      distv => 'DistB-0.01',
-      module => 'Test::ModuleC',
-      in_code => 0,
-      in_tests => 2,
-    },
-    {
-      distv => 'DistB-0.01',
-      module => 'Test::ModuleE',
-      in_code => 0,
-      in_tests => 2,
-    },
-  );
+  my $db = db('UsedModules', explain => 1);
 
   for (0..1) { # repetition doesn't break things?
-    for (@data) {
-      $db->bulk_insert($_);
-    }
-    $db->finalize_bulk_insert;
+    $db->set_test_data(
+      cols => [qw/distv module in_code in_tests/],
+      rows => [
+        [qw/DistA-0.01 ModuleA 1 1/],
+        [qw/DistA-0.01 ModuleB 1 0/],
+        [qw/DistA-0.01 Test::ModuleC 0 2/],
+        [qw/DistB-0.01 ModuleA 1 1/],
+        [qw/DistB-0.01 ModuleD 1 0/],
+        [qw/DistB-0.01 Test::ModuleC 0 2/],
+        [qw/DistB-0.01 Test::ModuleE 0 2/],
+      ],
+    );
 
-    {
+    no_scan_table {
       my $modules = $db->fetch_all_used_modules;
-      eq_or_diff [sort @$modules] => [qw/ModuleA ModuleB ModuleD Test::ModuleC Test::ModuleE/], "correct modules";
-    }
+      eq_or_diff [sort map {$_->{module}} @$modules] => [qw/ModuleA ModuleB ModuleD Test::ModuleC Test::ModuleE/], "correct modules";
+    } "known slow query";
 
-    {
+    no_scan_table {
       my %mapping = (
         ModuleA => 'DistA',
         ModuleB => 'DistA',
@@ -74,11 +36,12 @@ use WWW::CPANTS::DB::UsedModules;
       for (keys %mapping) {
         $db->update_used_module_dist($_ => $mapping{$_});
       }
+      $db->finalize_update_used_module_dist;
       my $dists = $db->fetchall_1('select distinct(module_dist) from used_modules');
       eq_or_diff [sort @$dists] => [qw/DistA DistD TestDistC TestDistE/], "correct used dists";
-    }
+    };
 
-    {
+    no_scan_table {
       my $dists = $db->fetch_used_modules_of('DistA-0.01');
       eq_or_diff [sort {$a->{module_dist} cmp $b->{module_dist}} @$dists] => [
         {
@@ -100,32 +63,7 @@ use WWW::CPANTS::DB::UsedModules;
           in_tests => 2,
         },
       ], "correct dists of DistA-0.01";
-    }
-  }
-
-  $db->remove;
-}
-
-{
-  my $db = WWW::CPANTS::DB::UsedModules->new(explain => 1);
-  $db->setup;
-
-  {
-    my $count = $db->fetch_1('select count(*) from used_modules');
-    is $count => 0, "num of rows is correct";
-  }
-
-  for (0..2000) {
-    $db->bulk_insert({
-      distv => "Dist$_",
-      module => "ModuleA",
-    });
-  }
-  $db->finalize_bulk_insert;
-
-  {
-    my $count = $db->fetch_1('select count(*) from used_modules');
-    is $count => 2001, "num of rows is correct: $count";
+    };
   }
 
   $db->remove;

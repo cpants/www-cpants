@@ -2,87 +2,87 @@ package WWW::CPANTS::Process::Queue;
 
 use strict;
 use warnings;
-use WWW::CPANTS::DB::Queue;
+use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
+use WWW::CPANTS::Parallel;
 use Path::Extended;
 
 sub new {
   my ($class, %args) = @_;
-  WWW::CPANTS::DB::Queue->new->setup;
   bless \%args, $class;
 }
 
 sub enqueue_cpan {
   my ($self, %args) = @_;
-  my $cpan = $args{cpan} || $self->{cpan} or die "requires a CPAN mirror";
+  my $cpan = $args{cpan} || $self->{backpan} || $self->{cpan}
+    or die "requires a CPAN mirror";
   my $dir = dir($cpan)->subdir('authors/id');
   die "$dir seems not a CPAN mirror" unless $dir->exists;
 
-  my $pm;
-  if (my $workers = $args{workers} || $self->{workers}) {
-    require WWW::CPANTS::ForkManager;
-    $pm = WWW::CPANTS::ForkManager->new(
-      max_workers => $workers,
-      on_child_reap => sub {
-        my ($pid, $exit, $id) = @_;
-        $self->log(debug => "finished (pid: $pid exit: $exit)");
-      },
-    );
-  }
+  my $pm = WWW::CPANTS::Parallel->new(
+    max_workers => $args{workers} || $self->{workers},
+  );
+
+  db('Queue')->setup;
 
   for my $child ($dir->children) {
     next unless $child->is_dir;
     next if -l $child->path;
-    $pm and $pm->start and next;
-    $self->log(debug => "searching " . $child->basename);
+    $pm->run(sub {
+      $self->log(debug => "searching " . $child->basename);
 
-    my $queue = WWW::CPANTS::DB::Queue->new(%args);
-    my @paths;
+      my $queue = db('Queue');
 
-    $child->recurse(prune => 1, depthfirst => 1, callback => sub {
-      my $e = shift;
-      return if -d $e;
-      return if -l $e;
+      $child->recurse(prune => 1, depthfirst => 1, callback => sub {
+        my $e = shift;
+        return if -d $e;
+        return if -l $e;
 
-      my $basename = $e->basename;
-      my $relpath = $e->relative($dir);
+        my $basename = $e->basename;
+        my $relpath = $e->relative($dir);
 
-      # ignore old scripts
-      return unless $relpath =~ m{^[A-Z]/[A-Z][A-Z]/};
+        # ignore old scripts
+        return unless $relpath =~ m{^[A-Z]/[A-Z][A-Z]/};
 
-      # ignore meta files
-      return if $basename eq 'CHECKSUMS';
-      return if $basename =~ /\.(?:readme|meta)$/i;
+        # ignore meta files
+        return if $basename eq 'CHECKSUMS';
+        return if $basename =~ /\.(?:readme|meta)$/i;
 
-      # ignore non-archives
-      return unless $basename =~ /\.(?:tar\.(gz|bz2)|tgz|zip)$/i;
+        # ignore non-archives
+        return unless $basename =~ /\.(?:tar\.(gz|bz2)|tgz|zip)$/i;
 
-      # ignore ppm archives
-      return if $basename =~ /\.ppm\.(?:tar\.gz|zip)$/i;
+        # ignore ppm archives
+        return if $basename =~ /\.ppm\.(?:tar\.gz|zip)$/i;
 
-      # ignore large language distributions
-      return if $basename =~ /^perl5?[-_]\d/;
-      return if $basename =~ /^ponie-/;
-      return if $basename =~ /^parrot-/;
-      return if $basename =~ /^kurila-/;
-      return if $basename =~ /^Perl6-Pugs/;
+        # ignore large language distributions
+        return if $basename =~ /^perl5?[-_]\d/;
+        return if $basename =~ /^ponie\-/;
+        return if $basename =~ /^parrot\-/;
+        return if $basename =~ /^kurila\-/;
+        return if $basename =~ /^Perl6\-Pugs/;
+        return if $basename =~ /^Rakudo\-Star/;
 
-      # ignore Bundle/Task distributions too?
-      # return if $basename =~ /^(?:Task|Bundle)-/;
+        # ignore apparently broken distributions
+        # e.g. (MARCEL|RENEEB|APEIRON)/-0.01.tar.gz
+        return if $basename =~ /^[^a-zA-Z0-9]/;
 
-      push @paths, [$relpath];
+        # ignore Bundle/Task distributions too?
+        # (should ignore at least Bundle::Everything)
+        return if $basename =~ /^Bundle\-Everything/;
+        # return if $basename =~ /^(?:Task|Bundle)-/;
 
-      if (@paths > 100) {
-        $queue->enqueue(\@paths);
-        @paths = ();
-      }
+        my $row = $queue->fetch_by_path($relpath);
+        return if $row->{status} && !$self->{force};
+
+        $queue->bulk_insert({path => $relpath, status => 0});
+      });
+      $queue->finalize_bulk_insert;
     });
-    if (@paths) {
-      $queue->enqueue(\@paths);
-    }
-    $pm and $pm->finish(0);
   }
-  $pm and $pm->wait_all_children;
+  $pm->wait_all_children;
+
+  my $count = db_r('Queue')->count_queued_items;
+  $self->log(info => "queued $count dists");
 }
 
 1;
@@ -100,6 +100,7 @@ WWW::CPANTS::Process::Queue
 =head1 METHODS
 
 =head2 new
+=head2 enqueue_cpan
 
 =head1 AUTHOR
 

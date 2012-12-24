@@ -1,0 +1,49 @@
+% layout 'layout';
+% my $total = stash('total') || '';
+% my $cpan_dists = stash('cpan_dists') || '';
+% my $cpan_rate = stash('cpan_rate') || '';
+% my $uploads = stash('uploads') || '';
+% my $uploads_per_year = stash('uploads_per_year') || [];
+% my $most_often_uploaded = stash('most_often_uploaded') || [];
+
+<div class="page-header">
+<h1>Stats on CPAN uploads</h1>
+</div>
+
+<section>
+<p>
+We saw <%= $uploads %> CPAN uploads so far. Among <%= $total %> distributions, <%= $cpan_dists %> distributions (<%= $cpan_rate %> %) are available from the CPAN now (the rest is only on the BackPAN).
+</p>
+</section>
+
+<section>
+<h2>Uploads per year</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Year</th><th>Uploads</th><th>New Uploads</th><th>Still Available on the CPAN</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$uploads_per_year) {
+<tr><td><%= $_->{year} %></td><td><%= $_->{uploads} %></td><td><%= $_->{new_uploads} %></td><td><%= $_->{is_cpan} %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>100 Most Often Uploaded</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Rank</th><th>Distribution Name</th><th>Authors/Maintainers</th><th>Number of Uploads</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$most_often_uploaded) {
+<tr><td><%= $_->{rank} %></td><td><% unless ($_->{dist} =~ /^(perl)$/) { %><a href="/dist/<%= $_->{dist} %>"><%= $_->{dist} %></a><% } else { %><%= $_->{dist} %><% } %></td><td><%== join ', ', map {qq{<a href="/author/$_">$_</a>}} sort split ',', $_->{authors} %></td><td><%= $_->{uploads} %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>

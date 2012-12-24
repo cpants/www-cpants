@@ -1,0 +1,19 @@
+% layout 'layout';
+<div class="page-header">
+<h1>Rankings</h1>
+
+<p class="section-lead">Various rankings for fun and interest.</p>
+</div>
+
+<section>
+<h2>CPANTS Game Ranking</h2>
+
+<p class="section-lead">These lists are in no way meant as lists of 'best' or 'good' Perl programmers. They are lists of good CPANTS game players. Don't take them seriously. It's a game after all!</p>
+<p>Note that optional metrics (like is_prereq) are not considered in this statistic.</p>
+
+<ul class="unstyled">
+<li><a href="/ranking/five_or_more">Game Ranking of Authors with 5 or more dists</a></li>
+<li><a href="/ranking/less_than_five">Game Ranking of Authors with less than 5 dists</a></li>
+<li><a href="/ranking/hall_of_fame">Hall of Fame: the most kwalitative distributions</a></li>
+</ul>
+</section>

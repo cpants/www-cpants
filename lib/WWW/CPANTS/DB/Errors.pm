@@ -4,36 +4,45 @@ use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
-sub dbname { 'errors.db' }
-sub schema { return <<'SCHEMA';
-create table if not exists errors (
-  distv text,
-  category text,
-  error text
-);
+sub _columns {(
+  [distv => 'text', {bulk_key => 1}],
+  [category => 'text', {bulk_key => 1}],
+  [error => 'text'],
+  [status => 'integer default 0'],
+)}
 
-create index if not exists category_idx on errors (category);
+sub _indices {(
+  ['category'],
+  unique => ['distv', 'category'],
+)}
 
-create unique index if not exists check_idx on errors (distv, category);
-SCHEMA
-}
+# - Process::Kwalitee::PrereqMatchesUse -
 
-sub bulk_insert {
-  my ($self, $bind) = @_;
-
-  my $rows = $self->{_insert_bind} ||= [];
-  if (@$rows > 100) {
-    $self->bulk('insert or replace into errors (distv, category, error) values (?, ?, ?)', $rows);
-    @$rows = ();
-  }
-  push @$rows, [@$bind{qw/distv category error/}];
-}
-
-sub finalize_bulk_insert {
+sub mark {
   my $self = shift;
-  $self->bulk('insert or replace into errors (distv, category, error) values (?, ?, ?)', $self->{_insert_bind}) if $self->{_insert_bind};
-  delete $self->{_insert_bind};
+  if (@_) {
+    my $params = $self->_in_params(@_);
+    $self->do("update errors set status = 1 where category in ($params)");
+  }
+  else {
+    $self->do("update errors set status = 1");
+  }
+  $self->{marked} = 1;
 }
+
+sub unmark {
+  my $self = shift;
+  if (@_) {
+    my $params = $self->_in_params(@_);
+    $self->do("delete from errors where category in ($params) and status = 1");
+  }
+  else {
+    $self->do("delete from errors where status = 1");
+  }
+  delete $self->{marked};
+}
+
+# - currently for testing only -
 
 sub fetch_distv_errors {
   my ($self, $distv) = @_;
@@ -59,7 +68,10 @@ WWW::CPANTS::DB::Errors
 
 =head1 METHODS
 
-=head2 new
+=head2 fetch_distv_errors
+=head2 fetch_category_errors
+=head2 mark
+=head2 unmark
 
 =head1 AUTHOR
 

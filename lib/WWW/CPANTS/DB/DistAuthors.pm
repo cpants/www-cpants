@@ -4,37 +4,18 @@ use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
-sub dbname { 'dist_authors.db' }
-sub schema { return <<'SCHEMA';
-create table if not exists dist_authors (
-  dist text,
-  author text
-);
+sub _columns {(
+  [dist => 'text'],
+  [author => 'text'],
+)}
 
-create index if not exists dist_idx on dist_authors (dist);
+sub _indices {(
+  ['dist'],
+  ['author'],
+  unique => ['dist', 'author'],
+)}
 
-create index if not exists author_idx on dist_authors (author);
-
-create unique index if not exists dist_author_idx on dist_authors (dist, author);
-SCHEMA
-}
-
-sub bulk_insert {
-  my ($self, $bind) = @_;
-
-  my $rows = $self->{_insert_bind} ||= [];
-  if (@$rows > 100) {
-    $self->bulk('insert or ignore into dist_authors (dist, author) values (?, ?)', $rows);
-    @$rows = ();
-  }
-  push @$rows, [@$bind{qw/dist author/}];
-}
-
-sub finalize_bulk_insert {
-  my $self = shift;
-  $self->bulk('insert or ignore into dist_authors (dist, author) values (?, ?)', $self->{_insert_bind}) if $self->{_insert_bind};
-  delete $self->{_insert_bind};
-}
+# - currently for testing only -
 
 sub fetch_authors {
   my ($self, $dist) = @_;
@@ -55,7 +36,7 @@ WWW::CPANTS::DB::DistAuthors
 
 =head1 METHODS
 
-=head2 new
+=head2 fetch_authors
 
 =head1 AUTHOR
 

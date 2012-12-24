@@ -1,0 +1,22 @@
+% layout 'layout';
+% require HTML::Entities;
+% my $dist = stash('dist') || {};
+% my $distname = $dist->{dist};
+% my $meta = stash('meta') || {};
+<div class="page-header">
+<h1><%= $distname %></h1>
+
+%= include 'dist/_subnav', active => 'metadata'
+
+</div>
+
+<section>
+<h2>Metadata</h2>
+
+<p class="section-lead">Analyzed metadata and errors of <%= $distname %>.</p>
+
+<pre>
+<%= JSON::XS->new->pretty->canonical->encode($meta) %>
+</pre>
+
+</section>

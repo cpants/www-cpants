@@ -1,0 +1,53 @@
+% layout 'layout';
+% my $versions = stash('versions') || {};
+% my $last_updated = stash('last_updated') or warn "NO LUP";
+<div class="page-header">
+<h1>CPANTS - The CPAN Testing Service</h1>
+</div>
+
+<section>
+<div class="span8">
+<h2>About this site</h2>
+<p>
+The goals of the CPANTS project are to provide some sort of quality measure (called "<strong>Kwalitee</strong>") and lots of metadata for all distributions on CPAN.
+</p>
+<p>
+Please take all the information presented here with a grain of salt. The methods used to test the distributions are a bit flakey, and some of the Kwalitee indicators are still subjects of discussions (which should happen on the <a href="http://lists.cpan.org/showlist.cgi?name=perl-qa">perl-qa</a> list).
+</p>
+</div>
+</section>
+
+<section>
+<div class="span8">
+<h3>Limitations</h3>
+<p>
+CPANTS is not about running the test suite that most distributions ship with. This is done by the <a href="http://www.cpantesters.org/">CPAN Testers</a>.
+</p>
+<p>
+One big limitation of CPANTS is that it cannot actually execute any code: The module might not run on the machine doing the testing, it might have third-party dependencies, etc. CPANTS can only gather data and Kwalitee by looking at files, source code etc. This means that there are a lot of bugs in the Kwalitee-calculating code. Don't take everything here too serious! In a future version it might be possible to collect metadata from various distributed testers who run the tests on different platforms and settings (as CPAN testers do).
+</p>
+</div>
+</section>
+
+<section>
+<div class="span8">
+<h3>Perl/Modules Used To Test</h3>
+<p>
+CPANTS Kwalitee is tested with the following versions of perl and modules.
+</p>
+<table class="table-condensed table-bordered table-striped">
+% for (sort keys %$versions) {
+<tr><td><%= $_ %></td><td><%= $versions->{$_} %></td></tr>
+% }
+</table>
+</div>
+</section>
+
+% if ($last_updated) {
+<section>
+<div class="span8">
+<h3>Last updated</h3>
+<%= $last_updated %>
+</div>
+</section>
+% }

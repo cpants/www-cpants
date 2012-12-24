@@ -1,0 +1,43 @@
+% layout 'layout';
+% my $rows = stash('merged') || [];
+% my $total = stash('total') || '';
+% my $largest = stash('largest') || [];
+
+<div class="page-header">
+<h1>Stats on distribution size</h1>
+</div>
+
+<section>
+<p>
+Here's statistics on the size of the latest <%= $total %> CPAN distributions (packed and unpacked).
+</p>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Size</th><th>Num of dists (Packed)</th><th>Num of Dists (Unpacked)</th></tr>
+</thead>
+<tbody>
+% {
+%   my $ct = 0;
+%   for (@$rows) {
+<tr><td sort="<%= ++$ct %>"><%= $_->{cat} %></td><td sort="<%= $_->{packed} %>"><%= $_->{packed} %> (<%= $_->{packed_rate} %> %)</td><td sort="<%= $_->{unpacked} %>"><%= $_->{unpacked} %> (<%= $_->{unpacked_rate} %> %)</td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>100 Largest Distributions</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th>Distribution</th><th>Packed Size</th><th>Unpacked Size</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$largest) {
+<tr><td><a href="/dist/<%= $_->{distv} %>"><%= $_->{distv} %></a></td><td sort="<%= $_->{packed} %>"><%= WWW::CPANTS::Utils::kb($_->{packed}) %></td><td sort="<%= $_->{unpacked} %>"><%= WWW::CPANTS::Utils::kb($_->{unpacked}) %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</section>

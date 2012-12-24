@@ -63,7 +63,12 @@ WWW::CPANTS::AppRoot
 
 =head1 METHODS
 
-=head2 new
+=head2 approot
+=head2 appfile
+=head2 appdir
+=head2 root
+=head2 file
+=head2 dir
 
 =head1 AUTHOR
 

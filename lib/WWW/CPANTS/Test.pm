@@ -5,14 +5,25 @@ use warnings;
 use Test::More;
 use Test::Differences;
 use WWW::CPANTS::AppRoot;
+use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
 use Exporter::Lite;
 use WorePAN;
+use Carp;
+use IO::Capture::Stderr;
+use Time::Piece;
+
+local $ENV{WWW_CPANTS_SLOW_QUERY} = 1;
+
+$Carp::Verbose = $ENV{TEST_VERBOSE};
+$Carp::CarpLevel = 1;
+
+$SIG{__DIE__} = sub { croak(@_) };
 
 our @EXPORT = (
   @Test::More::EXPORT,
   @Test::Differences::EXPORT,
-  qw/setup_mirror/,
+  qw/setup_mirror no_scan_table epoch/,
 );
 
 my $worepan;
@@ -46,10 +57,31 @@ sub setup_mirror {
   $worepan;
 }
 
+sub no_scan_table (&;$) {
+  my ($test, $skip) = @_;
+  my ($package, $file, $line) = caller;
+
+  my $capture = IO::Capture::Stderr->new;
+  $capture->start;
+  eval { $test->() };
+  my $error = $@ ? $@ : '';
+  $capture->stop;
+  fail $error if $error;
+  my @captured = $capture->read;
+  my @scan_table = grep { /SCAN TABLE/ && !/USING (?:COVERING )?INDEX/ } @captured;
+  SKIP: {
+    skip $skip, 1 if $skip;
+    ok !@scan_table, "no scan table: line $line";
+  }
+  note join '', @captured;
+}
+
+sub epoch { Time::Piece->strptime(shift, '%Y-%m-%d')->epoch }
+
 END {
   if (Test::More->builder->is_passing) {
-    if ($worepan and $pid == $$) {
-      $worepan->root->remove;
+    if ($pid && $pid == $$) {
+      $worepan->root->remove if $worepan;
     }
   }
   WWW::CPANTS::Log->logger(0);
@@ -69,7 +101,9 @@ WWW::CPANTS::Test
 
 =head1 METHODS
 
-=head2 new
+=head2 setup_mirror
+=head2 no_scan_table
+=head2 epoch
 
 =head1 AUTHOR
 

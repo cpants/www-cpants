@@ -14,9 +14,9 @@ ok !$@, "processed a CPAN mirror";
 note $@ if $@;
 
 my $queue = WWW::CPANTS::DB::Queue->new;
-my $id = $queue->get_first_id;
+my $id = $queue->fetch_first_id;
 ok $id, "first id in the queue";
-my $path = $queue->get_path($id);
+my $path = $queue->fetch_path($id);
 ok $path =~ /perl\-ldap/, "path: $path";
 
 done_testing;

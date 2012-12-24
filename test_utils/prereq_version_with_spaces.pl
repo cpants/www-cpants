@@ -11,8 +11,8 @@ my $analysis_db = WWW::CPANTS::DB::Analysis->new;
 
 my %paths;
 for (@$distvs) {
-  my $path = $analysis_db->fetch_path_by_distv($_);
-  $paths{$path} = 1;
+	my $path = $analysis_db->fetch_path_by_distv($_);
+	$paths{$path} = 1;
 }
 
 print "$_\n" for sort keys %paths;
