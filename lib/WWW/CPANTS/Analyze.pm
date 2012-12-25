@@ -93,7 +93,7 @@ sub analyze {
 
   # remove redundant information that can be easily generated.
   delete $context->stash->{$_} for qw/
-    dirs_list files_array files_list ignored_files_list
+    dirs_list files_list ignored_files_list
   /;
 
   $self->calc_kwalitee($context);
