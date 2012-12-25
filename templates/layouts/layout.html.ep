@@ -85,6 +85,12 @@ var cpants; $(function() { cpants = new CPANTS });
 </div>
 <div class="container">
   <div class="row">
+% if (stash('under_maintenance')) {
+    <div id="maintenance" class="alert alert-block alert-info">
+      <h4>The site is under maintenance.</h4>
+      <p>Some of the information may be old or missing tentatively. Sorry for the inconvenience.</p>
+    </div>
+% }
     <div id="main" class="span11">
       <%== content %>
     </div>

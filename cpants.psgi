@@ -28,6 +28,14 @@ app->secret(random_regex('\w{40}'));
 
 # ------------ For Browsers -----------------
 
+under sub {
+  my $self = shift;
+  if (appfile('__maintenance__')->exists) {
+    $self->stash(under_maintenance => 1);
+  }
+  return 1;
+};
+
 get '/' => sub {
   my $self = shift;
   my $data = load_page('Home') or return $self->render_not_found;

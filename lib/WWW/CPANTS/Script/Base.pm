@@ -65,8 +65,16 @@ sub run {
   my ($name) = (ref $self) =~ /::(\w+)$/;
 
   $self->log(info => "$name: started");
-
   my $start = time;
+
+  my $maintenance_file = appfile('__maintenance__');
+  if ($maintenance_file->exists) {
+    $maintenance_file = '';
+  }
+  else {
+    $maintenance_file->save("$name: $start");
+  }
+
   $self->_run(@_);
   my $end = time;
 
@@ -78,6 +86,10 @@ sub run {
       "to", localtime($end)->strftime('%Y-%m-%d %H:%M:%S'),
       "(" . Time::Seconds->new($end - $start)->pretty . ")",
   );
+
+  if ($maintenance_file) {
+    $maintenance_file->remove;
+  }
 }
 
 sub _run { die "not implemented\n" }
