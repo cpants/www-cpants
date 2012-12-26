@@ -147,7 +147,7 @@ post '/dists' => sub {
   my $name = $self->param('name');
   my $data = load_page('Dists', $name);
   if (@{$data->{dists}} == 1) {
-    $self->redirect_to('/dist/'.$data->{dists}[0]{dist});
+    $self->redirect_to('/dist/'.$data->{dists}[0]);
     return;
   }
   $self->stash(name => $name);
