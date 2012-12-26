@@ -11,6 +11,7 @@ use String::CamelCase 'camelize';
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log ();
 use WWW::CPANTS::Pages;
+use WWW::CPANTS::Config;
 use Compress::Zlib;
 
 $ENV{MOJO_REVERSE_PROXY} = 1;
@@ -320,7 +321,7 @@ builder {
   if (app->mode eq 'production') {
     enable "ServerStatus::Lite",
       path => '/server-status',
-      allow => ['127.0.0.1'],
+      allow => WWW::CPANTS::Config->local_addr,
       counter_file => appdir('tmp/counter'),
       scoreboard => appdir('tmp/scoreboard')->mkpath;
   }

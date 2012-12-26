@@ -39,6 +39,7 @@ sub import {
 
 sub backpan { $Config{backpan} }
 sub cpan    { $Config{cpan} }
+sub local_addr { $Config{local_addr} || ['127.0.0.1'] }
 
 1;
 
@@ -56,6 +57,7 @@ WWW::CPANTS::Config
 
 =head2 cpan
 =head2 backpan
+=head2 local_addr
 
 =head1 AUTHOR
 
