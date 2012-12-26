@@ -122,6 +122,7 @@ get '/dist/#distname/:tab' => sub {
   my $name = $self->param('distname');
   my $tab = $self->param('tab');
   my $tabclass = camelize($tab);
+  return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Dist\::$tabclass", $name) or return $self->render_not_found;
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
@@ -168,6 +169,7 @@ get '/ranking/:tab' => sub {
   my $page = $self->param('page') || 1;
   my $tab = $self->param('tab');
   my $tabclass = camelize($tab);
+  return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Ranking\::$tabclass", $page) or return $self->render_not_found;
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
@@ -212,6 +214,7 @@ get '/stats/:tab' => sub {
   my $self = shift;
   my $tab = $self->param('tab');
   my $tabclass = camelize($tab);
+  return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Stats\::$tabclass") or return $self->render_not_found;
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
