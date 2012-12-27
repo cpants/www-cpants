@@ -47,13 +47,6 @@ get '/author/:id/feed' => sub {
   my $self = shift;
   my $id = uc $self->param('id');
   my $base = $self->req->url->clone->to_abs->base;
-  if (my $host = $self->req->headers->header('X-Forwarded-Host')) {
-    my $host = (split /\s*,\s*/, $host)[0];
-    $host =~ s/:([0-9]+)$//;
-    my $port = $1 ? $1 : undef;
-    $base->host($host);
-    $base->port($port);
-  }
   my $data = load_page('Author::Feed', $id, $base) or return $self->render_not_found;
   $self->render(format => 'atom', text => $data);
 };
@@ -322,6 +315,7 @@ hook after_dispatch => sub {
 
 builder {
   if (app->mode eq 'production') {
+    enable "ReverseProxy";
     enable "ServerStatus::Lite",
       path => '/server-status',
       allow => WWW::CPANTS::Config->local_addr,
