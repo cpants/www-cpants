@@ -1,4 +1,5 @@
 analyze.pl
+api.psgi
 bootstrap.pl
 Changes
 cpants.psgi
@@ -34,10 +35,14 @@ lib/WWW/CPANTS/Extlib.pm
 lib/WWW/CPANTS/JSON.pm
 lib/WWW/CPANTS/Kwalitee.pm
 lib/WWW/CPANTS/Log.pm
+lib/WWW/CPANTS/Page/API/Kwalitee.pm
+lib/WWW/CPANTS/Page/API/Uploads.pm
 lib/WWW/CPANTS/Page/Author.pm
 lib/WWW/CPANTS/Page/Author/Chart.pm
+lib/WWW/CPANTS/Page/Author/Feed.pm
 lib/WWW/CPANTS/Page/Authors.pm
 lib/WWW/CPANTS/Page/Dist/Chart.pm
+lib/WWW/CPANTS/Page/Dist/Errors.pm
 lib/WWW/CPANTS/Page/Dist/Metadata.pm
 lib/WWW/CPANTS/Page/Dist/Overview.pm
 lib/WWW/CPANTS/Page/Dist/Prereq.pm
@@ -74,6 +79,7 @@ lib/WWW/CPANTS/Process/Analysis/ModuleInstall.pm
 lib/WWW/CPANTS/Process/Analysis/ModuleSignature.pm
 lib/WWW/CPANTS/Process/Analysis/PrereqModules.pm
 lib/WWW/CPANTS/Process/Analysis/UsedModules.pm
+lib/WWW/CPANTS/Process/Bootstrap.pm
 lib/WWW/CPANTS/Process/CPAN.pm
 lib/WWW/CPANTS/Process/GzipStaticFiles.pm
 lib/WWW/CPANTS/Process/Kwalitee.pm
@@ -174,11 +180,11 @@ t/analyze/broken_prereq.t
 t/analyze/cpants_error/errors.t
 t/analyze/distdir_fallback.t
 t/analyze/extract_never_ends.t
-t/analyze/files_to_extract_use_should_exist.t
 t/analyze/hard_links.t
 t/analyze/test_cpan_meta_yaml_version_warns.t
 t/analyze/timeout.t
 t/analyze/unfinished.t
+t/analyze/withoutworldwritables.t
 t/analyze/wrong_modules.t
 t/analyze/wrong_provides.t
 t/process/02_process_queue.t
@@ -197,6 +203,7 @@ t/web/home.t
 templates/author.html.ep
 templates/authors.html.ep
 templates/dist/_subnav.html.ep
+templates/dist/errors.html.ep
 templates/dist/metadata.html.ep
 templates/dist/overview.html.ep
 templates/dist/prereq.html.ep
@@ -227,4 +234,3 @@ test_utils/used_dist_should_be_found.pl
 update_cpan.pl
 update_pages.pl
 update_uploads.pl
-yearly.pl
