@@ -95,7 +95,7 @@ var cpants; $(function() { cpants = new CPANTS });
       <%== content %>
     </div>
     <div id="footer" class="span11">
-      <address>Site maintained by Kenichi Ishigaki &lt;ishigaki@cpan.org&gt;</address>
+      <address>Maintained by Kenichi Ishigaki &lt;ishigaki@cpan.org&gt;. If you find anything, submit it on <a href="https://github.com/charsbar/www-cpants/issues">GitHub</a>.</address>
     </div>
   </div>
 </div>
