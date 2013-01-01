@@ -3,7 +3,7 @@
 %  prereq => 'Prerequisites',
 %  used_by => 'Used By',
 % );
-% my @tabs = qw/overview prereq used_by provides metadata releases/;
+% my @tabs = qw/overview prereq used_by provides errors metadata releases/;
 <div class="subnav">
 <ul class="nav nav-tabs" data-toggle="nav-pills">
 % for (@tabs) {
