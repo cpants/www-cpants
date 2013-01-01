@@ -44,7 +44,7 @@ sub save_metrics {
     my $i = $_;
     +{
       map { $_ => $i->{$_} }
-      qw/name error remedy is_extra is_experimental is_disabled/
+      qw/name error remedy is_extra is_experimental is_disabled defined_in/
     }
   } $kwalitee->get_indicators;
   $METRICS = \@indicators;
@@ -79,6 +79,7 @@ sub sorted_metrics {
     if (!$value && $opts{requires_remedy}) {
       $entry->{error}  = $metric->{error};
       $entry->{remedy} = $metric->{remedy};
+      $entry->{defined_in} = $metric->{defined_in};
     }
 
     push @{$categories{$type} ||= []}, $entry;
