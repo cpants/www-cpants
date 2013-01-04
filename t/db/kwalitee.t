@@ -9,14 +9,15 @@ use WWW::CPANTS::Kwalitee;
 
   for (0..1) { # repetition doesn't break things?
     $db->set_test_data(
-      cols => [qw/analysis_id dist distv author is_cpan is_latest/],
+      serial => 'analysis_id',
+      cols => [qw/dist distv author is_cpan is_latest/],
       rows => [
-        [qw/1 DistA DistA-0.01 AuthorA 0 0/],
-        [qw/2 DistA DistA-0.02 AuthorA 0 0/],
-        [qw/3 DistA DistA-0.03 AuthorB 1 1/],
-        [qw/4 DistB DistB-0.01 AuthorB 1 0/],
-        [qw/5 DistB DistB-0.02 AuthorB 1 1/],
-        [qw/6 DistC DistC-0.01 AuthorC 1 1/],
+        [qw/DistA DistA-0.01 AuthorA 0 0/],
+        [qw/DistA DistA-0.02 AuthorA 0 0/],
+        [qw/DistA DistA-0.03 AuthorB 1 1/],
+        [qw/DistB DistB-0.01 AuthorB 1 0/],
+        [qw/DistB DistB-0.02 AuthorB 1 1/],
+        [qw/DistC DistC-0.01 AuthorC 1 1/],
       ],
     );
 
@@ -54,6 +55,7 @@ use WWW::CPANTS::Kwalitee;
 # mark/unmark
 {
   my $db = db('Kwalitee', explain => 1)->set_test_data(
+    serial => 'analysis_id',
     cols => [qw/dist distv author is_cpan is_latest/],
     rows => [
       [qw/DistA DistA-0.01 AuthorA 0 0/],
@@ -123,6 +125,7 @@ use WWW::CPANTS::Kwalitee;
 
 { # stats
   my $db = db('Kwalitee', explain => 1)->set_test_data(
+    serial => 'analysis_id',
     cols => [qw/dist distv is_cpan is_latest released/],
     rows => [
       [qw/DistA DistA-0.01 0 0/, epoch('2010-01-01')],

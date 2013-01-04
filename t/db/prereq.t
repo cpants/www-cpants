@@ -102,6 +102,7 @@ use WWW::CPANTS::DB;
     ],
   );
   my $kwalitee_db = db('Kwalitee')->set_test_data(
+    serial => 'analysis_id',
     cols => [qw/dist distv is_latest/],
     rows => [
       [qw/DistA DistA-0.01 0/],

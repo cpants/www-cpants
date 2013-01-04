@@ -3,7 +3,6 @@ use warnings;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Process::Kwalitee::IsCPAN;
-use Time::Piece;
 
 {
   db('Uploads')->set_test_data(
@@ -16,11 +15,11 @@ use Time::Piece;
   );
 
   db('Kwalitee')->set_test_data(
-    cols => [qw/dist distv/],
+    cols => [qw/analysis_id dist distv/],
     rows => [
-      [qw/DistA DistA-0.01/],
-      [qw/DistA DistA-0.02/],
-      [qw/DistA DistA-0.03/],
+      [qw/1 DistA DistA-0.01/],
+      [qw/2 DistA DistA-0.02/],
+      [qw/3 DistA DistA-0.03/],
     ],
   );
 }
@@ -84,9 +83,9 @@ WWW::CPANTS::Process::Kwalitee::IsCPAN->new->update;
 
 {
   db('Kwalitee')->set_test_data(
-    cols => [qw/dist distv/],
+    cols => [qw/analysis_id dist distv/],
     rows => [
-      [qw/DistA DistA-0.04/],
+      [qw/4 DistA DistA-0.04/],
     ],
   );
 }

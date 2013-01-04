@@ -185,6 +185,7 @@ sub set_test_data {
   my $int_pk = map  { $_->[0] }
                grep { $_->[1] =~ /integer primary key/i }
                $self->_columns;
+  $int_pk ||= $data{serial};
 
   my @cols = @{delete $data{cols} || []};
   my $cb = $self->can('_fix_test_data');
