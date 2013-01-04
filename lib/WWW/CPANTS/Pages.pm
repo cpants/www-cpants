@@ -23,6 +23,7 @@ sub import {
 sub load_page {
   my $id = shift;
   my $package = "WWW::CPANTS::Page::".$id;
+  return unless $LOADED{$package};
   $package->load_data(@_);
 }
 
