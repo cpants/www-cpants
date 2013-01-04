@@ -16,7 +16,7 @@ sub update {
   $self->{db}->bulk_insert({
     analysis_id => $data->{id},
     result_cd => $data->{valid_signature},
-    released => $data->{released},
+    released => $data->{released_epoch},
   });
 }
 

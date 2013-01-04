@@ -18,7 +18,7 @@ sub update {
   $self->{db}->bulk_insert({
     analysis_id => $data->{id},
     version => $data->{module_install_version},
-    dist_released => $data->{released},
+    dist_released => $data->{released_epoch},
   });
 }
 
