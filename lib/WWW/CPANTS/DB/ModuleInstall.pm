@@ -6,13 +6,14 @@ use base 'WWW::CPANTS::DB::Base';
 use Scope::OnExit;
 
 sub _columns {(
-  [analysis_id => 'integer primary key not null', {bulk_key => 1}],
+  [analysis_id => 'integer not null', {bulk_key => 1}],
   [version => 'text'],
   [dist_released => 'integer'],
   [mi_released => 'integer'],
 )}
 
 sub _indices {(
+  unique => ['analysis_id'],
   ['version'],
 )}
 

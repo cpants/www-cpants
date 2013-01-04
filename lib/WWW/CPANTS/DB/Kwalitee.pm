@@ -10,7 +10,7 @@ sub _columns {
   my $self = shift;
 
   return (
-    [analysis_id => 'integer primary key not null', {bulk_key => 1}],
+    [analysis_id => 'integer not null', {bulk_key => 1}],
     [dist => 'text'],
     [distv => 'text'],
     [author => 'text'],
@@ -27,6 +27,7 @@ sub _columns {
 }
 
 sub _indices {(
+  unique => ['analysis_id'],
   ['dist'],
   ['distv'],
   ['author'],

@@ -5,13 +5,14 @@ use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
 sub _columns {(
-  [analysis_id => 'integer primary key not null', {bulk_key => 1}],
+  [analysis_id => 'integer not null', {bulk_key => 1}],
   [size_packed => 'integer'],
   [size_unpacked => 'integer'],
   [files => 'integer'],
 )}
 
 sub _indices {(
+  unique => ['analysis_id'],
   ['size_packed'],
   ['size_unpacked'],
   ['files'],

@@ -17,12 +17,13 @@ my %RESULT = (
 );
 
 sub _columns {(
-  [analysis_id => 'integer primary key not null', {bulk_key => 1}],
+  [analysis_id => 'integer not null', {bulk_key => 1}],
   [result_cd => 'text'],
   [released => 'integer'],
 )}
 
 sub _indices {(
+  unique => ['analysis_id'],
   ['result_cd'],
 )}
 
