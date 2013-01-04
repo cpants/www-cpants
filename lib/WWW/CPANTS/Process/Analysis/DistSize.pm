@@ -14,6 +14,7 @@ sub update {
   my ($self, $data) = @_;
 
   $self->{db}->bulk_insert({
+    (analysis_id => $data->{id}),
     map {$_ => $data->{$_} }
     qw/size_packed size_unpacked files/
   });
