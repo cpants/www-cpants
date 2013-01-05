@@ -13,6 +13,9 @@ my @should_be_ignored = (
 my @shouldnt_be_ignored = (
   # no .pm, only .PL
   'M/ML/MLEHMANN/common-sense-3.6.tar.gz',
+
+  # no .pm nor .PL but has META.yml
+  'I/IN/INA/jacode/jacode-2.13.4.9.tar.gz',
 );
 
 my @paths = (@should_be_ignored, @shouldnt_be_ignored);
