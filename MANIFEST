@@ -1,5 +1,4 @@
 analyze.pl
-api.psgi
 bootstrap.pl
 Changes
 cpants.psgi
@@ -92,6 +91,7 @@ lib/WWW/CPANTS/Process/Kwalitee/PrereqDist.pm
 lib/WWW/CPANTS/Process/Kwalitee/PrereqMatchesUse.pm
 lib/WWW/CPANTS/Process/Kwalitee/UsedModuleDist.pm
 lib/WWW/CPANTS/Process/Minify.pm
+lib/WWW/CPANTS/Process/ModifyAnalysis.pm
 lib/WWW/CPANTS/Process/Queue.pm
 lib/WWW/CPANTS/Process/Uploads.pm
 lib/WWW/CPANTS/Script/Base.pm
@@ -102,7 +102,6 @@ Makefile.PL
 MANIFEST			This list of files
 metrics.pl
 minify.pl
-page.pl
 public/css/bootstrap-responsive.css
 public/css/bootstrap.css
 public/css/cpants.min.css
@@ -163,7 +162,6 @@ public/js/themes/grid.js
 public/js/themes/skies.js
 README
 run.pl
-script.pl
 show_errors.pl
 t/00_load.t
 t/01_app_root.t
@@ -181,6 +179,7 @@ t/analyze/cpants_error/errors.t
 t/analyze/distdir_fallback.t
 t/analyze/extract_never_ends.t
 t/analyze/hard_links.t
+t/analyze/no_perl_stuff.t
 t/analyze/test_cpan_meta_yaml_version_warns.t
 t/analyze/timeout.t
 t/analyze/unfinished.t
@@ -188,6 +187,16 @@ t/analyze/withoutworldwritables.t
 t/analyze/wrong_modules.t
 t/analyze/wrong_provides.t
 t/process/02_process_queue.t
+t/process/analysis/dist_authors.t
+t/process/analysis/dist_modules.t
+t/process/analysis/dist_size.t
+t/process/analysis/errors.t
+t/process/analysis/kwalitee.t
+t/process/analysis/module_install.t
+t/process/analysis/module_signature.t
+t/process/analysis/no_perl_stuff.t
+t/process/analysis/prereq_modules.t
+t/process/analysis/used_modules.t
 t/process/cpan.t
 t/process/kwalitee/author_stats.t
 t/process/kwalitee/is_cpan.t
