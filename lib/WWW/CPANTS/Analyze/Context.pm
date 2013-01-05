@@ -6,11 +6,11 @@ use Archive::Any::Lite;
 use CPAN::DistnameInfo;
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log;
+use WWW::CPANTS::JSON;
 use File::Spec;
 use Path::Extended;
 use IO::Capture::Stdout;
 use IO::Capture::Stderr;
-use JSON::XS;
 use Digest::MD5 qw/md5_hex/;
 
 sub new {
@@ -68,14 +68,13 @@ sub set_kwalitee {
 
 sub stash { shift->{stash} }
 
-my $json_parser = JSON::XS->new->convert_blessed(1);
 sub dump_stash {
   my ($self, $pretty) = @_;
   if ($pretty) {
-    $json_parser->pretty->canonical->encode($self->{stash});
+    encode_pretty_json($self->{stash});
   }
   else {
-    $json_parser->encode(shift->{stash});
+    encode_json($self->{stash});
   }
 }
 
@@ -185,15 +184,6 @@ sub extract {
     return;
   }
   return 1;
-}
-
-# to convert version objects in the stash
-# XXX: of course it's best not to use these costly conversions
-
-{
-  no warnings 'redefine';
-  sub version::TO_JSON { "$_[0]" }
-  sub Module::Build::Version::TO_JSON { "$_[0]" }
 }
 
 sub stop_capturing {

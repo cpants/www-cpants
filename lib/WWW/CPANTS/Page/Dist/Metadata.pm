@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::JSON;
 use WWW::CPANTS::Utils;
-use JSON::XS;
 
 sub load_data {
   my ($class, $name) = @_;

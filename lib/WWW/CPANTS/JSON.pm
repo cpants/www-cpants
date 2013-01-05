@@ -2,14 +2,20 @@ package WWW::CPANTS::JSON;
 
 use strict;
 use warnings;
-use JSON::XS;
+use JSON::XS ();
 use Exporter::Lite;
 use WWW::CPANTS::AppRoot;
 
 our @EXPORT = qw/
   slurp_json save_json json_file
-  encode_json decode_json
+  encode_json decode_json encode_pretty_json
 /;
+
+my $parser = JSON::XS->new->utf8->convert_blessed(1);
+
+sub decode_json ($) { $parser->decode(@_) }
+sub encode_json ($) { $parser->encode(@_) }
+sub encode_pretty_json ($) { $parser->pretty->canonical->encode(@_) }
 
 sub json_file {
   my $file = shift;
@@ -38,6 +44,15 @@ sub save {
 
 *slurp_json = \&slurp;
 *save_json = \&save;
+
+# to convert version objects in the stash
+# XXX: of course it's best not to use these costly conversions
+
+{
+  no warnings 'redefine';
+  sub version::TO_JSON { "$_[0]" }
+  sub Module::Build::Version::TO_JSON { "$_[0]" }
+}
 
 1;
 

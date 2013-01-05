@@ -4,10 +4,10 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Analyze;
+use WWW::CPANTS::JSON;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::Parallel;
 use Path::Extended;
-use JSON::XS;
 use Module::Find;
 
 sub new {

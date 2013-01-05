@@ -3,7 +3,7 @@ package WWW::CPANTS::Process::Analysis::Errors;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use JSON::XS;
+use WWW::CPANTS::JSON;
 
 sub new {
   bless { 
