@@ -107,6 +107,7 @@ sub check_perl_stuff {
 
   for (@{ $context->stash->{files_array} || []}) {
     return 1 if /\.(?:pm|PL)$/;
+    return 1 if /\bMETA\.(?:yml|json)$/;
   }
   $context->stash->{has_no_perl_stuff} = 1;
 
