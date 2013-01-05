@@ -96,7 +96,21 @@ sub analyze {
     dirs_list files_list ignored_files_list
   /;
 
+  # make sure the dist has some perl stuff
+  $self->check_perl_stuff($context) or return $context;
+
   $self->calc_kwalitee($context);
+}
+
+sub check_perl_stuff {
+  my ($self, $context) = @_;
+
+  for (@{ $context->stash->{files_array} || []}) {
+    return 1 if /\.(?:pm|PL)$/;
+  }
+  $context->stash->{has_no_perl_stuff} = 1;
+
+  return;
 }
 
 sub calc_kwalitee {

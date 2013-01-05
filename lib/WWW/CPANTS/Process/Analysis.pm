@@ -74,6 +74,8 @@ sub process_queue {
           $self->log(warn => "analysis aborted: $path");
           next;
         }
+        next if $context->stash->{has_no_perl_stuff};
+
         my $analysis_id = $analysis_db->insert_or_update({
           path => $path,
           distv => $context->stash->{vname},
