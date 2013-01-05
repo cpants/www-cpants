@@ -54,6 +54,28 @@ sub fetch_json_by_id {
   $self->fetch_1('select json from analysis where id = ?', $id);
 }
 
+# - Process::ModifyAnalysis -
+
+sub bulk_update_json {
+  my ($self, $id, $json) = @_;
+  $self->bulk(update_json => 'update analysis set json = ? where id = ?', $json, $id);
+}
+
+sub finalize_bulk_update_json {
+  shift->finalize_bulk('update_json');
+}
+
+sub delete_analysis {
+  my ($self, @ids) = @_;
+
+  my $dbh = $self->dbh;
+
+  while(my @i = splice @ids, 0, 1000) {
+    my $params = $self->_in_params(@i);
+    $dbh->do("delete from analysis where id in ($params)");
+  }
+}
+
 # - currently for testing only -
 
 sub update_json_by_id {
