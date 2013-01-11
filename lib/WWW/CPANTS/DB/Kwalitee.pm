@@ -69,7 +69,7 @@ sub _fix_test_data {
 sub fetch_author_stats {
   my $self = shift;
 
-  $self->fetchall('select author as pauseid, count(*) as num_dists, avg(core_kwalitee) as average_core_kwalitee, avg(kwalitee) as average_kwalitee from (select * from kwalitee where is_cpan > 0 group by author, dist order by released) group by author');
+  $self->fetchall('select author as pauseid, count(*) as num_dists, avg(core_kwalitee) as average_core_kwalitee, avg(kwalitee) as average_kwalitee from (select * from kwalitee where is_latest > 0 group by author, dist) group by author');
 }
 
 # - Process::Kwalitee::FinalKwalitee -

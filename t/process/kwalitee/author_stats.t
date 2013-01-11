@@ -6,31 +6,32 @@ use WWW::CPANTS::Process::Kwalitee::AuthorStats;
 
 {
   db('Kwalitee')->set_test_data(
-    cols => [qw/analysis_id dist distv author released is_cpan kwalitee core_kwalitee/],
+    cols => [qw/analysis_id dist distv author released is_cpan is_latest kwalitee core_kwalitee/],
     rows => [
-      [qw/1 DistA DistA-0.01 AuthorA 1 1 120 100/],
-      [qw/2 DistA DistA-0.02 AuthorA 2 1 120 100/],
-      [qw/3 DistB DistB-0.01 AuthorA 1 1 100 80/],
-      [qw/4 DistC DistC-0.01 AuthorA 1 0 30 20/],
-      [qw/5 DistC DistC-0.02 AuthorA 1 1 50 30/],
+      [qw/1 DistA DistA-0.01 AuthorA 1 1 0 120 100/],
+      [qw/2 DistA DistA-0.02 AuthorA 2 1 1 120 100/],
+      [qw/3 DistB DistB-0.01 AuthorA 1 1 1 100 80/],
+      [qw/4 DistC DistC-0.01 AuthorA 1 0 0 30 20/],
+      [qw/5 DistC DistC-0.02 AuthorA 1 1 1 50 30/],
 
-      [qw/6 DistD DistD-0.01 AuthorB 1 1 130 110/],
-      [qw/7 DistD DistD-0.02 AuthorB 2 1 130 110/],
-      [qw/8 DistE DistE-0.01 AuthorB 1 1 110 90/],
-      [qw/9 DistF DistF-0.01 AuthorB 1 0 40 30/],
-      [qw/10 DistF DistF-0.02 AuthorB 1 1 60 40/],
+      [qw/6 DistD DistD-0.01 AuthorB 1 1 0 130 110/],
+      [qw/7 DistD DistD-0.02 AuthorB 2 1 1 130 110/],
+      [qw/8 DistE DistE-0.01 AuthorB 1 1 1 110 90/],
+      [qw/9 DistF DistF-0.01 AuthorB 1 0 0 40 30/],
+      [qw/10 DistF DistF-0.02 AuthorB 1 1 1 60 40/],
 
-      [qw/11 DistG DistG-0.01 AuthorC 1 1 120 100/],
-      [qw/12 DistH DistH-0.02 AuthorC 2 1 120 100/],
-      [qw/13 DistI DistI-0.01 AuthorC 1 1 100 80/],
-      [qw/14 DistJ DistJ-0.01 AuthorC 1 1 30 20/],
-      [qw/15 DistK DistK-0.02 AuthorC 1 1 50 30/],
+      [qw/11 DistG DistG-0.01 AuthorC 1 1 1 120 100/],
+      [qw/12 DistH DistH-0.02 AuthorC 2 1 1 120 100/],
+      [qw/13 DistI DistI-0.01 AuthorC 1 1 1 100 80/],
+      [qw/14 DistJ DistJ-0.01 AuthorC 1 1 1 30 20/],
+      [qw/15 DistK DistK-0.02 AuthorC 1 1 1 50 30/],
 
-      [qw/16 DistL DistL-0.01 AuthorD 1 1 130 110/],
-      [qw/17 DistM DistM-0.02 AuthorD 2 1 130 110/],
-      [qw/18 DistN DistN-0.01 AuthorD 1 1 110 90/],
-      [qw/19 DistO DistO-0.01 AuthorD 1 1 40 30/],
-      [qw/20 DistP DistP-0.02 AuthorD 1 1 60 40/],
+      [qw/16 DistL DistL-0.01 AuthorD 1 1 1 130 110/],
+      [qw/17 DistM DistM-0.02 AuthorD 2 1 1 130 110/],
+      [qw/18 DistN DistN-0.01 AuthorD 1 1 1 110 90/],
+      [qw/19 DistO DistO-0.01 AuthorD 1 1 1 40 30/],
+      [qw/20 DistP DistP-0.02 AuthorD 1 1 1 60 40/],
+      [qw/21 DistA DistA-0.03 AuthorA 3 0 0 80 70/],
     ]
   );
 
