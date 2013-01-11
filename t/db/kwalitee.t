@@ -56,14 +56,17 @@ use WWW::CPANTS::Kwalitee;
 {
   my $db = db('Kwalitee', explain => 1)->set_test_data(
     serial => 'analysis_id',
-    cols => [qw/dist distv author is_cpan is_latest/],
+    cols => [qw/dist distv author is_cpan is_latest released/],
     rows => [
-      [qw/DistA DistA-0.01 AuthorA 0 0/],
-      [qw/DistA DistA-0.02 AuthorA 0 0/],
-      [qw/DistA DistA-0.03 AuthorB 1 1/],
-      [qw/DistB DistB-0.01 AuthorB 1 0/],
-      [qw/DistB DistB-0.02 AuthorB 1 1/],
-      [qw/DistC DistC-0.01 AuthorC 1 1/],
+      [qw/DistA DistA-0.01 AuthorA 0 0/, epoch('2013-01-01')],
+      [qw/DistA DistA-0.02 AuthorA 0 0/, epoch('2013-01-02')],
+      [qw/DistA DistA-0.03 AuthorB 1 1/, epoch('2013-01-03')],
+      [qw/DistB DistB-0.01 AuthorB 1 0/, epoch('2013-01-01')],
+      [qw/DistB DistB-0.02 AuthorB 1 1/, epoch('2013-01-02')],
+      [qw/DistC DistC-0.01 AuthorC 1 1/, epoch('2013-01-01')],
+      [qw/DistD DistD-0.01 AuthorD/, undef, undef, epoch('2013-01-01')],
+      [qw/DistE DistE-0.01 AuthorE 1 0/, epoch('2013-01-01')],
+      [qw/DistE DistE-0.02 AuthorE 0 0/, epoch('2013-01-02')],
     ],
   );
 
@@ -81,7 +84,7 @@ use WWW::CPANTS::Kwalitee;
     is $dist->{is_cpan} => 2, "flag is updated";
   };
 
-  no_scan_table { $db->mark_cpan([qw/DistB-0.02 DistC-0.01/]) };
+  no_scan_table { $db->mark_cpan([qw/DistB-0.02 DistC-0.01 DistE-0.01/]) };
   no_scan_table { $db->unmark_previous_cpan };
   no_scan_table {
     my $dist = $db->fetch_distv('DistA-0.03');
@@ -118,6 +121,24 @@ use WWW::CPANTS::Kwalitee;
     my $dist = $db->fetch_distv('DistC');
     is $dist->{distv} => 'DistC-0.01', "correct dist";
     is $dist->{is_latest} => 1, "is latest";
+  };
+
+  no_scan_table {
+    my $dist = $db->fetch_distv('DistD-0.01');
+    is $dist->{distv} => 'DistD-0.01', "correct dist";
+    ok !$dist->{is_latest}, "is not latest";
+  };
+
+  no_scan_table {
+    my $dist = $db->fetch_distv('DistE-0.01');
+    is $dist->{distv} => 'DistE-0.01', "correct dist";
+    is $dist->{is_latest} => 1, "is latest";
+  };
+
+  no_scan_table {
+    my $dist = $db->fetch_distv('DistE-0.02');
+    is $dist->{distv} => 'DistE-0.02', "correct dist";
+    ok !$dist->{is_latest}, "is not latest";
   };
 
   $db->remove;
