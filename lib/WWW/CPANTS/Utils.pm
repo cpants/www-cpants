@@ -12,12 +12,12 @@ our @EXPORT = qw/
 /;
 
 sub date {
-  my $time = Time::Piece->new(shift);
+  my $time = gmtime(shift);
   $time->ymd;
 }
 
 sub datetime {
-  my $time = Time::Piece->new(shift);
+  my $time = gmtime(shift);
   $time->ymd . ' ' . $time->hms;
 }
 

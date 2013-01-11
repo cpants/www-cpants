@@ -47,7 +47,7 @@ CPANTS Kwalitee is tested with the following versions of perl and modules.
 <section>
 <div class="span8">
 <h3>Last updated</h3>
-<%= $last_updated %>
+<%= $last_updated %> GMT
 </div>
 </section>
 % }
