@@ -61,7 +61,7 @@ sub _update {
     my $prereqs = $prereq_db->fetch_prereqs_of($distv);
     for my $prereq (@$prereqs) {
       next unless $prereq->{prereq_dist};
-      delete $should_be_prereq{$prereq->{prereq_dist}} if $prereq->{type} == 1;
+      delete $should_be_prereq{$prereq->{prereq_dist}} if $prereq->{type} == 1 or $prereq->{type} == 3;
       delete $should_be_build_prereq{$prereq->{prereq_dist}};
     }
 

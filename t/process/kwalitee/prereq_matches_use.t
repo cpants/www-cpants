@@ -38,7 +38,7 @@ use WWW::CPANTS::Process::Kwalitee::PrereqMatchesUse;
     cols => [qw/distv prereq_dist type/],
     rows => [
       [qw/DistA-0.01 ModDistA 1/],
-      [qw/DistA-0.01 ModDistB 1/],
+      [qw/DistA-0.01 ModDistB 3/], # recommended
       [qw/DistA-0.01 ModDistC 2/],
 
       [qw/DistB-0.01 ModDistA 1/],
