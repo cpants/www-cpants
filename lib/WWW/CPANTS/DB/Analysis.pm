@@ -107,6 +107,9 @@ WWW::CPANTS::DB::Analysis
 =head2 has_analyzed
 =head2 insert_or_update
 =head2 update_json_by_id
+=head2 bulk_update_json
+=head2 finalize_bulk_update_json
+=head2 delete_analysis
 
 =head1 AUTHOR
 

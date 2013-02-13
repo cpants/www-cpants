@@ -332,6 +332,7 @@ WWW::CPANTS::DB::Kwalitee
 =head2 fetch_most_kwalitative_dists
 =head2 fetch_overview
 =head2 fetch_indicator_stats
+=head2 fetch_author_history
 =head2 mark_cpan
 =head2 mark_current_cpan
 =head2 mark_current_latest

@@ -216,6 +216,7 @@ WWW::CPANTS::DB::Uploads
 =head2 count_distinct_dists
 =head2 count_uploads
 =head2 count_uploads_per_year
+=head2 fetch_dist_version
 =head2 fetch_most_often_uploaded
 =head2 fetch_current_type
 =head2 fetch_recent_uploads

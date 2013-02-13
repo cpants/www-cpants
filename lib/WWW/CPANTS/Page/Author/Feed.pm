@@ -47,7 +47,7 @@ WWW::CPANTS::Page::Author::Feed
 
 =head1 METHODS
 
-=head2 new
+=head2 load_data
 
 =head1 AUTHOR
 

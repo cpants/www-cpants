@@ -162,6 +162,7 @@ WWW::CPANTS::Analyze
 =head1 METHODS
 
 =head2 new
+=head2 check_perl_stuff
 =head2 analyze
 =head2 calc_kwalitee
 

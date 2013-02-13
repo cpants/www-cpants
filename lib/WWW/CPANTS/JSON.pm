@@ -71,6 +71,7 @@ WWW::CPANTS::JSON
 =head2 json_file
 =head2 slurp, slurp_json
 =head2 save, save_json
+=head2 decode_json, encode_json, encode_pretty_json
 
 =head1 AUTHOR
 

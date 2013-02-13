@@ -51,6 +51,7 @@ WWW::CPANTS::Process::ModifyAnalysis
 =head1 METHODS
 
 =head2 new
+=head2 modify
 
 =head1 AUTHOR
 

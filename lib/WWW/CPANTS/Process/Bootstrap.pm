@@ -220,6 +220,11 @@ WWW::CPANTS::Process::Bootstrap
 =head1 METHODS
 
 =head2 new
+=head2 concat_js
+=head2 fetch_bootstrap_master
+=head2 run_recess
+=head2 tweak_less_files
+=head2 update
 
 =head1 AUTHOR
 
