@@ -12,6 +12,7 @@ use WWW::CPANTS::DB;
       rows => [
         [qw/DistA DistA-0.01 Foo ModuleA 0.01 1/],
         [qw/DistA DistA-0.01 Foo ModuleB 0 1/],
+        [qw/DistA DistA-0.01 Foo ModuleB 0 2/],
         [qw/DistA DistA-0.01 Foo Test::ModuleC 0 2/],
         [qw/DistB DistB-0.01 Bar ModuleA 0.01 1/],
         [qw/DistB DistB-0.01 Bar ModuleD 0 1/],
@@ -61,6 +62,15 @@ use WWW::CPANTS::DB;
           prereq_dist => 'PrereqDistA',
           prereq_version => '0',
           type => 1,
+        },
+        {
+          author => 'Foo',
+          dist => 'DistA',
+          distv => 'DistA-0.01',
+          prereq => 'ModuleB',
+          prereq_dist => 'PrereqDistA',
+          prereq_version => '0',
+          type => 2,
         },
       ], "correct prereq dists of DistA-0.01";
     };

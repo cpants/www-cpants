@@ -71,7 +71,7 @@ sub update_stray_prereq_dists {
 
 sub fetch_prereqs_of {
   my ($self, $distv) = @_;
-  $self->fetchall('select * from prereq_modules where distv = ? group by prereq_dist', $distv);
+  $self->fetchall('select * from prereq_modules where distv = ? group by prereq_dist, type', $distv);
 }
 
 # - Page::Stats::Dependencies

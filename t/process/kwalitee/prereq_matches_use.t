@@ -19,7 +19,7 @@ use WWW::CPANTS::Process::Kwalitee::PrereqMatchesUse;
     rows => [
       [qw/DistA-0.01 ModuleA ModDistA 1 0/],
       [qw/DistA-0.01 ModuleB ModDistB 1 0/],
-      [qw/DistA-0.01 ModuleC ModDistC 0 1/],
+      [qw/DistA-0.01 ModuleC ModDistC 1 1/],
       [qw/DistA-0.01 Exporter Exporter 1 0/],  # core
       [qw/DistA-0.01 DB_File perl 0 1/],       # core
 
@@ -39,7 +39,8 @@ use WWW::CPANTS::Process::Kwalitee::PrereqMatchesUse;
     rows => [
       [qw/DistA-0.01 ModDistA 1/],
       [qw/DistA-0.01 ModDistB 3/], # recommended
-      [qw/DistA-0.01 ModDistC 2/],
+      [qw/DistA-0.01 ModDistC 1/], # ModDistC is listed as prereq
+      [qw/DistA-0.01 ModDistC 2/], # and as build_prereq
 
       [qw/DistB-0.01 ModDistA 1/],
       [qw/DistB-0.01 ModDistC 2/], # build_prereq, not used
