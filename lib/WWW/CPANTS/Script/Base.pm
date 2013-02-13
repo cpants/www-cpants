@@ -8,7 +8,6 @@ use WWW::CPANTS::Config;
 use WWW::CPANTS::Log;
 use Time::Piece;
 use Time::Seconds;
-use Scope::OnExit;
 
 our $FORCE_DEBUG = 0;
 our $VERBOSE = $^O eq 'MSWin32' ? 1 : 0;
@@ -34,11 +33,6 @@ sub run {
   my $pidfile = file("pids/$class.pid");
   die "another process is running\n" if $pidfile->exists;
   $pidfile->save($$, {mkdir => 1});
-
-  on_scope_exit {
-    my $pid = $pidfile->exists ? $pidfile->slurp : undef;
-    $pidfile->remove if $pid && $pid eq $$;
-  };
 
   $self->logger(1);
   if ($VERBOSE or $self->{verbose}) {
@@ -89,6 +83,11 @@ sub run {
 
   if ($maintenance_file) {
     $maintenance_file->remove;
+  }
+
+  if ($pidfile) {
+    my $pid = $pidfile->exists ? $pidfile->slurp : undef;
+    $pidfile->remove if $pid && $pid eq $$;
   }
 }
 
