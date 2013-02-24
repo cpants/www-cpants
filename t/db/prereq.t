@@ -109,6 +109,11 @@ use WWW::CPANTS::DB;
       [qw/DistC-0.01 PrereqDistC/],
       [qw/DistC-0.01 PrereqDistD/],
       [qw/DistD-0.01 PrereqDistE/],
+      [qw/Task-Everything-0.01 PrereqDistA/],
+      [qw/Task-Everything-0.01 PrereqDistB/],
+      [qw/Task-Everything-0.01 PrereqDistC/],
+      [qw/Task-Everything-0.01 PrereqDistD/],
+      [qw/Task-Everything-0.01 PrereqDistE/],
     ],
   );
   my $kwalitee_db = db('Kwalitee')->set_test_data(
@@ -126,22 +131,23 @@ use WWW::CPANTS::DB;
       [qw/PrereqDistC PrereqDistC-0.01 1/],
       [qw/PrereqDistD PrereqDistD-0.01 1/],
       [qw/PrereqDistE PrereqDistE-0.01 1/],
+      [qw/Task-Everything Task-Everything-0.01 1/],
     ],
   );
 
   no_scan_table {
     my $stats = $db->fetch_stats_of_required;
     eq_or_diff $stats => [
-      {cat => ">= 3", count => 1, sort => 3},
+      {cat => ">= 3", count => 3, sort => 3},
       {cat => ">= 2", count => 2, sort => 2},
-      {cat => ">= 1", count => 2, sort => 1},
-      {cat => "0", count => 5, sort => undef},
+      {cat => "0", count => 6, sort => undef},
     ], "stats of required";
   };
 
   no_scan_table {
     my $stats = $db->fetch_stats_of_requires;
     eq_or_diff $stats => [
+      {cat => ">= 5", count => 1, sort => 5},
       {cat => ">= 4", count => 1, sort => 4},
       {cat => ">= 3", count => 1, sort => 3},
       {cat => ">= 1", count => 2, sort => 1},
@@ -152,11 +158,11 @@ use WWW::CPANTS::DB;
   no_scan_table {
     my $dists = $db->fetch_most_required_dists;
     eq_or_diff $dists => [
-      {count => 3, prereq_dist => 'PrereqDistB', rank => 1},
-      {count => 2, prereq_dist => 'PrereqDistA', rank => 2},
-      {count => 2, prereq_dist => 'PrereqDistC', rank => 2},
-      {count => 1, prereq_dist => 'PrereqDistD', rank => 4},
-      {count => 1, prereq_dist => 'PrereqDistE', rank => 4},
+      {count => 4, prereq_dist => 'PrereqDistB', rank => 1},
+      {count => 3, prereq_dist => 'PrereqDistA', rank => 2},
+      {count => 3, prereq_dist => 'PrereqDistC', rank => 2},
+      {count => 2, prereq_dist => 'PrereqDistD', rank => 4},
+      {count => 2, prereq_dist => 'PrereqDistE', rank => 4},
     ], "most required dists";
   };
 

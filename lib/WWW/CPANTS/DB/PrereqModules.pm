@@ -193,7 +193,9 @@ sub fetch_dists_that_requires_most {
       from (
         select k.distv
         from prereq_modules as p, kwalitee.kwalitee as k
-        where k.is_latest > 0 and p.distv = k.distv
+        where
+          substr(k.distv, 1, 5) != "Task-" and
+          k.is_latest > 0 and p.distv = k.distv
       ) group by distv order by count desc limit 130
   });
   $self->fetchall(q{

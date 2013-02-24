@@ -58,6 +58,7 @@
 
 <section>
 <h2>100 Distributions That Require Most</h2>
+<p>(Note: Task-* distributions are omitted.)</p>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
 <tr><th>Rank</th><th>Distribution Name</th><th>Number of Prerequisites</th></tr>
