@@ -95,7 +95,7 @@ sub fetch_stats_of_required {
       from (
         select dist
         from kwalitee.kwalitee
-        where is_latest > 0
+        where is_latest > 0 and dist != 'perl'
       ) as k
       left join (
         select
