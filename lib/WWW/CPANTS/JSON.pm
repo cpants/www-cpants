@@ -11,11 +11,11 @@ our @EXPORT = qw/
   encode_json decode_json encode_pretty_json
 /;
 
-my $parser = JSON::XS->new->utf8->convert_blessed(1);
+my $parser = JSON::XS->new->utf8->canonical->convert_blessed(1);
 
 sub decode_json ($) { $parser->decode(@_) }
 sub encode_json ($) { $parser->encode(@_) }
-sub encode_pretty_json ($) { $parser->pretty->canonical->encode(@_) }
+sub encode_pretty_json ($) { $parser->pretty->encode(@_) }
 
 sub json_file {
   my $file = shift;
