@@ -112,6 +112,38 @@ sub _load_extra_packages {
   @loaded;
 }
 
+sub recalc_kwalitee {
+  my $self = shift;
+
+  my @databases = map { $_->new } $self->_load_extra_packages(qw/Kwalitee/);
+
+  my $db = WWW::CPANTS::DB::Analysis->new;
+  my $ct = 0;
+  my $updated = 0;
+  while(my $row = $db->iterate(qw/id path json/)) {
+    my $data = decode_json($row->{json});
+    $data->{id} = $row->{id};
+    my $analyze = WWW::CPANTS::Analyze->new;
+    my $context = WWW::CPANTS::Analyze::Context->new(
+      dist => $row->{path},
+      no_capture => 1,
+    );
+    $context->{stash} = $data;
+    $analyze->calc_kwalitee($context);
+
+    my $new_json = $context->dump_stash;
+    if ($row->{json} ne $new_json) {
+      $db->bulk_update_json($row->{id}, $new_json);
+      $_->update($context->stash) for @databases;
+      $updated++;
+    }
+    $self->log(debug => "processed $ct (updated: $updated)") unless ++$ct % 1000;
+  }
+  $db->finalize_bulk_update_json;
+  $_->finalize for @databases;
+  $self->log(debug => "processed $ct (updated: $updated)");
+}
+
 sub fix_extra_databases {
   my $self = shift;
 
@@ -144,6 +176,7 @@ WWW::CPANTS::Process::Analysis
 
 =head2 new
 =head2 process_queue
+=head2 recalc_kwalitee
 =head2 fix_extra_databases
 
 =head1 AUTHOR
