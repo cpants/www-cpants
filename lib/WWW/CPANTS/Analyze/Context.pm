@@ -8,6 +8,7 @@ use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::JSON;
 use File::Spec;
+use File::Basename;
 use Path::Extended;
 use IO::Capture::Stdout;
 use IO::Capture::Stderr;
@@ -89,7 +90,7 @@ sub tmpdir {
 
 sub tmpfile {
   my $self = shift;
-  my $file = file($self->tmpdir, $self->tarball);
+  my $file = file($self->tmpdir, File::Basename::basename($self->tarball));
   my $dist = file($self->dist);
   $self->set(released_epoch => $dist->mtime);
 
