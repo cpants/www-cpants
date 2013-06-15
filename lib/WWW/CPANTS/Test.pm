@@ -31,6 +31,12 @@ my $pid;
 
 sub setup_mirror {
   my @files = @_;
+
+  my %opts;
+  if (ref $files[-1] eq ref {}) {
+    %opts = %{pop @files};
+  }
+
   unless (@files) {
     @files = qw{
       I/IS/ISHIGAKI/Path-Extended-0.19.tar.gz
