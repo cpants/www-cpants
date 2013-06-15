@@ -49,18 +49,24 @@ use WWW::CPANTS::DB;
           module_dist => 'DistA',
           in_code => 1,
           in_tests => 1,
+          evals_in_code => undef,
+          evals_in_tests	 => undef,
         },
         {
           module => 'ModuleB',
           module_dist => 'DistA',
           in_code => 1,
           in_tests => 0,
+          evals_in_code => undef,
+          evals_in_tests	 => undef,
         },
         {
           module => 'Test::ModuleC',
           module_dist => 'TestDistC',
           in_code => 0,
           in_tests => 2,
+          evals_in_code => undef,
+          evals_in_tests	 => undef,
         },
       ], "correct dists of DistA-0.01";
     };
