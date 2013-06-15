@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter::Lite;
 use Time::Piece;
+use WWW::CPANTS::AppRoot;
 
 our @EXPORT = qw/
   date datetime
@@ -43,6 +44,18 @@ sub kb {
   return $byte . ' bytes';
 }
 
+sub hide_internal {
+  my $str = shift;
+  my $root = WWW::CPANTS::AppRoot::approot->stringify;
+  $str =~ s!$ENV{HOME}/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
+  $str =~ s!$ENV{HOME}/(backpan|cpan/)!$1!g;
+  $str =~ s!$root/tmp/analysis/[^/]+/[^/]+/!!g;
+  $str =~ s!$root/extlib/[^/]+/!!g;
+  $str =~ s!$ENV{HOME}/!!g;
+  $str =~ s!$root/!!g;
+  $str;
+}
+
 1;
 
 __END__
@@ -61,6 +74,7 @@ WWW::CPANTS::Utils
 =head2 decimal
 =head2 percent
 =head2 kb
+=head2 hide_internal
 
 =head1 AUTHOR
 
