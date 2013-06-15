@@ -89,7 +89,7 @@ sub _fetch_ranking {
   $page ||= 1;
   my $limit = 100;
 
-  my $rows = $self->fetchall('select * from authors where sort_id between ? and ? and liga = ?', ($page - 1) * $limit + 1, $page * $limit + 1, $liga);
+  my $rows = $self->fetchall('select * from authors where sort_id between ? and ? and liga = ? order by sort_id, num_dists desc, pauseid', ($page - 1) * $limit + 1, $page * $limit + 1, $liga);
 
   my $prev = $page > 1 ? $page - 1 : undef;
   my $next;
