@@ -13,6 +13,7 @@ use Path::Extended;
 use IO::Capture::Stdout;
 use IO::Capture::Stderr;
 use Digest::MD5 qw/md5_hex/;
+use IO::Zlib;
 
 sub new {
   my ($class, %args) = @_;
@@ -127,6 +128,17 @@ sub extract {
 
   my $tmpfile = $self->tmpfile or return;
   my $tmpdir  = $self->tmpdir;
+
+  $self->set(no_pax_headers => 1);
+  if ($tmpfile =~ /\.(?:tar\.gz|tgz)$/ && -r $tmpfile) {
+    if (my $fh = IO::Zlib->new($tmpfile->path, 'rb')) {
+      my $buf;
+      $fh->read($buf, 1024);
+      if ($buf =~ /PaxHeaders/) {
+        $self->set(no_pax_headers => 0);
+      }
+    }
+  }
 
   my $archive;
   my @warnings;
