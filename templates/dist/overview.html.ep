@@ -38,7 +38,7 @@
 <tr><th>Core Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></td></tr>
 <tr><th>External Links</th><td>
 <ul class="unstyled">
-<li><a href="http://metacpan.org/release/<%= $distname %>">metacpan.org</a></li>
+<li><a href="http://metacpan.org/release/<%= $dist->{author} %>/<%= $distname %>">metacpan.org</a></li>
 <li><a href="http://search.cpan.org/dist/<%= $distname %>">search.cpan.org</a></li>
 <li><a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=<%= $distname %>">rt.cpan.org</a></li>
 <li><a href="http://www.cpantesters.org/distro/<%= substr($distname, 0, 1) %>/<%= $distname %>.html">www.cpantesters.org</a>
