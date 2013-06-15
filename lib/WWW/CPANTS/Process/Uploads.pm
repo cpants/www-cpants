@@ -33,10 +33,12 @@ sub update {
   );
 
   for my $subdir ('A' .. 'Z') {
+    my $backpan_subdir = $dirs{backpan}->subdir($subdir);
+    next unless -d $backpan_subdir;
     $pm->run(sub {
       $self->log(debug => "processing $subdir");
       my $db = db('Uploads');
-      $dirs{backpan}->subdir($subdir)->recurse(depthfirst => 1, callback => sub {
+      $backpan_subdir->recurse(depthfirst => 1, callback => sub {
         my $e = shift;
         return unless $e->basename =~ /\.(?:tar\.(?:gz|bz2)|tgz|zip)$/;
         my $path = $e->relative($dirs{backpan});
