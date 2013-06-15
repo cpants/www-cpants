@@ -38,8 +38,8 @@ sub load_metrics {
 sub metric_info { $MAPPING{$_[0]} }
 
 sub save_metrics {
-  require Module::CPANTS::Kwalitee;
-  my $kwalitee = Module::CPANTS::Kwalitee->new;
+  require Module::CPANTS::SiteKwalitee;
+  my $kwalitee = Module::CPANTS::SiteKwalitee->new;
   my @indicators = grep { !$_->{is_disabled} } map {
     my $i = $_;
     +{
