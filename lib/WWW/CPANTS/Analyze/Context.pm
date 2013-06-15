@@ -29,6 +29,22 @@ sub new {
     return;
   }
 
+  my $version = $distinfo->version;
+  $version = '' unless defined $version;
+  my ($major, $minor) = $version =~ /^(\d+)\.(.*)/;
+  $major = 0 unless defined $major;
+
+  my %stash = (
+    dist => $distinfo->dist,
+    package => $distinfo->filename || $args{dist},
+    vname => $distinfo->distvname,
+    extension => $distinfo->extension || 'unknown',
+    version => $distinfo->version,
+    version_major => $major,
+    version_minor => $minor,
+    author => $distinfo->cpanid,
+  );
+
   my %capture;
   unless ($args{no_capture} or $INC{'Test/More.pm'}) {
     %capture = (
@@ -39,7 +55,7 @@ sub new {
   }
 
   bless {
-    stash => { dist => $distinfo->dist },
+    stash => \%stash,
     args => \%args,
     distinfo => $distinfo,
     capture => \%capture,
