@@ -55,8 +55,8 @@ sub _update {
     my $used = $used_db->fetch_used_modules_of($distv);
     my @not_core = grep { $_->{module_dist} && $_->{module_dist} ne 'perl' && !is_core($_->{module}) } @$used;
 
-    my %should_be_prereq = map { $_->{module_dist} => 1 } grep { $_->{in_code} } @not_core;
-    my %should_be_build_prereq = map { $_->{module_dist} => 1 } grep { $_->{in_tests} } @not_core;
+    my %should_be_prereq = map { $_->{module_dist} => 1 } grep { $_->{in_code} and $_->{in_code} != ($_->{evals_in_code} || 0) } @not_core;
+    my %should_be_build_prereq = map { $_->{module_dist} => 1 } grep { $_->{in_tests} and $_->{in_tests} != ($_->{evals_in_tests} || 0) } @not_core;
 
     my $prereqs = $prereq_db->fetch_prereqs_of($distv);
     for my $prereq (@$prereqs) {
