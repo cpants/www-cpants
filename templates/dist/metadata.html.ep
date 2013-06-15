@@ -16,7 +16,7 @@
 <p class="section-lead">Analyzed metadata and errors of <%= $distname %>.</p>
 
 <pre>
-<%= JSON::XS->new->pretty->canonical->encode($meta) %>
+<%= WWW::CPANTS::Utils::hide_internal(JSON::XS->new->pretty->canonical->encode($meta)) %>
 </pre>
 
 </section>
