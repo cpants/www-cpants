@@ -23,7 +23,7 @@ sub datetime {
 }
 
 sub decimal {
-  my $decimal = shift;
+  my $decimal = shift || 0;
   sprintf '%0.2f', int($decimal * 100 + 0.5) / 100;
 }
 
@@ -33,7 +33,7 @@ sub percent {
 }
 
 sub kb {
-  my $byte = shift;
+  my $byte = shift || 0;
   my $kb = 1000; # or better use Kibibyte?
   if ($byte > $kb * $kb) {
     return decimal($byte / ($kb * $kb)) . ' MB'
