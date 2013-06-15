@@ -407,7 +407,7 @@ sub bulk {
 sub finalize_bulk {
   my ($self, $id) = @_;
   my $dbh = $self->dbh;
-  my $sth = $self->{_sth}{$id};
+  my $sth = $self->{_sth}{$id} or return;
 
   my $retry = 10;
   while($retry--) {
