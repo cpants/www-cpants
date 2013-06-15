@@ -50,6 +50,7 @@ sub setup_mirror {
     local_mirror => $local_mirror->path,
     files => \@files,
     no_network => 0,
+    no_indices => defined $opts{no_indices} ? $opts{no_indices} : 1,
     use_backpan => 1,
   );
   $mirror->recurse(callback => sub {
