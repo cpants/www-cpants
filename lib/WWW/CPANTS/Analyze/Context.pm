@@ -60,6 +60,7 @@ sub new {
     args => \%args,
     distinfo => $distinfo,
     capture => \%capture,
+    pid => $$,
   }, $class;
 }
 
@@ -169,9 +170,10 @@ sub extract {
     $self->set(extractable => 0);
     $self->set_error(extractable => $error);
     $self->set_kwalitee(extractable => 0);
+    unlink $tmpfile;
     return;
   }
-  if (@link_errors or @warnings) {
+  elsif (@link_errors or @warnings) {
     # broken but some of the files may probably be extracted
     $self->set(extractable => 0);
     my %errors;
@@ -248,7 +250,7 @@ sub capture_stderr { shift->{capture}{err} }
 sub DESTROY {
   my $self = shift;
   $self->stop_capturing;
-  if ($self->{tmpdir}) {
+  if ($self->{pid} == $$ and $self->{tmpdir}) {
     unless ($self->{stash}{error}{cpants} && $self->{debug}) {
       $self->{tmpdir}->remove;
     }
