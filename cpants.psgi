@@ -297,7 +297,7 @@ hook after_dispatch => sub {
   return if $c->stash->{'mojo.static'};
   return if $c->req->headers->header('X-Forwarded-For');
   return unless ($c->req->headers->accept_encoding || '') =~ /gzip/i;
-  return if $c->res->is_multipart || $c->res->is_dynamic;
+  return if $c->res->content->is_multipart || $c->res->content->is_dynamic;
 
   my $asset = $c->res->content->asset;
   return if $asset->is_file || $asset->is_range;
