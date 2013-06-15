@@ -11,6 +11,8 @@ sub _columns {(
   [module_dist => 'text'],
   [in_code => 'integer default 0'],
   [in_tests => 'integer default 0'],
+  [evals_in_code => 'integer default 0'],
+  [evals_in_tests => 'integer default 0'],
 )}
 
 sub _indices {(
@@ -24,7 +26,7 @@ sub _indices {(
 
 sub fetch_used_modules_of {
   my ($self, $distv) = @_;
-  $self->fetchall('select module, module_dist, in_code, in_tests from used_modules where distv = ?', $distv);
+  $self->fetchall('select module, module_dist, in_code, in_tests, evals_in_code, evals_in_tests from used_modules where distv = ?', $distv);
 }
 
 # - Process::Kwalitee::UsedModuleDist -

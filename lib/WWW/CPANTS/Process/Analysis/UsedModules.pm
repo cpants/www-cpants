@@ -24,6 +24,8 @@ sub update {
       module   => $key,
       in_code  => $uses->{$key}{in_code} || 0,
       in_tests => $uses->{$key}{in_tests} || 0,
+      evals_in_code  => $uses->{$key}{evals_in_code} || 0,
+      evals_in_tests => $uses->{$key}{evals_in_tests} || 0,
     });
   }
 }
