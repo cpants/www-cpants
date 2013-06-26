@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use FindBin;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Kwalitee;
 
@@ -33,6 +34,13 @@ my $kwalitee = {
   is $sorted->[1]{key} => 'extracts_nicely';
   is $sorted->[1]{value} => 0;
   ok $sorted->[1]{remedy}, "remedy for a failing metric";
+}
+
+{
+  for (@{sorted_metrics($kwalitee)}) {
+    my $file = "$FindBin::Bin/kwalitee/$_->{key}.t";
+    ok -e $file, "kwalitee test for $_->{key} exists";
+  }
 }
 
 done_testing;
