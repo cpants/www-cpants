@@ -47,11 +47,12 @@ sub kb {
 sub hide_internal {
   my $str = shift;
   my $root = WWW::CPANTS::AppRoot::approot->stringify;
-  $str =~ s!$ENV{HOME}/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
-  $str =~ s!$ENV{HOME}/(backpan|cpan/)!$1!g;
+  (my $home = $root) =~ s|^(/home/[^/]+)/.+|$1|;
+  $str =~ s!$home/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
+  $str =~ s!$home/(backpan|cpan/)!$1!g;
   $str =~ s!$root/tmp/analysis/[^/]+/[^/]+/!!g;
   $str =~ s!$root/extlib/[^/]+/!!g;
-  $str =~ s!$ENV{HOME}/!!g;
+  $str =~ s!$home/!!g;
   $str =~ s!$root/!!g;
   $str;
 }
