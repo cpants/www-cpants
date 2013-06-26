@@ -154,6 +154,12 @@ sub calc_kwalitee {
   $context;
 }
 
+sub metric {
+  my ($self, $name) = @_;
+
+  $self->{kwalitee}->get_indicators_hash->{$name};
+}
+
 # not to break things; should not use this anyway
 
 unless (main->can('logger')) {
@@ -178,6 +184,7 @@ WWW::CPANTS::Analyze
 =head2 check_perl_stuff
 =head2 analyze
 =head2 calc_kwalitee
+=head2 metric
 
 =head1 AUTHOR
 
