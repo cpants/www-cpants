@@ -11,7 +11,9 @@ sub load_data { slurp_json('page/stats_module_signature') }
 sub create_data {
   my $class = shift;
 
-  my $results = db_r('ModuleSignature')->fetch_result_stats;
+  my $db = db_r('ModuleSignature');
+
+  my $results = $db->fetch_result_stats;
   my %total;
   for my $result (@$results) {
     for (qw/latest cpan backpan/) {
@@ -24,8 +26,18 @@ sub create_data {
     }
   }
 
+  my $usage = $db->fetch_usage_stats;
+  for my $row (@$usage) {
+    for (qw/latest cpan backpan/) {
+      $row->{$_.'_ok_rate'} = percent($row->{$_.'_ok'}, $row->{$_.'_total'});
+      $row->{$_.'_errors_rate'} = percent($row->{$_.'_errors'}, $row->{$_.'_total'});
+      $row->{$_.'_missing_rate'} = percent($row->{$_.'_missing'}, $row->{$_.'_total'});
+    }
+  }
+
   save_json('page/stats_module_signature', {
     results => $results,
+    usage => $usage,
   });
 }
 
