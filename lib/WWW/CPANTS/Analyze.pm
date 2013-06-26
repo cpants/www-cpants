@@ -5,12 +5,12 @@ use warnings;
 use WWW::CPANTS::Extlib;
 use WWW::CPANTS::Analyze::Context;
 use WWW::CPANTS::Log;
-use Module::CPANTS::Kwalitee;
+use Module::CPANTS::SiteKwalitee;
 
 sub new {
   my ($class, %args) = @_;
 
-  $args{kwalitee} = Module::CPANTS::Kwalitee->new;
+  $args{kwalitee} = Module::CPANTS::SiteKwalitee->new;
 
   bless \%args, $class;
 }
