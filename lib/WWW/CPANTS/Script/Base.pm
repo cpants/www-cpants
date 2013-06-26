@@ -24,15 +24,15 @@ sub options {
 sub run {
   my $self = shift;
 
-  local $SIG{INT} = sub { warn "Terminating on SIGINT"; exit };
+  my ($class) = lc(ref $self || $self) =~ /::([^:]+)$/;
+  my $pidfile = $self->{_pidfile} = file("pids/$class.pid");
+  die "another process is running\n" if $pidfile->exists;
+  $pidfile->save($$, {mkdir => 1});
+
+  local $SIG{INT} = sub { warn "Terminating on SIGINT"; $self->_remove_pidfile; exit };
 
   $self->{cpan}    ||= WWW::CPANTS::Config->cpan;
   $self->{backpan} ||= WWW::CPANTS::Config->backpan;
-
-  my ($class) = lc(ref $self || $self) =~ /::([^:]+)$/;
-  my $pidfile = file("pids/$class.pid");
-  die "another process is running\n" if $pidfile->exists;
-  $pidfile->save($$, {mkdir => 1});
 
   $self->logger(1);
   if ($VERBOSE or $self->{verbose}) {
@@ -85,13 +85,18 @@ sub run {
     $maintenance_file->remove;
   }
 
-  if ($pidfile) {
-    my $pid = $pidfile->exists ? $pidfile->slurp : undef;
-    $pidfile->remove if $pid && $pid eq $$;
-  }
+  $self->_remove_pidfile;
 }
 
 sub _run { die "not implemented\n" }
+
+sub _remove_pidfile {
+  my $self = shift;
+  my $pidfile = $self->{_pidfile} or return;
+  return unless $pidfile->exists;
+  my $pid = $pidfile->slurp;
+  $pidfile->remove if $pid && $pid eq $$;
+}
 
 1;
 
