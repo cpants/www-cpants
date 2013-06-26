@@ -59,19 +59,29 @@ sub fetch_usage_stats {
 
   my $year = Time::Piece->new->year;
 
+  $self->attach('Kwalitee');
+  on_scope_exit { $self->detach('Kwalitee') };
+
   $self->fetchall(qq{
     select
-      strftime('%Y', released, 'unixepoch') + 0 as year,
-      sum(case when result_cd = '0' then 1 else 0) as signature_ok,
-      sum(case when result_cd = '-1' then 1 else 0) as signature_missing,
-      sum(case when result_cd = '-2' then 1 else 0) as signature_malformed,
-      sum(case when result_cd = '-3' then 1 else 0) as signature_bad,
-      sum(case when result_cd = '-4' then 1 else 0) as signature_mismatch,
-      sum(case when result_cd = '-5' then 1 else 0) as manifest_mismatch,
-      sum(case when result_cd = '-6' then 1 else 0) as cipher_unknown,
-      sum(case when result_cd = '0E0' then 1 else 0) as cannot_verify
-    from module_signature
-    where year between ? and ?
+      strftime('%Y', m.released, 'unixepoch') + 0 as year,
+      sum(case when result_cd = '0' then 1 else 0 end) as backpan_ok,
+      sum(case when result_cd = '-1' then 1 else 0 end) as backpan_missing,
+      sum(case when result_cd + 0 < -1 then 1 else 0 end) as backpan_errors,
+      sum(case when k.is_cpan > 0 and result_cd = '0' then 1 else 0 end) as cpan_ok,
+      sum(case when k.is_cpan > 0 and result_cd = '-1' then 1 else 0 end) as cpan_missing,
+      sum(case when k.is_cpan > 0 and result_cd + 0 < -1 then 1 else 0 end) as cpan_errors,
+      sum(case when k.is_latest > 0 and result_cd = '0' then 1 else 0 end) as latest_ok,
+      sum(case when k.is_latest > 0 and result_cd = '-1' then 1 else 0 end) as latest_missing,
+      sum(case when k.is_latest > 0 and result_cd + 0 < -1 then 1 else 0 end) as latest_errors,
+      sum(case when k.is_latest > 0 then 1 else 0 end) as latest_total,
+      sum(case when k.is_cpan > 0 then 1 else 0 end) as cpan_total,
+      sum(1) as backpan_total,
+      group_concat(distinct(case when result_cd != '-1' and k.is_latest > 0 then k.author else NULL end)) as latest_authors,
+      group_concat(distinct(case when result_cd != '-1' and k.is_cpan > 0 then k.author else NULL end)) as cpan_authors,
+      group_concat(distinct(case when result_cd != '-1' then k.author else NULL end)) as backpan_authors
+    from module_signature as m, kwalitee as k
+    where m.analysis_id = k.analysis_id and year between ? + 0 and ? + 0
     group by year order by year asc
   }, $year - 9, $year);
 }
