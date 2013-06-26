@@ -120,10 +120,15 @@ sub calc_kwalitee {
   $context->set(kwalitee => {});
   my $kwalitee = 0;
   my $total_kwalitee = 0;
+  my @aggregators;
   for my $module (@{ $self->{kwalitee}->generators }) {
     for my $indicator (@{ $module->kwalitee_indicators }) {
       next if $indicator->{needs_db};
       next if $indicator->{is_disabled};
+      if ($indicator->{aggregating}) {
+        push @aggregators, $indicator;
+        next;
+      }
       my $ret = $indicator->{code}($context->stash, $indicator);
       $ret = $ret > 0 ? 1 : 0;  # normalize
       $context->set_kwalitee($indicator->{name} => $ret);
@@ -131,6 +136,14 @@ sub calc_kwalitee {
       $kwalitee += $ret;
       $total_kwalitee++;
     }
+  }
+  for my $indicator (@aggregators) {
+    my $ret = $indicator->{code}($context->stash, $indicator);
+    $ret = $ret > 0 ? 1 : 0;  # normalize
+    $context->set_kwalitee($indicator->{name} => $ret);
+    next if $indicator->{is_experimental};
+    $kwalitee += $ret;
+    $total_kwalitee++;
   }
 
   # this value is tentative and will be finalized later,
