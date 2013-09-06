@@ -240,6 +240,7 @@ sub distdir {
   my $self = shift;
   if (@_) {
     $self->{distdir} = File::Spec->catdir(@_);
+    $self->{distdir} =~ s|\\|/|g if $^O eq 'MSWin32';
   }
   $self->{distdir};
 }
