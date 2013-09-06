@@ -118,9 +118,11 @@ my %params = (
       directory => [qw!extlib log test_mirror tmp test_utils xt xutils!],
     },
   },
+  MIN_PERL_VERSION => '5.010',
 );
 
 my $eumm = $ExtUtils::MakeMaker::VERSION;
+delete $params{MIN_PERL_VERSION} if $eumm < 6.48;
 delete $params{META_MERGE} if $eumm < 6.46;
 delete $params{LICENSE}    if $eumm < 6.31;
 
