@@ -39,6 +39,8 @@ sub update {
   }
   $pm->wait_all_children;
 
+  $kwalitee_db->update_dynamic_prereq_matches_use;
+
   $errors_db->unmark(qw/missing_prereqs missing_build_prereqs/);
 }
 
