@@ -56,6 +56,10 @@ get '/author/:id' => sub {
   my $id = uc $self->param('id');
   my $base = $self->req->url->clone->to_abs->base;
   my $data = load_page('Author', $id) or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -93,7 +97,16 @@ post '/authors' => sub {
 get '/dist/#distname' => sub {
   my $self = shift;
   my $name = $self->param('distname');
+  my $format = '';
+  if ($name =~ s/\.(json)$//) {
+    $format = $1;
+    $self->param(distname => $name);
+    $self->stash(format => $format);
+  }
   my $data = load_page('Dist::Overview', $name) or return $self->render_not_found;
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_highcharts => 1);
   $self->stash(requires_tablesorter => 1);
@@ -110,6 +123,10 @@ get '/dist/#distname/:tab' => sub {
   my $tabclass = camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Dist\::$tabclass", $name) or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -157,6 +174,10 @@ get '/ranking/:tab' => sub {
   my $tabclass = camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Ranking\::$tabclass", $page) or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -169,6 +190,10 @@ get '/ranking/:tab' => sub {
 get '/kwalitee' => sub {
   my $self = shift;
   my $data = load_page('Kwalitee') or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -180,6 +205,10 @@ get '/kwalitee/:name' => sub {
   my $self = shift;
   my $name = $self->param('name');
   my $data = load_page('Kwalitee::Indicator', $name) or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(requires_highcharts => 1);
@@ -202,6 +231,10 @@ get '/stats/:tab' => sub {
   my $tabclass = camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
   my $data = load_page("Stats\::$tabclass") or return $self->render_not_found;
+  my $format = $self->stash('format');
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -214,6 +247,10 @@ get '/stats/:tab' => sub {
 get '/recent' => sub {
   my $self = shift;
   my $data = load_page("Recent") or return $self->render_not_found;
+  my $format = $self->stash('format');
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
   $self->stash($data);
   $self->stash(breadcrumbs => [
     {name => 'Recent'},
