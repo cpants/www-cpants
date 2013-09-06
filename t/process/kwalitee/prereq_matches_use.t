@@ -14,6 +14,15 @@ use WWW::CPANTS::Process::Kwalitee::PrereqMatchesUse;
     ],
   );
 
+  db('MetaYML')->set_test_data(
+    cols => [qw/analysis_id is_dynamic/],
+    rows => [
+      [qw/1 0/],
+      [qw/2 0/],
+      [qw/3 0/],
+    ],
+  );
+
   db('UsedModules')->set_test_data(
     cols => [qw/distv module module_dist in_code in_tests/],
     rows => [
