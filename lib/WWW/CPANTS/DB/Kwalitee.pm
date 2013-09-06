@@ -175,6 +175,14 @@ sub finalize_update_prereq_matches_use {
   shift->finalize_bulk('update_prereq_matches_use');
 }
 
+sub update_dynamic_prereq_matches_use {
+  my $self = shift;
+
+  $self->attach('MetaYML');
+  on_scope_exit { $self->detach('MetaYML') };
+  $self->do('update kwalitee set prereq_matches_use = 1, build_prereq_matches_use = 1 where analysis_id = (select analysis_id from meta_yml where analysis_id = kwalitee.analysis_id and is_dynamic = 1)');
+}
+
 # - Page::Author -
 
 sub fetch_author_kwalitee {
@@ -341,6 +349,7 @@ WWW::CPANTS::DB::Kwalitee
 =head2 update_final_kwalitee
 =head2 update_is_prereq
 =head2 update_prereq_matches_use
+=head2 update_dynamic_prereq_matches_use
 =head2 finalize_update_final_kwalitee
 =head2 finalize_update_is_prereq
 =head2 finalize_update_prereq_matches_use
