@@ -37,7 +37,7 @@ for my $test (@tests) {
   if (!$result) {
     my $details = $metric->{details}->($context->stash) || '';
     ok $details, $details;
-  };
+  }
 }
 
 done_testing;
