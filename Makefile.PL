@@ -20,13 +20,15 @@ my %params = (
     'Exporter::Lite' => 0,
     'File::Temp' => 0,
     'File::HomeDir' => 0,
+    'Furl' => 0,
     'Log::Handler' => 0,
     'JSON::XS' => 0,
     'Digest::MD5' => 0,
+    'Imager' => 0,
     'List::Util' => 0,
     'List::MoreUtils' => 0,
     'File::Spec' => 0,
-    'Mojolicious' => '3.65',
+    'Mojolicious' => '4.00',
     'Module::CoreList' => '2.78', # should always use the latest
     'Module::Find' => 0,
     'String::CamelCase' => 0,
@@ -47,6 +49,7 @@ my %params = (
     'Test::More'          => '0.88',
     'Test::Differences'   => 0,
     'Test::UseAllModules' => '0.10',
+    'WorePAN' => '0.04',  # for rare ids
 
     # Plack Application Management
     'Plack::Builder::Conditionals' => 0,
@@ -61,60 +64,50 @@ my %params = (
     ),
 
     # For Kwalitee (Module::CPANTS::Analyse deps)
-#    'Archive::Any'              => '0.06',
     'Archive::Any::Lite'        => '0.04',
     'Archive::Tar'              => '1.48',
     'Class::Accessor'           => '0.19',
     'IO::Capture'               => '0.05',
     'Module::Pluggable'         => '0',
     'version'                   => '0.73',
-
-    ### Distname
     'CPAN::DistnameInfo'        => '0.06',
 
-    ### Distros
-    'LWP::Simple'               => 0,
-    'Text::CSV_XS'              => '0.45',
+    ### Kwalitee::
 
     ### Files
-    'ExtUtils::Manifest'        => 0,
-    'File::Find::Rule'          => '0',
+    'File::Find::Rule::VCS'     => '0',
     'File::Slurp'               => '0',
-    'Readonly'                  => '0',
-
-    # requires a tweak not to take too much time to guess
-    # 'Software::License'         => '0.003',
 
     ### License
-    'List::MoreUtils'           => '0',
-    'Pod::Simple::Checker'      => '2.02',
+    # requires a tweak not to take too much time to guess
+    # 'Software::License'         => '0.003',
 
     ### Manifest
     'Array::Diff'               => '0.04',
 
     ### MetaYML
-    'Test::CPAN::Meta::YAML::Version' => '0.21', # data structure change
     'CPAN::Meta::YAML'                 => 0,
+    'CPAN::Meta::Validator'            => 0,
 
-    # YAML::(Any|Syck) is a source of troubles...
-    # 'YAML::Any'                 => 0,
+    ### Uses
+    'Module::ExtractUse'        => '0.31', # used_in_eval
+    'Set::Scalar'               => 0,
+
+    ### SiteKwalitee::
 
     ### Pod
     'Pod::Simple::Checker'      => '2.02',
-
-    ### Repackageable
-    'List::MoreUtils'           => '0',
 
     ### Signature, though highly controversial...
     'File::chdir'               => 0,
     'Module::Signature'         => '0.70', # less warnings
 
-    ### Uses
-    'Module::ExtractUse'        => '0.27', # requires the latest
-    'Set::Scalar'               => 0,
+    ### Version
+    'Parse::LocalDistribution'  => '0.02',
+    'Parse::PMFile'             => '0.04',
+
 
     # Experimental
-    'WorePAN' => 0,
   },
   test => { TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t' },
   META_MERGE => {
