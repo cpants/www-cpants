@@ -40,6 +40,7 @@ sub import {
 sub backpan { $Config{backpan} }
 sub cpan    { $Config{cpan} }
 sub local_addr { $Config{local_addr} || ['127.0.0.1'] }
+sub font { $Config{font} || ($^O eq 'MSWin32' ? {face => 'Meiryo UI'} : {file => '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf'}) }
 
 1;
 
@@ -58,6 +59,7 @@ WWW::CPANTS::Config
 =head2 cpan
 =head2 backpan
 =head2 local_addr
+=head2 font
 
 =head1 AUTHOR
 
