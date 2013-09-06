@@ -11,8 +11,10 @@ sub _columns {(
   [module_dist => 'text'],
   [in_code => 'integer default 0'],
   [in_tests => 'integer default 0'],
+  [in_config => 'integer default 0'],
   [evals_in_code => 'integer default 0'],
   [evals_in_tests => 'integer default 0'],
+  [evals_in_config => 'integer default 0'],
 )}
 
 sub _indices {(
