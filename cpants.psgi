@@ -11,6 +11,7 @@ use String::CamelCase 'camelize';
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log ();
 use WWW::CPANTS::Pages;
+use WWW::CPANTS::StatusImage;
 use WWW::CPANTS::Config;
 use Compress::Zlib;
 
@@ -60,6 +61,11 @@ get '/author/:id' => sub {
   if ($format eq 'json') {
     return $self->render(json => $data);
   }
+  if ($format eq 'png') {
+    my $kwalitee = $data->{author_info}{average_core_kwalitee};
+    my $path = WWW::CPANTS::StatusImage->new($kwalitee)->path;
+    return $self->render_static($path);
+  }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
@@ -98,7 +104,7 @@ get '/dist/#distname' => sub {
   my $self = shift;
   my $name = $self->param('distname');
   my $format = '';
-  if ($name =~ s/\.(json)$//) {
+  if ($name =~ s/\.(json|png)$//) {
     $format = $1;
     $self->param(distname => $name);
     $self->stash(format => $format);
@@ -106,6 +112,11 @@ get '/dist/#distname' => sub {
   my $data = load_page('Dist::Overview', $name) or return $self->render_not_found;
   if ($format eq 'json') {
     return $self->render(json => $data);
+  }
+  if ($format eq 'png') {
+    my $kwalitee = $data->{dist}{kwalitee};
+    my $path = WWW::CPANTS::StatusImage->new($kwalitee)->path;
+    return $self->render_static($path);
   }
   $self->stash($data);
   $self->stash(requires_highcharts => 1);
