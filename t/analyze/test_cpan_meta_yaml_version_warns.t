@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
-use Capture::Tiny qw/capture_stderr/;
+use IO::Capture::Stderr;
 
 my @paths = qw(
   C/CD/CDRAKE/SysTray-0.13.tar.gz
@@ -45,9 +45,11 @@ my $mirror = setup_mirror(@paths);
 
 my $analyzer = WWW::CPANTS::Analyze->new;
 for my $path (@paths) {
-  my $err = capture_stderr {
-    my $context = $analyzer->analyze(dist => $mirror->file($path));
-  };
+  my $capture = IO::Capture::Stderr->new;
+  $capture->start;
+  my $context = $analyzer->analyze(dist => $mirror->file($path));
+  $capture->stop;
+  my $err = $capture->read;
   ok !$err, "no warnings are captured";
   note $err if $err;
 }
