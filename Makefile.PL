@@ -114,6 +114,9 @@ my %params = (
     resources => {
       repository => 'https://github.com/charsbar/www-cpants',
     },
+    no_index => {
+      directory => [qw!extlib log test_mirror tmp test_utils xt xutils!],
+    },
   },
 );
 
