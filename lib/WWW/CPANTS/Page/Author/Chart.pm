@@ -7,7 +7,7 @@ use WWW::CPANTS::DB;
 sub load_data {
   my ($class, $id) = @_;
 
-  my $history = db('CPANTS')->fetch_author_history($id);
+  my $history = db('Kwalitee')->fetch_author_history($id);
 
   my (@dates, @kwalitee, @num_dists);
   for my $run (@$history) {
