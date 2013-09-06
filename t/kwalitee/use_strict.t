@@ -14,6 +14,11 @@ my @tests = (
   ['P/PJ/PJB/Speech-Speakup-1.04.tar.gz', 0], # 7410
   ['T/TE/TEMPIRE/Eponymous-Hash-0.01.tar.gz', 0], # 8503
   ['S/SU/SULLR/Net-SSLGlue-1.03.tar.gz', 0], # 8720
+
+  # use 5.012 and higher
+  ['Z/ZD/ZDM/Pharaoh-BootStrap-3.00.tar.gz', 1], # use 5.12.0
+  ['M/MA/MALLEN/Acme-Github-Test-0.03.tar.gz', 1] # use 5.014
+
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
