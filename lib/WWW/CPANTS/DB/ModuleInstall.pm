@@ -14,7 +14,6 @@ sub _columns {(
 
 sub _indices {(
   unique => ['analysis_id'],
-  ['version'],
 )}
 
 sub fetch_stats {

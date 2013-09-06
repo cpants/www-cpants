@@ -28,11 +28,7 @@ sub _columns {
 
 sub _indices {(
   unique => ['analysis_id'],
-  ['dist'],
   ['distv'],
-  ['author'],
-  ['is_cpan'],
-  ['is_latest'],
 )}
 
 sub _kwalitee_indicators {

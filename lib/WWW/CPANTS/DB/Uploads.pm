@@ -19,10 +19,7 @@ sub _columns {(
 )}
 
 sub _indices {(
-  ['released'],
-  ['dist'],
   ['distv'],
-  ['year'],
 )}
 
 sub _fix_test_data {

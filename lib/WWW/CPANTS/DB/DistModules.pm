@@ -14,7 +14,6 @@ sub _columns {(
 )}
 
 sub _indices {(
-  ['dist'],
   ['module'],
   unique => ['distv', 'module'],
 )}

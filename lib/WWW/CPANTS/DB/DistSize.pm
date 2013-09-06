@@ -13,9 +13,6 @@ sub _columns {(
 
 sub _indices {(
   unique => ['analysis_id'],
-  ['size_packed'],
-  ['size_unpacked'],
-  ['files'],
 )}
 
 sub fetch_packed_size_stats {

@@ -17,13 +17,6 @@ sub _columns {(
   [status => 'integer default 0'],
 )}
 
-sub _indices {(
-  ['average_kwalitee'],
-  ['rank', 'num_dists desc'],
-  ['sort_id'],
-  ['num_dists desc'],
-)}
-
 # - Process::Kwalitee::AuthorStats -
 
 sub update_author_stats {

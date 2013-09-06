@@ -14,11 +14,6 @@ sub _columns {(
   [status => 'integer default 0'],
 )}
 
-sub _indices {(
-  ['dist'],
-  ['author'],
-)}
-
 # - Process::Kwalitee::PrereqDist, Process::Kwalitee::UsedModuleDist -
 
 sub fetch_dist_by_module {

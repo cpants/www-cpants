@@ -10,8 +10,6 @@ sub _columns {(
 )}
 
 sub _indices {(
-  ['dist'],
-  ['author'],
   unique => ['dist', 'author'],
 )}
 

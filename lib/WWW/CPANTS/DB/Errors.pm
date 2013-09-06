@@ -12,7 +12,6 @@ sub _columns {(
 )}
 
 sub _indices {(
-  ['category'],
   unique => ['distv', 'category'],
 )}
 
