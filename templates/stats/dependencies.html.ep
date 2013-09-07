@@ -9,6 +9,12 @@
 </div>
 
 <section>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/dependencies") %>
+</div>
+</section>
+
+<section>
 <div class="span11">
 <h2>Number of Dependants</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">

@@ -7,7 +7,9 @@
 </div>
 
 <section>
-<p>Here's additional statistics on the result of the signature verification.</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/module_signature") %>
+</div>
 </section>
 
 <section>

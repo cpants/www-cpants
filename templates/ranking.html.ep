@@ -4,10 +4,10 @@
 </div>
 
 <section>
-<h2>CPANTS Game Ranking</h2>
-
-<p class="section-lead">These lists are in no way meant as lists of 'best' or 'good' Perl programmers. They are lists of good CPANTS game players. Don't take them seriously. It's a game after all!</p>
-<p>Note that optional metrics (like is_prereq) are not considered in this statistic.</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("ranking") %>
+</div>
+</section>
 
 <section>
 <div class="span8">

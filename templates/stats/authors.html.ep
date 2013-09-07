@@ -10,9 +10,13 @@
 </div>
 
 <section>
-<p>
-We have <%= $total %> CPAN authors now, and <%= $contributed %> authors (<%= $contribution_rate %> %) have actually contributed one or more distributions so far.
-</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/authors", {
+  total => $total,
+  contributed => $contributed,
+  contribution_rate => $contribution_rate,
+}) %>
+</div>
 </section>
 
 <section>

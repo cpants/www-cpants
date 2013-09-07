@@ -4,7 +4,10 @@
 </div>
 
 <section>
-<p>Here's statistics on various aspects of CPAN distributions and authors.</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats") %>
+</div>
+</section>
 
 <section>
 <div class="span8">

@@ -6,7 +6,9 @@
 </div>
 
 <section>
-<p>Unlike other toolchain modules, Module::Install's issues tend to linger until authors who chose to use Module::Install upgrade their distributions. Here's statistics on who uses which versions of Module::Install.</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/module_install") %>
+</div>
 </section>
 
 <section>

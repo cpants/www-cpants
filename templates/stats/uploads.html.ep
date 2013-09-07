@@ -11,9 +11,14 @@
 </div>
 
 <section>
-<p>
-We saw <%= $uploads %> CPAN uploads so far. Among <%= $total %> distributions, <%= $cpan_dists %> distributions (<%= $cpan_rate %> %) are available from the CPAN now (the rest is only on the BackPAN).
-</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/uploads", {
+  uploads => $uploads,
+  total => $total,
+  cpan_rate => $cpan_rate,
+  cpan_dists => $cpan_dists,
+}) %>
+</div>
 </section>
 
 <section>

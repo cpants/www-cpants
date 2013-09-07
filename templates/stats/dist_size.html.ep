@@ -8,9 +8,14 @@
 </div>
 
 <section>
-<p>
-Here's statistics on the size of the latest <%= $total %> CPAN distributions (packed and unpacked).
-</p>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/dist_size", {
+  total => $total,
+}) %>
+</div>
+</section>
+
+<section>
 <div class="span11">
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>

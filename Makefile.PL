@@ -108,6 +108,7 @@ my %params = (
 
 
     # Experimental
+    'Text::Markdown' => 0,
   },
   test => { TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t' },
   META_MERGE => {

@@ -11,6 +11,7 @@ use String::CamelCase 'camelize';
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log ();
 use WWW::CPANTS::Pages;
+use WWW::CPANTS::Text ();
 use WWW::CPANTS::StatusImage;
 use WWW::CPANTS::Config;
 use Compress::Zlib;
