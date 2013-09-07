@@ -263,6 +263,7 @@ get '/stats/:tab' => sub {
   my $parent = page('Stats');
   my $page = page("Stats\::$tabclass") or return $self->render_not_found;
   my $data = $page->load_data or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);
   }
@@ -279,6 +280,7 @@ get '/recent' => sub {
   my $self = shift;
   my $page = page('Recent');
   my $data = $page->load_data or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);
   }
