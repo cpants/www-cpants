@@ -9,13 +9,10 @@
 <section>
 <div class="span8">
 <ul>
-<li><a href="/stats/uploads">On the number of CPAN uploads</a></li>
-<li><a href="/stats/authors">On the number of active CPAN authors</a></li>
-<li><a href="/stats/dist_size">On the size of distributions</a></li>
-<li><a href="/stats/dependencies">On the number of dependencies</a></li>
-<li><a href="/stats/module_install">On Module::Install</a></li>
-<li><a href="/stats/module_signature">On Module::Signature</a></li>
-%# <li><a href="/stats/files">On the number of files in a distribution</a></li>
+% my $pages = stash('pages') || [];
+% for (@$pages) {
+<li><a href="<%= $_->{path} %>">On <%= $_->{title} %></a></li>
+% }
 </ul>
 </div>
 </section>
