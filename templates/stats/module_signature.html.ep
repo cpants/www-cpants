@@ -1,5 +1,6 @@
 % layout 'layout';
 % my $results = stash('results') || [];
+% my $usage = stash('usage') || [];
 
 <div class="page-header">
 <h1><%= page_title() %></h1>
@@ -29,4 +30,29 @@
 % }
 </tbody>
 </table>
+</div>
+</section>
+
+<section>
+<div class="span11">
+<h2>Stats on Usage</h2>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th rowspan="2">Year</th><th colspan="3">Latest</th><th colspan="3">CPAN</th><th colspan="3">BackPAN</th></tr>
+<tr><th>OK</th><th>Errors</th><th>No signature</th><th>OK</th><th>Errors</th><th>No signature</th><th>OK</th><th>Errors</th><th>No signature</th></tr>
+</thead>
+<tbody>
+% {
+%   for (@$usage) {
+<tr>
+<td><%= $_->{year} %></td>
+<td sort="<%= $_->{latest_ok} %>"><%= $_->{latest_ok} %> (<%= $_->{latest_ok_rate} %> %)</td><td sort="<%= $_->{latest_errors} %>"><%= $_->{latest_errors} %> (<%= $_->{latest_errors_rate} %> %)</td><td sort="<%= $_->{latest_missing} %>"><%= $_->{latest_missing} %> (<%= $_->{latest_missing_rate} %> %)</td>
+<td sort="<%= $_->{cpan_ok} %>"><%= $_->{cpan_ok} %> (<%= $_->{cpan_ok_rate} %> %)</td><td sort="<%= $_->{cpan_errors} %>"><%= $_->{cpan_errors} %> (<%= $_->{cpan_errors_rate} %> %)</td><td sort="<%= $_->{cpan_missing} %>"><%= $_->{cpan_missing} %> (<%= $_->{cpan_missing_rate} %> %)</td>
+<td sort="<%= $_->{backpan_ok} %>"><%= $_->{backpan_ok} %> (<%= $_->{backpan_ok_rate} %> %)<td sort="<%= $_->{backpan_errors} %>"><%= $_->{backpan_errors} %> (<%= $_->{backpan_errors_rate} %> %)</td><td sort="<%= $_->{backpan_missing} %>"><%= $_->{backpan_missing} %> (<%= $_->{backpan_missing_rate} %> %)</td>
+</tr>
+%   }
+% }
+</tbody>
+</table>
+</div>
 </section>
