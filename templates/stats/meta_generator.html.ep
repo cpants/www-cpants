@@ -1,0 +1,116 @@
+% layout 'layout';
+% my $stats = stash('stats') || [];
+% my %map = (
+%   eumm    => 'ExtUtils::MakeMaker',
+%   mb      => 'Module::Build',
+%   mbt     => 'Module::Build::Tiny',
+%   mi      => 'Module::Install',
+%   dzil    => 'Dist::Zilla',
+%   milla   => 'Milla',
+%   minilla => 'Minilla',
+%   others  => 'others',
+%   unknown => 'unknown',
+% );
+% my $colspan = keys %map;
+
+<div class="page-header">
+<h1><%= page_title() %></h1>
+</div>
+
+<section>
+<div class="span8">
+<%== WWW::CPANTS::Text::markdown("stats/meta_generator") %>
+</div>
+</section>
+
+<section>
+<div class="span11">
+<h2>Stats</h2>
+
+<h3>Latest</h3>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th rowspan="2">Year</th><th colspan="<%= $colspan %>">Latest</th></tr>
+<tr>
+% for my $type (qw/latest/) {
+%   for (sort keys %map) {
+<th><%= $map{$_} %></th>
+%   }
+% }
+</tr>
+</thead>
+<tbody>
+% for my $row (@$stats) {
+<tr>
+<td><%= $row->{year} %></td>
+%   for my $type (qw/latest/) {
+%     for (sort keys %map) {
+<td sort="<%= $row->{$type.'_'.$_} %>"><%= $row->{$type.'_'.$_} %></td>
+%     }
+%   }
+</tr>
+% }
+</tbody>
+</table>
+</div>
+</section>
+
+<section>
+<div class="span11">
+<h3>CPAN</h3>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th rowspan="2">Year</th><th colspan="<%= $colspan %>">CPAN</th></tr>
+<tr>
+% for my $type (qw/cpan/) {
+%   for (sort keys %map) {
+<th><%= $map{$_} %></th>
+%   }
+% }
+</tr>
+</thead>
+<tbody>
+% for my $row (@$stats) {
+<tr>
+<td><%= $row->{year} %></td>
+%   for my $type (qw/cpan/) {
+%     for (sort keys %map) {
+<td sort="<%= $row->{$type.'_'.$_} %>"><%= $row->{$type.'_'.$_} %></td>
+%     }
+%   }
+</tr>
+% }
+</tbody>
+</table>
+</div>
+</section>
+
+<section>
+<div class="span11">
+<h3>BackPAN</h3>
+<table class="tablesorter table-bordered table-striped table-condensed">
+<thead>
+<tr><th rowspan="2">Year</th><th colspan="<%= $colspan %>">BackPAN</th></tr>
+<tr>
+% for my $type (qw/backpan/) {
+%   for (sort keys %map) {
+<th><%= $map{$_} %></th>
+%   }
+% }
+</tr>
+</thead>
+<tbody>
+% for my $row (@$stats) {
+<tr>
+<td><%= $row->{year} %></td>
+%   for my $type (qw/backpan/) {
+%     for (sort keys %map) {
+<td sort="<%= $row->{$type.'_'.$_} %>"><%= $row->{$type.'_'.$_} %></td>
+%     }
+%   }
+</tr>
+% }
+</tbody>
+</table>
+</div>
+</section>
