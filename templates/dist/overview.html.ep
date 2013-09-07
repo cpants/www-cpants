@@ -53,8 +53,8 @@
 <h2>Kwalitee Fails</h2>
 
 % if (@core_fails) {
+<h3>Core fails</h3>
 <table class="tablesorter table-condensed table-bordered table-striped">
-<caption>Core fails</caption>
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
 </thead>
@@ -71,8 +71,8 @@
 % }
 
 % if (@extra_fails) {
+<h3>Extra fails</h3>
 <table class="tablesorter table-condensed table-bordered table-striped">
-<caption>Extra fails</caption>
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
 </thead>
@@ -89,8 +89,8 @@
 % }
 
 % if (@exp_fails) {
+<h3>Experimental fails</h3>
 <table class="tablesorter table-condensed table-bordered table-striped">
-<caption>Experimental fails</caption>
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
 </thead>

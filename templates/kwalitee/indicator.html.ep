@@ -8,16 +8,15 @@
 </div>
 
 <section>
-<h2>Description</h2>
+<div class="span8">
+<h3>Description</h3>
 <p><%= $info->{error} %></p>
-</section>
-
-<section>
-<h2>Remedy</h2>
+<h3>Remedy</h3>
 <p><%= $info->{remedy} %></p>
 </section>
 
 <section>
+<div class="span11">
 <h2>Stats</h2>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
@@ -36,14 +35,18 @@
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</div>
 </section>
 
 % if (@fails) {
 <section>
+<div class="span11">
 <h2><%= scalar @fails %> Latest Failing Dists</h2>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
@@ -59,6 +62,7 @@
 % }
 </tbody>
 </table>
+</div>
 </section>
 % }
 

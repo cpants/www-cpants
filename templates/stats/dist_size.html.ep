@@ -11,6 +11,7 @@
 <p>
 Here's statistics on the size of the latest <%= $total %> CPAN distributions (packed and unpacked).
 </p>
+<div class="span11">
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
 <tr><th>Size</th><th>Num of dists (Packed)</th><th>Num of Dists (Unpacked)</th></tr>
@@ -24,9 +25,11 @@ Here's statistics on the size of the latest <%= $total %> CPAN distributions (pa
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>100 Largest Distributions</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -40,4 +43,5 @@ Here's statistics on the size of the latest <%= $total %> CPAN distributions (pa
 % }
 </tbody>
 </table>
+</div>
 </section>

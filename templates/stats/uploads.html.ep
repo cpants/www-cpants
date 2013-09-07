@@ -17,6 +17,7 @@ We saw <%= $uploads %> CPAN uploads so far. Among <%= $total %> distributions, <
 </section>
 
 <section>
+<div class="span11">
 <h2>Uploads per year</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -30,9 +31,11 @@ We saw <%= $uploads %> CPAN uploads so far. Among <%= $total %> distributions, <
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>100 Most Often Uploaded</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -46,4 +49,5 @@ We saw <%= $uploads %> CPAN uploads so far. Among <%= $total %> distributions, <
 % }
 </tbody>
 </table>
+</div>
 </section>

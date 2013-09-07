@@ -9,6 +9,7 @@
 </div>
 
 <section>
+<div class="span11">
 <h2>Number of Dependants</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -22,9 +23,11 @@
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>Number of Prerequisites</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -38,9 +41,11 @@
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>100 Most Required Distributions</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -54,9 +59,11 @@
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>100 Distributions That Require Most</h2>
 <p>(Note: Task-* distributions are omitted.)</p>
 <table class="tablesorter table-bordered table-striped table-condensed">
@@ -71,4 +78,5 @@
 % }
 </tbody>
 </table>
+</div>
 </section>

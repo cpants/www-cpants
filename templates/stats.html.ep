@@ -6,6 +6,8 @@
 <section>
 <p>Here's statistics on various aspects of CPAN distributions and authors.</p>
 
+<section>
+<div class="span8">
 <ul>
 <li><a href="/stats/uploads">On the number of CPAN uploads</a></li>
 <li><a href="/stats/authors">On the number of active CPAN authors</a></li>
@@ -15,5 +17,5 @@
 <li><a href="/stats/module_signature">On Module::Signature</a></li>
 %# <li><a href="/stats/files">On the number of files in a distribution</a></li>
 </ul>
-
+</div>
 </section>

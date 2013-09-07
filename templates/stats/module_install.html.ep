@@ -10,6 +10,7 @@
 </section>
 
 <section>
+<div class="span11">
 <h2>Stats</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -33,4 +34,5 @@
 % }
 </tbody>
 </table>
+</div>
 </section>

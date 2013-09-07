@@ -16,6 +16,7 @@ We have <%= $total %> CPAN authors now, and <%= $contributed %> authors (<%= $co
 </section>
 
 <section>
+<div class="span11">
 <h2>Active CPAN authors per year</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -29,9 +30,11 @@ We have <%= $total %> CPAN authors now, and <%= $contributed %> authors (<%= $co
 % }
 </tbody>
 </table>
+</div>
 </section>
 
 <section>
+<div class="span11">
 <h2>100 Most Contributed Authors</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -45,4 +48,5 @@ We have <%= $total %> CPAN authors now, and <%= $contributed %> authors (<%= $co
 % }
 </tbody>
 </table>
+</div>
 </section>
