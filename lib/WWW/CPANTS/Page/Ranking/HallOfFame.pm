@@ -5,6 +5,8 @@ use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 
+sub title { 'Hall Of Fame' }
+
 sub load_data { slurp_json('page/ranking_hall_of_fame') }
 
 sub create_data {
@@ -27,6 +29,8 @@ WWW::CPANTS::Page::Ranking::HallOfFame
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 title
 
 =head2 load_data
 

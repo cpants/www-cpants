@@ -7,6 +7,8 @@ use WWW::CPANTS::JSON;
 use WWW::CPANTS::Extlib;
 use String::CamelCase 'camelize';
 
+sub title { 'CPANTS - A CPAN Testing Service' }
+
 sub load_data { slurp_json('page/home') }
 
 sub create_data {
@@ -55,6 +57,8 @@ WWW::CPANTS::Page::Home
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 title
 
 =head2 load_data
 

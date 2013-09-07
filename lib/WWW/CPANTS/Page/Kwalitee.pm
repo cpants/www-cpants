@@ -7,6 +7,8 @@ use WWW::CPANTS::JSON;
 use WWW::CPANTS::Kwalitee;
 use WWW::CPANTS::Utils;
 
+sub title { 'Kwalitee' };
+
 sub load_data { slurp_json('page/kwalitee_overview') }
 
 sub create_data {
@@ -45,6 +47,8 @@ WWW::CPANTS::Page::Kwalitee
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 title
 
 =head2 load_data
 

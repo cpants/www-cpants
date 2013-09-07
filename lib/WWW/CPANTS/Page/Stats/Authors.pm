@@ -6,6 +6,8 @@ use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 use WWW::CPANTS::Utils;
 
+sub title { 'CPAN Authors' }
+
 sub load_data { slurp_json('page/stats_authors') }
 
 sub create_data {
@@ -43,6 +45,7 @@ WWW::CPANTS::Page::Stats::Authors
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

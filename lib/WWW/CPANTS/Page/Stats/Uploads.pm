@@ -6,6 +6,8 @@ use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 use WWW::CPANTS::Utils;
 
+sub title { 'CPAN Uploads' }
+
 sub load_data { slurp_json('page/stats_uploads') }
 
 sub create_data {
@@ -46,6 +48,7 @@ WWW::CPANTS::Page::Stats::Uploads
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

@@ -5,7 +5,9 @@
 %= javascript "/js/html5shiv.js";
 <![endif]-->
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CPANTS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+% my @breadcrumbs = @{ stash('breadcrumbs') || [] };
+<title><%= join ' - ', 'CPANTS', map {$_->{name}} @breadcrumbs %></title>
 % if (stash('feed_url')) {
 <link rel="alternate" type="application/atom+xml" href="<%= stash('feed_url') %>" title="<%= stash('feed_title') %>">
 % }
@@ -68,18 +70,21 @@ var cpants; $(function() { cpants = new CPANTS });
       </div>
     </div>
   </div>
-% if (my @breadcrumbs = @{ stash('breadcrumbs') || [] }) {
-%   my $last = pop @breadcrumbs;
+% if (@breadcrumbs) {
+%   $breadcrumbs[-1]{last} = 1;
   <ul class="breadcrumb">
     <li><a href="/">Home</a> <span class="divider">/</span></li>
 %   for (@breadcrumbs) {
-%     if ($_->{path}) {
+%     if (!$_->{last}) {
+%       if ($_->{path}) {
     <li><a href="<%= $_->{path} %>"><%= $_->{name} %></a> <span class="divider">/</span></li>
-%     } else {
+%       } else {
     <li><%= $_->{name} %> <span class="divider">/</span></li>
+%       }
+%     } else {
+    <li class="active"><%= $_->{name} %></li>
 %     }
 %   }
-    <li class="active"><%= $last->{name} %></li>
   </ul>
 % }
 </div>

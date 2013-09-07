@@ -6,6 +6,8 @@ use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 use WWW::CPANTS::Utils;
 
+sub title { 'Module::Signature' }
+
 sub load_data { slurp_json('page/stats_module_signature') }
 
 sub create_data {
@@ -55,6 +57,7 @@ WWW::CPANTS::Page::Stats::ModuleSignature
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

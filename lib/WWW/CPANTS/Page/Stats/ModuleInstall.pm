@@ -5,6 +5,8 @@ use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 
+sub title { 'Module::Install' }
+
 sub load_data { slurp_json('page/stats_module_install') }
 
 sub create_data {
@@ -31,6 +33,7 @@ WWW::CPANTS::Page::Stats::ModuleInstall
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

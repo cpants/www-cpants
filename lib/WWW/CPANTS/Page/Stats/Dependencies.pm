@@ -5,6 +5,8 @@ use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 
+sub title { 'Dependencies' }
+
 sub load_data { slurp_json('page/stats_dependencies') }
 
 sub create_data {
@@ -39,6 +41,7 @@ WWW::CPANTS::Page::Stats::Dependencies
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

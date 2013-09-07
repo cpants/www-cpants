@@ -28,6 +28,12 @@ else {
 }
 app->secret(random_regex('\w{40}'));
 
+app->helper(page_title => sub {
+  my $self = shift;
+  $self->stash('page_title') ||
+  join ' - ', map {$_->{name}} @{$self->stash('breadcrumbs') || []};
+});
+
 # ------------ For Browsers -----------------
 
 under sub {
@@ -40,8 +46,10 @@ under sub {
 
 get '/' => sub {
   my $self = shift;
-  my $data = load_page('Home') or return $self->render_not_found;
+  my $page = page('Home');
+  my $data = $page->load_data or return $self->render_not_found;
   $self->stash($data);
+  $self->stash(page_title => $page->title);
 } => 'home';
 
 get '/author/:id/feed' => sub {
@@ -56,7 +64,8 @@ get '/author/:id' => sub {
   my $self = shift;
   my $id = uc $self->param('id');
   my $base = $self->req->url->clone->to_abs->base;
-  my $data = load_page('Author', $id) or return $self->render_not_found;
+  my $page = page('Author');
+  my $data = $page->load_data($id) or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);
@@ -69,9 +78,9 @@ get '/author/:id' => sub {
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Author'},
     {name => $id},
   ]);
+  $self->stash(page_title => "$data->{author_info}{name} ($id)");
   $self->stash(feed_title => "Feed for $id");
   $self->stash(feed_url => "$base/author/$id/feed");
   $self->stash(body_class => lc "pause-$id");
@@ -81,14 +90,15 @@ get '/authors' => sub {
   my $self = shift;
   $self->stash(authors => []);
   $self->stash(breadcrumbs => [
-    {name => 'Search Authors'},
+    {name => page('Authors')->title},
   ]);
 } => 'authors';
 
 post '/authors' => sub {
   my $self = shift;
   my $name = $self->param('name');
-  my $data = load_page('Authors', $name);
+  my $page = page('Authors');
+  my $data = $page->load_data($name);
   if (@{$data->{authors}} == 1) {
     $self->redirect_to('/author/'.$data->{authors}[0]{pauseid});
     return;
@@ -96,7 +106,7 @@ post '/authors' => sub {
   $self->stash(name => $name);
   $self->stash($data);
   $self->stash(breadcrumbs => [
-    {name => 'Search Authors'},
+    {name => $page->title},
   ]);
 } => 'authors';
 
@@ -122,7 +132,6 @@ get '/dist/#distname' => sub {
   $self->stash(requires_highcharts => 1);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Distribution'},
     {name => $name},
   ]);
 } => 'dist/overview';
@@ -141,7 +150,6 @@ get '/dist/#distname/:tab' => sub {
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Distribution'},
     {name => $name, path => "/dist/$name"},
     {name => $tabclass},
   ]);
@@ -152,14 +160,15 @@ get '/dists' => sub {
   my $self = shift;
   $self->stash(dists => []);
   $self->stash(breadcrumbs => [
-    {name => 'Search Distributions'},
+    {name => page('Dists')->title},
   ]);
 } => 'dists';
 
 post '/dists' => sub {
   my $self = shift;
   my $name = $self->param('name');
-  my $data = load_page('Dists', $name);
+  my $page = page('Dists');
+  my $data = $page->load_data($name);
   if (@{$data->{dists}} == 1) {
     $self->redirect_to('/dist/'.$data->{dists}[0]);
     return;
@@ -167,24 +176,29 @@ post '/dists' => sub {
   $self->stash(name => $name);
   $self->stash($data);
   $self->stash(breadcrumbs => [
-    {name => 'Search Distributions'},
+    {name => $page->title},
   ]);
 } => 'dists';
 
 get '/ranking' => sub {
   my $self = shift;
+  my $page = page('Ranking');
+  my $data = $page->load_data;
+  $self->stash($data);
   $self->stash(breadcrumbs => [
-    {name => 'Ranking'},
+    {name => $page->title},
   ]);
 } => 'ranking';
 
 get '/ranking/:tab' => sub {
   my $self = shift;
-  my $page = $self->param('page') || 1;
+  my $page_no = $self->param('page') || 1;
   my $tab = $self->param('tab');
   my $tabclass = camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
-  my $data = load_page("Ranking\::$tabclass", $page) or return $self->render_not_found;
+  my $parent = page('Ranking');
+  my $page = page("Ranking\::$tabclass") or return $self->render_not_found;
+  my $data = $page->load_data($page_no) or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);
@@ -192,15 +206,16 @@ get '/ranking/:tab' => sub {
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Ranking', path => '/ranking'},
-    {name => $tabclass},
+    {name => $parent->title, path => '/ranking'},
+    {name => $page->title},
   ]);
   $self->render("ranking/$tab");
 };
 
 get '/kwalitee' => sub {
   my $self = shift;
-  my $data = load_page('Kwalitee') or return $self->render_not_found;
+  my $page = page('Kwalitee');
+  my $data = $page->load_data or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);
@@ -208,13 +223,14 @@ get '/kwalitee' => sub {
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Kwalitee'},
+    {name => $page->title},
   ]);
 } => 'kwalitee/overview';
 
 get '/kwalitee/:name' => sub {
   my $self = shift;
   my $name = $self->param('name');
+  my $parent = page('Kwalitee');
   my $data = load_page('Kwalitee::Indicator', $name) or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
@@ -224,47 +240,51 @@ get '/kwalitee/:name' => sub {
   $self->stash(requires_tablesorter => 1);
   $self->stash(requires_highcharts => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Kwalitee', path => '/kwalitee'},
+    {name => $parent->title, path => '/kwalitee'},
     {name => $name},
   ]);
 } => 'kwalitee/indicator';
 
 get '/stats' => sub {
   my $self = shift;
+  my $page = page('Stats');
+  my $data = $page->load_data;
+  $self->stash($data);
   $self->stash(breadcrumbs => [
-    {name => 'Stats'},
+    {name => $page->title},
   ]);
 } => 'stats';
 
 get '/stats/:tab' => sub {
   my $self = shift;
   my $tab = $self->param('tab');
-  my $tabclass = camelize($tab);
+  my $tabclass = length $tab < 3 ? uc($tab) : camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
-  my $data = load_page("Stats\::$tabclass") or return $self->render_not_found;
-  my $format = $self->stash('format');
+  my $parent = page('Stats');
+  my $page = page("Stats\::$tabclass") or return $self->render_not_found;
+  my $data = $page->load_data or return $self->render_not_found;
   if ($format eq 'json') {
     return $self->render(json => $data);
   }
   $self->stash($data);
   $self->stash(requires_tablesorter => 1);
   $self->stash(breadcrumbs => [
-    {name => 'Stats', path => '/stats'},
-    {name => $tabclass},
+    {name => $parent->title, path => '/stats'},
+    {name => $page->title},
   ]);
   $self->render("stats/$tab");
 };
 
 get '/recent' => sub {
   my $self = shift;
-  my $data = load_page("Recent") or return $self->render_not_found;
-  my $format = $self->stash('format');
+  my $page = page('Recent');
+  my $data = $page->load_data or return $self->render_not_found;
   if ($format eq 'json') {
     return $self->render(json => $data);
   }
   $self->stash($data);
   $self->stash(breadcrumbs => [
-    {name => 'Recent'},
+    {name => $page->title},
   ]);
 } => 'recent';
 

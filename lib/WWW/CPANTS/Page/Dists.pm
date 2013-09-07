@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 
+sub title { 'Search Distributions' }
+
 sub load_data {
   my ($class, $name) = @_;
 
@@ -27,6 +29,8 @@ WWW::CPANTS::Page::Dists
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 title
 
 =head2 load_data
 

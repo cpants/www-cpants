@@ -1,6 +1,6 @@
 % layout 'layout';
 <div class="page-header">
-<h1>Search CPAN Distributions</h1>
+<h1><%= page_title() %></h1>
 </div>
 
 <section>

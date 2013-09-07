@@ -2,7 +2,7 @@
 % my $results = stash('results') || [];
 
 <div class="page-header">
-<h1>Stats on Module::Signature</h1>
+<h1><%= page_title() %></h1>
 </div>
 
 <section>

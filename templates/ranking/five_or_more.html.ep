@@ -1,7 +1,7 @@
 % layout 'layout';
 % my $authors = stash('rows') || [];
 <div class="page-header">
-<h1>CPANTS Game Ranking: For Authors with 5 or more dists</h1>
+<h1><%= page_title() %></h1>
 
 <p class="section-lead">This list is in no way meant as a list of 'best' or 'good' Perl programmers. It is a list of good CPANTS players. Also note that optional metrics (like is_prereq) are not considered in this statistic.</p>
 </div>

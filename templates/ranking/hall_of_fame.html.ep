@@ -1,7 +1,7 @@
 % layout 'layout';
 % my $dists = stash('dists') || [];
 <div class="page-header">
-<h1>CPANTS Game Ranking: Hall Of Fame</h1>
+<h1><%= page_title() %></h1>
 
 <p class="section-lead">The following <%= scalar @$dists %> distributions have the highest kwalitee score.</p>
 </div>

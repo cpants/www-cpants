@@ -17,14 +17,20 @@ sub import {
     eval "require $module; 1" or do { warn "$module: $@"; next };
     $LOADED{$module} = 1;
   }
+  reinstall_sub({ into => $caller, code => 'page' });
   reinstall_sub({ into => $caller, code => 'load_page' });
 }
 
-sub load_page {
+sub page {
   my $id = shift;
   my $package = "WWW::CPANTS::Page::".$id;
   return unless $LOADED{$package};
-  $package->load_data(@_);
+  $package;
+}
+
+sub load_page {
+  my $page = page(shift) or return;
+  $page->load_data(@_);
 }
 
 sub loaded { keys %LOADED }
@@ -60,6 +66,7 @@ WWW::CPANTS::Pages
 
 =head1 METHODS
 
+=head2 page
 =head2 load_page
 =head2 loaded
 =head2 update

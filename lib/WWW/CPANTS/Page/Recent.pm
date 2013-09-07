@@ -8,6 +8,8 @@ use WWW::CPANTS::Utils;
 use Time::Piece;
 use Time::Seconds;
 
+sub title { 'Recent Uploads' }
+
 sub load_data { slurp_json('page/recent') }
 
 sub create_data {
@@ -62,6 +64,7 @@ WWW::CPANTS::Page::Recent
 
 =head1 METHODS
 
+=head2 title
 =head2 load_data
 =head2 create_data
 

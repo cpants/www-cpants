@@ -7,6 +7,8 @@ use WWW::CPANTS::JSON;
 use WWW::CPANTS::Utils;
 use List::Util qw/sum/;
 
+sub title { 'Distribution Size' }
+
 sub load_data { slurp_json('page/stats_dist_size') }
 
 sub create_data {
@@ -62,6 +64,7 @@ WWW::CPANTS::Page::Stats::DistSize
 
 =head1 METHODS
 
+=head2 title
 =head2 create_data
 =head2 load_data
 

@@ -5,6 +5,8 @@ use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 
+sub title { 'For Authors with 5 or more dists' }
+
 sub load_data {
   my ($class, $page) = @_;
   if (($page || 1) == 1) {
@@ -35,6 +37,8 @@ WWW::CPANTS::Page::Ranking::FiveOrMore
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 title
 
 =head2 load_data
 
