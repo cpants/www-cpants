@@ -16,7 +16,7 @@
 <tr>
 <td><a href="/dist/<%= $dist->{dist} %>"><%= $dist->{dist} %></a></td>
 <td><a href="/author/<%= $dist->{author} %>"><%= $dist->{author} %></a></td>
-<td><%= $dist->{kwalitee} %></td>
+<td><%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %></td>
 </tr>
 %   }
 </tbody>

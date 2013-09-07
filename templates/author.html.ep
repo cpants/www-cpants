@@ -10,8 +10,8 @@
 <section>
 <table class="table-bordered table-striped table-condensed">
 <tr><th>Email</th><td><%= $author_info->{email} %></td></tr>
-<tr><th>Average Kwalitee</th><td><%= $author_info->{average_kwalitee} %></td></tr>
-<tr><th>CPANTS Game Kwalitee</th><td><%= $author_info->{average_core_kwalitee} %></td></tr>
+<tr><th>Average Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($author_info->{average_kwalitee}) %></td></tr>
+<tr><th>CPANTS Game Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($author_info->{average_core_kwalitee}) %></td></tr>
 % if ($author_info->{rank}) {
 %   my $num_dists = $author_info->{num_dists};
 <tr><th>Rank (Liga: <%== $num_dists >= 5 ? qq{<a href="/ranking/five_or_more">5 or more</a>} : qq{<a href="/ranking/less_than_five">less than 5</a>} %>)</th><td><%= $author_info->{rank} %></td></tr>
