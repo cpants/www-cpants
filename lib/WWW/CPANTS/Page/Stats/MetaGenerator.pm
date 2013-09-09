@@ -15,8 +15,9 @@ sub create_data {
 
   my $db = db_r('DistTools');
   my $stats = $db->fetch_stats;
+  my $user_stats = $db->fetch_user_stats;
 
-  save_json('page/stats_meta_generator', { stats => $stats });
+  save_json('page/stats_meta_generator', { stats => $stats, user_stats => $user_stats });
 }
 
 1;

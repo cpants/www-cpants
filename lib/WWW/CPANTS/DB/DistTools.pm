@@ -62,6 +62,42 @@ sub fetch_stats {
   }, $year - 9, $year);
 }
 
+sub fetch_user_stats {
+  my $self = shift;
+
+  my $year = Time::Piece->new->year;
+
+  $self->attach('Kwalitee');
+  on_scope_exit { $self->detach('Kwalitee') };
+
+  my %map = (
+    eumm    => 'ExtUtils::MakeMaker',
+    mb      => 'Module::Build',
+    mi      => 'Module::Install',
+    dzil    => 'Dist::Zilla',
+    milla   => 'Milla',
+    minilla => 'Minilla',
+    others  => 'others',
+    unknown => 'unknown',
+  );
+
+  $self->fetchall(qq{
+    select
+      strftime('%Y', k.released, 'unixepoch') + 0 as year,
+  } . join('', map {qq{
+      count(distinct(case when generated_by = '$map{$_}' then d.author end)) as backpan_${_},
+      count(distinct(case when k.is_cpan > 0 and generated_by = '$map{$_}' then d.author end)) as cpan_${_},
+      count(distinct(case when k.is_latest > 0 and generated_by = '$map{$_}' then d.author end)) as latest_${_},
+  }} keys %map) . qq{
+      count(distinct(case when k.is_latest > 0 then d.author end)) as latest_total,
+      count(distinct(case when k.is_cpan > 0 then d.author end)) as cpan_total,
+      count(distinct(d.author)) as backpan_total
+    from kwalitee as k, dist_tools as d
+    where d.analysis_id = k.analysis_id and year between ? + 0 and ? + 0
+    group by year order by year asc
+  }, $year - 9, $year);
+}
+
 1;
 
 __END__
@@ -77,6 +113,7 @@ WWW::CPANTS::DB::DistTools
 =head1 METHODS
 
 =head2 fetch_stats
+=head2 fetch_user_stats
 
 =head1 AUTHOR
 
