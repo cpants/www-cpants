@@ -37,7 +37,6 @@ sub fetch_stats {
   my %map = (
     eumm    => 'ExtUtils::MakeMaker',
     mb      => 'Module::Build',
-    mbt     => 'Module::Build::Tiny',
     mi      => 'Module::Install',
     dzil    => 'Dist::Zilla',
     milla   => 'Milla',

@@ -13,9 +13,9 @@ sub new {
 sub update {
   my ($self, $data) = @_;
 
+  # ignore Module::Build::Tiny as it doesn't generate META files
   my @rules = (
     ['ExtUtils::MakeMaker' => qr/ExtUtils::MakeMaker|EUMM/],
-    ['Module::Build::Tiny'],
     ['Module::Build'],
     ['Module::Install'],
     ['Milla'],  # should be put before Dist::Zilla
