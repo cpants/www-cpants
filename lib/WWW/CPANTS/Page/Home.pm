@@ -27,7 +27,6 @@ sub create_data {
     Module::CoreList
     Software::License
     CPAN::Meta::YAML
-    Test::CPAN::Meta::YAML
     Pod::Simple::Checker
     Module::Signature
     Module::ExtractUse
