@@ -9,7 +9,7 @@ use WWW::CPANTS::AppRoot;
 our @EXPORT = qw/
   date datetime
   decimal percent
-  kb
+  kb hide_internal
 /;
 
 sub date {

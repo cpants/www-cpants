@@ -7,6 +7,7 @@ use WWW::CPANTS::Analyze;
 use WWW::CPANTS::JSON;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Utils;
 use Path::Extended;
 use Module::Find;
 
@@ -80,7 +81,7 @@ sub process_queue {
           path => $path,
           distv => $context->stash->{vname},
           author => $context->stash->{author},
-          json => $context->dump_stash,
+          json => hide_internal($context->dump_stash),
           duration => time - $start,
         });
         $context->stash->{id} = $analysis_id;
