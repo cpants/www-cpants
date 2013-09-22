@@ -52,8 +52,8 @@ sub hide_internal {
   $str =~ s!$home/((?:backpan|cpan)/)!$1!g;
   $str =~ s!$root/tmp/analyze/[^/]+/[^/]+/!!g;
   $str =~ s!$root/extlib/[^/]+/!!g;
-  $str =~ s!$home/!!g;
   $str =~ s!$root/!!g;
+  $str =~ s!$home/!!g;
   $str;
 }
 
