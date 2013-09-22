@@ -50,7 +50,7 @@ sub hide_internal {
   (my $home = $root) =~ s|^(/home/[^/]+)/.+|$1|;
   $str =~ s!$home/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
   $str =~ s!$home/((?:backpan|cpan)/)!$1!g;
-  $str =~ s!$root/tmp/analysis/[^/]+/[^/]+/!!g;
+  $str =~ s!$root/tmp/analyze/[^/]+/[^/]+/!!g;
   $str =~ s!$root/extlib/[^/]+/!!g;
   $str =~ s!$home/!!g;
   $str =~ s!$root/!!g;
