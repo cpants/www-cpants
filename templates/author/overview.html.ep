@@ -1,0 +1,68 @@
+% layout 'layout';
+% my $author_info = stash('author_info') || {};
+% my $author_kwalitee_info = stash('author_kwalitee_info') || {};
+% my $dists = stash('dists') || [];
+% my $metrics = stash('metrics') || [];
+<div class="page-header">
+<h1><%= page_title() %></h1>
+
+%= include 'author/_subnav', active => 'overview'
+</div>
+
+<section>
+<table class="table-bordered table-striped table-condensed">
+<tr><th>Email</th><td><%= $author_info->{email} %></td></tr>
+<tr><th>Average Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($author_info->{average_kwalitee}) %></td></tr>
+<tr><th>CPANTS Game Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($author_info->{average_core_kwalitee}) %></td></tr>
+% if ($author_info->{rank}) {
+%   my $num_dists = $author_info->{num_dists};
+<tr><th>Rank (Liga: <%== $num_dists >= 5 ? qq{<a href="/ranking/five_or_more">5 or more</a>} : qq{<a href="/ranking/less_than_five">less than 5</a>} %>)</th><td><%= $author_info->{rank} %></td></tr>
+% }
+
+<tr><th>External Links</th><td>
+<ul class="unstyled">
+<li><a href="http://metacpan.org/author/<%= uc $id %>">metacpan.org</a>
+<li><a href="http://search.cpan.org/~<%= lc $id %>">search.cpan.org</a>
+<li><a href="http://www.cpantesters.org/author/<%= uc substr($id, 0, 1) %>/<%= uc $id %>.html">www.cpantesters.org</a></li>
+<ul>
+</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Distributions</h2>
+<table id="distributions" class="tablesorter table-condensed table-bordered table-striped">
+<thead>
+<tr><th>name</th><th>released</th><th>kwalitee</th><th class="{sorter:false}">metrics</th></tr>
+</thead>
+<tbody>
+% for my $dist (@$dists) {
+<tr><td>
+%   if (defined $dist->{kwalitee}) {
+<a href="/dist/<%= $dist->{dist} %>" rel="tooltip" title="<%= $dist->{distv} %>"><%= $dist->{dist} %></a>
+%   } else {
+<%= $dist->{dist} %>
+%   }
+</td><td>
+<%= WWW::CPANTS::Utils::date($dist->{released}) %>
+</td><td>
+%   if (defined $dist->{kwalitee}) {
+<%= sprintf('%3.3f', $dist->{kwalitee}) %>
+%   }
+</td><td>
+%   if (defined $dist->{kwalitee}) {
+%     for my $metric (@$metrics) {
+%       next if $metric->{is_experimental};
+<span style="background-color: <%= $dist->{$metric->{key}} ? 'green' : $metric->{is_extra} ? 'orange' : 'red' %>; display: inline-block; width: 9px; border-radius: 4px;" rel="tooltip" title="<%= $metric->{key} %>">&nbsp;</span>
+%     }
+%   }
+</td></tr>
+% }
+</tbody>
+</table>
+</section>
+<script>
+$(function(){
+  $('#distributions a, span').tooltip();
+});
+</script>

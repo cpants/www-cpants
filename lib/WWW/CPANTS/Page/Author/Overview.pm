@@ -1,4 +1,4 @@
-package WWW::CPANTS::Page::Author;
+package WWW::CPANTS::Page::Author::Overview;
 
 use strict;
 use warnings;
@@ -15,7 +15,7 @@ sub load_data {
   my %data = (
     author_info => $author_info,
     dists => $dists,
-    metrics => scalar sorted_metrics(),
+    metrics => scalar sorted_metrics({}),
   );
 
   \%data;
@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::Page::Author
+WWW::CPANTS::Page::Author::Overview
 
 =head1 SYNOPSIS
 

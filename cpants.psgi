@@ -61,11 +61,32 @@ get '/author/:id/feed' => sub {
   $self->render(format => 'atom', text => $data);
 };
 
+get '/author/:id/:tab' => sub {
+  my $self = shift;
+  my $id = uc $self->param('id');
+  my $tab = $self->param('tab');
+  my $tabclass = camelize($tab);
+  return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
+  my $data = load_page("Author\::$tabclass", $id) or return $self->render_not_found;
+  my $format = $self->stash('format') || '';
+  if ($format eq 'json') {
+    return $self->render(json => $data);
+  }
+  $self->stash($data);
+  $self->stash(requires_tablesorter => 1);
+  $self->stash(breadcrumbs => [
+    {name => $id, path => "/author/$id"},
+    {name => $tabclass},
+  ]);
+  $self->stash(body_class => lc "pause-$id");
+  $self->render("author/$tab");
+};
+
 get '/author/:id' => sub {
   my $self = shift;
   my $id = uc $self->param('id');
   my $base = $self->req->url->clone->to_abs->base;
-  my $page = page('Author');
+  my $page = page('Author::Overview');
   my $data = $page->load_data($id) or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
@@ -85,7 +106,7 @@ get '/author/:id' => sub {
   $self->stash(feed_title => "Feed for $id");
   $self->stash(feed_url => "$base/author/$id/feed");
   $self->stash(body_class => lc "pause-$id");
-} => 'author';
+} => 'author/overview';
 
 get '/authors' => sub {
   my $self = shift;
