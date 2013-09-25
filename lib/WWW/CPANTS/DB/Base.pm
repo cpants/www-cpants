@@ -48,6 +48,7 @@ sub dbh {
       RaiseError => 1,
       PrintError => 0,
       ShowErrorStatement => 1,
+      sqlite_unicode => 1,
       sqlite_use_immediate_transaction => $self->{readonly} ? 0 : 1,
 #      sqlite_see_if_its_a_number => 1,
     });
