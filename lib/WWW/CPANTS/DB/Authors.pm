@@ -7,7 +7,9 @@ use base 'WWW::CPANTS::DB::Base';
 sub _columns {(
   [pauseid => 'text primary key not null', {bulk_key => 1}],
   [name => 'text'],
+  [asciiname => 'text'],
   [email => 'text'],
+  [homepage => 'text'],
   [average_kwalitee => 'float default 0', {no_bulk => 1}],
   [average_core_kwalitee => 'float default 0', {no_bulk => 1}],
   [num_dists => 'integer default 0', {no_bulk => 1}],
