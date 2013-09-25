@@ -39,6 +39,7 @@ my %params = (
     'JavaScript::Minifier::XS' => 0,
     'CSS::LESS::Filter' => '0.02',
     'XML::Atom::SimpleFeed' => 0,
+    'WorePAN' => '0.07',  # for better author names
 
     'Parallel::Runner' => 0,  # seems working well
     'Scope::OnExit' => 0,
@@ -49,7 +50,6 @@ my %params = (
     'Test::More'          => '0.88',
     'Test::Differences'   => 0,
     'Test::UseAllModules' => '0.10',
-    'WorePAN' => '0.04',  # for rare ids
 
     # Plack Application Management
     'Plack::Builder::Conditionals' => 0,
