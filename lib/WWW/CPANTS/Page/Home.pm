@@ -2,6 +2,7 @@ package WWW::CPANTS::Page::Home;
 
 use strict;
 use warnings;
+use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::JSON;
 use WWW::CPANTS::Extlib;
@@ -17,23 +18,19 @@ sub create_data {
 
   $data{versions}{perl} = "$^V";
 
-  my @modules_to_show_version = qw(
-    Archive::Any::Lite
-    Archive::Tar
-    Archive::Zip
-    CPAN::DistnameInfo
-    ExtUtils::Manifest
+  my @modules_to_show_version;
+  open my $fh, '<', appfile('cpanfile');
+  while(<$fh>) {
+    next unless /#\s*CHECK/;
+    my ($package) = $_ =~ /requires\s*['"]([^'"]+)['"]/;
+    push @modules_to_show_version, $package if $package;
+  }
+  push @modules_to_show_version, qw(
     Module::CPANTS::Analyse
-    Module::CoreList
-    Software::License
-    CPAN::Meta::YAML
-    Pod::Simple::Checker
-    Module::Signature
-    Module::ExtractUse
-    version
+    Module::CPANTS::SiteKwalitee
   );
 
-  for my $package (@modules_to_show_version) {
+  for my $package (sort @modules_to_show_version) {
     eval "require $package; 1" or die $@;
     $data{versions}{$package} = $package->VERSION . "";
   }
