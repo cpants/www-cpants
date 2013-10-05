@@ -39,7 +39,7 @@
 
 <section>
 <div class="span11">
-<h2>100 Most Contributed Authors</h2>
+<h2>100 Most Contributing Authors</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
 <tr><th>Rank</th><th>Name</th><th>Number of Distributions</th></tr>
