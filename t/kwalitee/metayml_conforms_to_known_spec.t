@@ -13,6 +13,10 @@ my @tests = (
   ['C/CI/CINDY/AnyEvent-HTTPD-CookiePatch-v0.1.0.tar.gz', 0], # 4162
   ['B/BE/BENNIE/ACME-KeyboardMarathon-1.15.tar.gz', 0], # 4479
   ['M/ML/MLX/Algorithm-Damm-1.001.002.tar.gz', 0], # 4537
+
+  # 'meta-spec' => '1.1' is kind of broken, but it's not regarded
+  # as a fatal error as of CPAN::Meta 2.132830.
+  ['J/JO/JOSEPHW/XML-Writer-0.545.tar.gz', 1],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
