@@ -11,7 +11,7 @@ my %params = (
   test => { TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t' },
   META_MERGE => {
     resources => {
-      repository => 'https://github.com/charsbar/www-cpants',
+      repository => 'https://github.com/cpants/www-cpants',
     },
     no_index => {
       directory => [qw!extlib log test_mirror tmp test_utils xt xutils!],
