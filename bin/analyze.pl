@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use FindBin;
-use lib "$FindBin::Bin/lib";
+use lib "$FindBin::Bin/../lib";
 
 WWW::CPANTS::Script::analyze->run_directly;
 
@@ -23,6 +23,7 @@ sub _run {
     cleanup => !$self->{no_cleanup},
     no_network => 0,
     use_backpan => 1,
+    no_indices => 1,
   );
 
   for my $path (@paths) {
