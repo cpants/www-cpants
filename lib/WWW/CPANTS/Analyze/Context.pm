@@ -19,7 +19,7 @@ sub new {
   my ($class, %args) = @_;
 
   unless ($args{dist}) {
-    $class->log(warn => "$args{dist} not found");
+    $class->log(warn => "requires dist");
     return;
   }
 
