@@ -2,6 +2,11 @@ on 'configure' => sub {
   requires 'ExtUtils::MakeMaker::CPANfile' => '0.04';
 };
 
+on 'build' => sub {
+  # for cpanm --installdeps .
+  requires 'ExtUtils::MakeMaker::CPANfile' => '0.04';
+};
+
 # For site/scripts
 requires 'CLI::Dispatch' => '0.15';
 requires 'CPAN::DistnameInfo' => '0.06'; # CHECK
@@ -18,9 +23,9 @@ requires 'JSON::XS' => 0;
 requires 'List::MoreUtils' => 0;
 requires 'List::Util' => 0;
 requires 'Log::Handler' => 0;
-requires 'Module::CoreList' => '2.78'; # CHECK: should always use the latest
+requires 'Module::CoreList' => '3.00'; # CHECK: should always use the latest
 requires 'Module::Find' => 0;
-requires 'Mojolicious' => '4.00';
+requires 'Mojolicious' => '4.63';
 requires 'Parallel::Runner' => 0;  # seems working well
 requires 'Parallel::ForkManager' => 0;
 requires 'Path::Extended' => '0.21'; # better error message
@@ -79,15 +84,16 @@ requires 'File::Slurp' => '0';
 
 ### License
 # requires a tweak not to take too much time to guess
-requires 'Software::License' => '0.003'; # CHECK
+requires 'Software::License' => '0.103008'; # CHECK
+requires 'Software::License::CC_BY_SA_3_0' => '0';
 
 ### Manifest
 requires 'Array::Diff' => '0.04';
-requires 'ExtUtils::Manifest' => 0; # CHECK
+requires 'ExtUtils::Manifest' => 0;
 
 ### MetaYML
 requires 'CPAN::Meta::YAML' => 0; # CHECK
-requires 'CPAN::Meta::Validator' => 0; # CHECK
+requires 'CPAN::Meta::Validator' => '2.133380'; # CHECK
 
 ### Uses
 requires 'Module::ExtractUse' => '0.31'; # CHECK: used_in_eval
@@ -103,5 +109,5 @@ requires 'File::chdir' => 0;
 requires 'Module::Signature' => '0.70'; # CHECK: less warnings
 
 ### Version
-requires 'Parse::LocalDistribution' => '0.02'; # CHECK
-requires 'Parse::PMFile' => '0.04'; # CHECK
+requires 'Parse::LocalDistribution' => '0.07'; # CHECK
+requires 'Parse::PMFile' => '0.12'; # CHECK
