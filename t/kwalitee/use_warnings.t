@@ -14,6 +14,9 @@ my @tests = (
   ['J/JB/JBAZIK/Archive-Ar-1.15.tar.gz', 0], # 7983
   ['S/SU/SULLR/Net-SSLGlue-1.03.tar.gz', 0], # 8720
   ['S/SH/SHARYANTO/Term-ProgressBar-Color-0.00.tar.gz', 0], # 9746
+
+  # no .pm files
+  ['R/RC/RCLAMP/cvn-0.02.tar.gz', 1],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);

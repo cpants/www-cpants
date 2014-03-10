@@ -17,8 +17,10 @@ my @tests = (
 
   # use 5.012 and higher
   ['Z/ZD/ZDM/Pharaoh-BootStrap-3.00.tar.gz', 1], # use 5.12.0
-  ['M/MA/MALLEN/Acme-Github-Test-0.03.tar.gz', 1] # use 5.014
+  ['M/MA/MALLEN/Acme-Github-Test-0.03.tar.gz', 1], # use 5.014
 
+  # no .pm files
+  ['R/RC/RCLAMP/cvn-0.02.tar.gz', 1],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
