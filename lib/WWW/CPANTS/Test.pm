@@ -44,7 +44,7 @@ sub setup_mirror {
   }
 
   my $mirror = dir('mirror')->mkdir;
-  my $local_mirror = appdir('test_mirror')->mkdir;
+  my $local_mirror = appdir('tmp/test_mirror')->mkdir;
   $worepan = WorePAN->new(
     root => $mirror->path,
     local_mirror => $local_mirror->path,

@@ -19,7 +19,7 @@ sub encode_pretty_json ($) { $parser->pretty->encode(@_) }
 
 sub json_file {
   my $file = shift;
-  file($file =~ /\.json$/ ? $file : 'data/'.$file.'.json');
+  file($file =~ /\.json$/ ? $file : 'tmp/data/'.$file.'.json');
 }
 
 sub slurp {

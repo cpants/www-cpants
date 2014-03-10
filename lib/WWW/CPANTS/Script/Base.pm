@@ -25,7 +25,7 @@ sub run {
   my $self = shift;
 
   my ($class) = lc(ref $self || $self) =~ /::([^:]+)$/;
-  my $pidfile = $self->{_pidfile} = file("pids/$class.pid");
+  my $pidfile = $self->{_pidfile} = file("tmp/pids/$class.pid");
   die "another process is running\n" if $pidfile->exists;
   $pidfile->save($$, {mkdir => 1});
 
