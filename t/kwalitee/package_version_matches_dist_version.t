@@ -14,6 +14,9 @@ my @tests = (
   ['I/ID/IDIVISION/nginx-0.0.1.tar.gz', 0], # 1082
   ['M/MT/MTHURN/Devel-Fail-Make-1.005.tar.gz', 0], # 1088
   ['I/IL/ILYAZ/os2/tk/binary/update-03.zip', 0], # 1125
+
+  # illegal provides
+  ['D/DJ/DJERIUS/Lua-API-0.02.tar.gz', 0],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
