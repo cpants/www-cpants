@@ -52,8 +52,11 @@
 % if (@core_fails or @extra_fails or @exp_fails) {
 <h2>Kwalitee Fails</h2>
 
+<div class="span10">
+<h3>Core metrics</h3>
 % if (@core_fails) {
-<h3>Core fails</h3>
+<h4>Fails</h4>
+<p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">report us</a> if they are false.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
@@ -68,10 +71,16 @@
 % }
 </tbody>
 </table>
+% } else {
+<p>Excellent. This distribution passes all the core metrics.</p>
 % }
+</div>
 
+<div class="span10">
+<h3>Extra metrics</h3>
 % if (@extra_fails) {
-<h3>Extra fails</h3>
+<h4>Fails</h4>
+<p>These fails affect your total Kwalitee score, but don't affect the one for the Game. Some of them should be fixed by all means. Others are just matters of taste.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
@@ -86,10 +95,16 @@
 % }
 </tbody>
 </table>
+% } else {
+<p>Excellent. Your distribution passes all the extra metrics.</p>
 % }
+</div>
 
+<div class="span10">
+<h3>Experimental metrics</h3>
 % if (@exp_fails) {
-<h3>Experimental fails</h3>
+<h4>Fails</h4>
+<p>These fails are not serious and don't affect your Kwalitee scores at all.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
 <tr><th class="span2">metric</th><th>remedy</th></tr>
@@ -104,7 +119,10 @@
 % }
 </tbody>
 </table>
+% } else {
+<p>Excellent. Your distribution passes all the experimental metrics.</p>
 % }
+</div>
 </section>
 % }
 
