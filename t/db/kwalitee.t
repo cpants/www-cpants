@@ -225,4 +225,21 @@ use WWW::CPANTS::Kwalitee;
   };
 }
 
+{
+  my $db = db('Kwalitee', explain => 1)->set_test_data(
+    serial => 'analysis_id',
+    cols => [qw/dist distv is_cpan is_latest released/],
+    rows => [
+      [qw/DistA DistA 0 0/,      epoch('2010-01-01')],
+      [qw/DistA DistA-0.02 0 1/, epoch('2010-01-02')],
+    ],
+    set_metrics => 1,
+  );
+
+  no_scan_table {
+    my $dist = $db->fetch_distv('DistA');
+    ok $dist->{is_latest};
+  };
+}
+
 done_testing;

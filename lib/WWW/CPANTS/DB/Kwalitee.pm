@@ -274,7 +274,7 @@ sub fetch_author_history {
 sub fetch_distv {
   my ($self, $dist_or_distv) = @_;
 
-  $self->fetch("select * from kwalitee where (distv = ?) or (dist = ? and is_latest = 1)", $dist_or_distv, $dist_or_distv);
+  $self->fetch("select * from kwalitee where (distv = ?) or (dist = ? and is_latest = 1) order by is_latest desc", $dist_or_distv, $dist_or_distv);
 }
 
 # - Page::Dist::Prereq, Page::Dist::UsedBy -
