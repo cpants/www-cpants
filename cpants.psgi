@@ -25,7 +25,6 @@ if ($^O eq 'MSWin32') {
 else {
   app->mode('production');
   app->log->level('error');
-  system($^X, appfile("minify.pl"));
 }
 app->secret(random_regex('\w{40}'));
 
