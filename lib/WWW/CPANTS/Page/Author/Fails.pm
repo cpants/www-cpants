@@ -13,7 +13,7 @@ sub load_data {
   my $dists = db('Kwalitee')->fetch_author_kwalitee($id) or return;
 
   my @metrics;
-  for my $metric (sort {$a->{key} <=> $b->{key}} @{scalar sorted_metrics({})}) {
+  for my $metric (sort {$a->{key} cmp $b->{key}} @{scalar sorted_metrics({})}) {
     my $name = $metric->{key};
     my @fails;
     for my $dist (@$dists) {
