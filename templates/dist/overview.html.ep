@@ -7,12 +7,9 @@
 % my $distname = stash('distname');
 % my $distv = $dist->{distv};
 % my @recent = @{ stash('recent') || [] };
-<div class="page-header">
 <h1><%= $dist->{dist} %></h1>
 
 %= include 'dist/_subnav';
-
-</div>
 
 <section>
 <table class="table-bordered table-striped table-condensed">

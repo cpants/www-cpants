@@ -2,12 +2,9 @@
 % my $dist = stash('dist') || {};
 % my $distname = $dist->{dist};
 % my $modules = stash('modules') || [];
-<div class="page-header">
 <h1><%= $distname %></h1>
 
 %= include 'dist/_subnav', active => 'provides'
-
-</div>
 
 <section>
 <h2>Provides</h2>

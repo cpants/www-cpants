@@ -2,11 +2,9 @@
 % my $core = stash('core') || [];
 % my $extra = stash('extra') || [];
 % my $experimental = stash('experimental') || [];
-<div class="page-header">
 <h1>What's "Kwalitee"?</h1>
 
 <p class="section-lead">"Kwalitee" is something that looks like quality, sounds like quality, but is not quite quality.</p>
-</div>
 
 <h2>Kwalitee indicators</h2>
 

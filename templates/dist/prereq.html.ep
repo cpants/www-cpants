@@ -6,12 +6,9 @@
 % my $optional_prereqs = stash('optional_prereqs') || [];
 % my $used_in_code = stash('used_in_code') || [];
 % my $used_in_tests = stash('used_in_tests') || [];
-<div class="page-header">
 <h1><%= $distname %></h1>
 
 %= include 'dist/_subnav', active => 'prereq'
-
-</div>
 
 % if (@$prereqs + @$build_prereqs + @$optional_prereqs) {
 <section>

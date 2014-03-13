@@ -2,10 +2,8 @@
 % my $info = stash('info') || {};
 % my $stats = stash('stats') || {};
 % my @fails = @{ stash('fails') || [] };
-<div class="page-header">
 <h1><%= $info->{name} %></h1>
 <p class="page-lead">(defined in <%= $info->{defined_in} %>)</p>
-</div>
 
 <section>
 <div class="col-md-8">

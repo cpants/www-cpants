@@ -3,12 +3,9 @@
 % my $distname = $dist->{dist};
 % my $distv = $dist->{distv};
 % my $errors = stash('errors') || [];
-<div class="page-header">
 <h1><%= $distname %></h1>
 
 %= include 'dist/_subnav', active => 'errors'
-
-</div>
 
 <section>
 <h2>Errors</h2>
