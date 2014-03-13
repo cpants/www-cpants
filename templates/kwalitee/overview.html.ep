@@ -21,7 +21,6 @@
 <section class="tab-pane<% if ($_ eq 'core') { %> active<% } %>" id="<%= $_ %>">
 
 <table class="tablesorter table-condensed table-bordered table-striped">
-<caption><%= ucfirst $_ %> indicators</caption>
 <thead>
 <tr><th>Name</th><th>Description</th><th>Remedy</th><th>Fail<br />(Latest)</th><th>Fail<br />(CPAN)</th><th>Fail<br />(BackPAN)</th></tr>
 </thead>
