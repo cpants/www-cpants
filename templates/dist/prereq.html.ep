@@ -22,7 +22,7 @@
 
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">Listed Prerequisites</th><th class="span2">Required Version</th><th>Latest Dist</th><th class="span2">Kwalitee</th></tr>
+<tr><th class="col-md-3">Listed Prerequisites</th><th class="col-md-2">Required Version</th><th>Latest Dist</th><th class="col-md-2">Kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $prereq (@$prereqs) {
@@ -37,7 +37,7 @@
 
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">Listed Build Prerequisites</th><th class="span2">Required Version</th><th>Latest Dist</th><th class="span2">Kwalitee</th></tr>
+<tr><th class="col-md-3">Listed Build Prerequisites</th><th class="col-md-2">Required Version</th><th>Latest Dist</th><th class="col-md-2">Kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $prereq (@$build_prereqs) {
@@ -52,7 +52,7 @@
 
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">Listed Optional Prerequisites</th><th class="span2">Required Version</th><th>Latest Dist</th><th class="span2">Kwalitee</th></tr>
+<tr><th class="col-md-3">Listed Optional Prerequisites</th><th class="col-md-2">Required Version</th><th>Latest Dist</th><th class="col-md-2">Kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $prereq (@$optional_prereqs) {
@@ -74,7 +74,7 @@
 
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">Modules "use"d in code</th><th class="span2">count</th><th>Latest Dist</th><th class="span2">Kwalitee</th></tr>
+<tr><th class="col-md-3">Modules "use"d in code</th><th class="col-md-2">count</th><th>Latest Dist</th><th class="col-md-2">Kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $used (@$used_in_code) {
@@ -89,7 +89,7 @@
 
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">Modules "used in tests</th><th class="span2">count</th><th>Dist</th><th class="span2">Kwalitee</th></tr>
+<tr><th class="col-md-3">Modules "used in tests</th><th class="col-md-2">count</th><th>Dist</th><th class="col-md-2">Kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $used (@$used_in_tests) {

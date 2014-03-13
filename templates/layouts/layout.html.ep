@@ -49,57 +49,58 @@ var cpants; $(function() { cpants = new CPANTS });
 </head>
 % my $body_class = stash('body_class');
 <body<%== $body_class ? qq{ class="$body_class"} : "" %>>
-<div id="navbar" class="navbar">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<div id="navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-      </a>
-      <a href="/" class="brand">CPANTS</a>
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li><a href="/kwalitee">Kwalitee</a></li>
-          <li><a href="/ranking">The CPANTS game</a></li>
-          <li><a href="/stats">Stats</a></li>
-          <li><a href="/recent">Recent Uploads</a></li>
-          <li><a href="/dists">Search Distributions</a></li>
-          <li><a href="/authors">Search Authors</a></li>
-        </ul>
-      </div>
+      </button>
+      <a href="/" class="navbar-brand">CPANTS</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/kwalitee">Kwalitee</a></li>
+        <li><a href="/ranking">The CPANTS game</a></li>
+        <li><a href="/stats">Stats</a></li>
+        <li><a href="/recent">Recent Uploads</a></li>
+        <li><a href="/dists">Search Distributions</a></li>
+        <li><a href="/authors">Search Authors</a></li>
+      </ul>
     </div>
   </div>
+</div>
 % if (@breadcrumbs) {
 %   $breadcrumbs[-1]{last} = 1;
-  <ul class="breadcrumb">
-    <li><a href="/">Home</a> <span class="divider">/</span></li>
+<ul class="breadcrumb">
+  <li><a href="/">Home</a></li>
 %   for (@breadcrumbs) {
 %     if (!$_->{last}) {
 %       if ($_->{path}) {
-    <li><a href="<%= $_->{path} %>"><%= $_->{name} %></a> <span class="divider">/</span></li>
+  <li><a href="<%= $_->{path} %>"><%= $_->{name} %></a></li>
 %       } else {
-    <li><%= $_->{name} %> <span class="divider">/</span></li>
+  <li><%= $_->{name} %></li>
 %       }
 %     } else {
-    <li class="active"><%= $_->{name} %></li>
+  <li class="active"><%= $_->{name} %></li>
 %     }
 %   }
-  </ul>
+</ul>
 % }
-</div>
 <div class="container">
   <div class="row">
 % if (stash('under_maintenance')) {
-    <div id="maintenance" class="alert alert-block alert-info">
+    <div id="maintenance" class="alert alert-info">
       <h4>The site is under maintenance.</h4>
       <p>Some of the information may be old or missing tentatively. Sorry for the inconvenience.</p>
     </div>
 % }
-    <div id="main" class="span11">
+    <div id="main" class="col-md-11">
       <%== content %>
     </div>
-    <div id="footer" class="span11">
+    <div id="footer" class="col-md-11">
       <address>Maintained by Kenichi Ishigaki &lt;ishigaki@cpan.org&gt;. If you find anything, submit it on <a href="https://github.com/cpants/www-cpants/issues">GitHub</a>.</address>
     </div>
   </div>

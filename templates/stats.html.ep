@@ -4,13 +4,13 @@
 </div>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <%== WWW::CPANTS::Text::markdown("stats") %>
 </div>
 </section>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <ul>
 % my $pages = stash('pages') || [];
 % for (@$pages) {

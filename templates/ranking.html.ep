@@ -4,14 +4,14 @@
 </div>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <%== WWW::CPANTS::Text::markdown("ranking") %>
 </div>
 </section>
 
 <section>
-<div class="span8">
-<ul class="unstyled">
+<div class="col-md-8">
+<ul class="list-unstyled">
 % my $pages = stash('pages') || [];
 % for (@$pages) {
 <li><a href="<%= $_->{path} %>"><%= $_->{title} %></a></li>

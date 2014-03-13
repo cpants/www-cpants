@@ -17,7 +17,7 @@
 % if (@$deps) {
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span3">name</th><th class="span2">author</th><th class="span2">kwalitee</th></tr>
+<tr><th class="col-md-3">name</th><th class="col-md-2">author</th><th class="col-md-2">kwalitee</th></tr>
 </thead>
 <tbody>
 % for my $dep (@$deps) {

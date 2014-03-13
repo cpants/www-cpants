@@ -11,7 +11,7 @@
 </div>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <%== WWW::CPANTS::Text::markdown("stats/uploads", {
   uploads => $uploads,
   total => $total,
@@ -22,7 +22,7 @@
 </section>
 
 <section>
-<div class="span11">
+<div class="col-md-11">
 <h2>Uploads per year</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>
@@ -40,7 +40,7 @@
 </section>
 
 <section>
-<div class="span11">
+<div class="col-md-11">
 <h2>100 Most Often Uploaded</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>

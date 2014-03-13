@@ -6,13 +6,13 @@
 </div>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <%== WWW::CPANTS::Text::markdown('home') %>
 </div>
 </section>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <h3>Perl/Modules Used To Test</h3>
 <p>
 CPANTS Kwalitee is tested with the following versions of perl and modules.
@@ -27,7 +27,7 @@ CPANTS Kwalitee is tested with the following versions of perl and modules.
 
 % if ($last_updated) {
 <section>
-<div class="span8">
+<div class="col-md-8">
 <h3>Last updated</h3>
 <%= $last_updated %> GMT
 </div>

@@ -4,15 +4,23 @@
 </div>
 
 <section>
-<form method="post" id="search_form" autocomplete="off" class="form-inline">
-<input type="text" name="name" id="search" value="<%= param('name') %>" > <input type="submit" class="btn" name="submit" value="Search" />
+<div class="row">
+<div class="col-md-8">
+<form method="post" id="search_form" autocomplete="off" class="form-inline" role="form">
+<input type="text" name="name" id="search" value="<%= param('name') %>" class="form-control"> <input type="submit" class="btn" name="submit" value="Search" />
 </form>
+</div>
+</div>
+<div class="row">
+<div class="col-md-8">
 <div id="results">
-<ul class="unstyled">
+<ul class="list-unstyled">
 % for(@{$authors}) {
 <li><a href="/author/<%= $_->{pauseid} %>"><%= $_->{pauseid} %></a> (<%= $_->{name} %>)</li>
 % }
 </ul>
+</div>
+</div>
 </div>
 </section>
 

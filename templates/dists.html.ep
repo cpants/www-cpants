@@ -4,11 +4,11 @@
 </div>
 
 <section>
-<form method="post" id="search_form" autocomplete="off" class="form-inline">
-<input type="text" name="name" id="search" value="<%= param('name') %>" /> <input type="submit" name="submit" value="Search" class="btn" />
+<form method="post" id="search_form" autocomplete="off" class="form-inline" role="form">
+<input type="text" name="name" id="search" value="<%= param('name') %>" class="form-control" /> <input type="submit" name="submit" value="Search" class="btn" />
 </form>
 <div id="results">
-<ul class="unstyled">
+<ul class="list-unstyled">
 % for(@{$dists}) {
 <li><a href="/dist/<%= $_ %>"><%= $_ %></a></li>
 % }

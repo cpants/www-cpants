@@ -37,7 +37,7 @@
 <tr><th>Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %></td></tr>
 <tr><th>Core Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></td></tr>
 <tr><th>External Links</th><td>
-<ul class="unstyled">
+<ul class="list-unstyled">
 <li><a href="http://metacpan.org/release/<%= $dist->{author} %>/<%= $distv %>">metacpan.org</a></li>
 <li><a href="http://search.cpan.org/dist/<%= $distname %>">search.cpan.org</a></li>
 <li><a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=<%= $distname %>">rt.cpan.org</a></li>
@@ -52,14 +52,14 @@
 % if (@core_fails or @extra_fails or @exp_fails) {
 <h2>Kwalitee Fails</h2>
 
-<div class="span10">
+<div class="col-md-10">
 <h3>Core metrics</h3>
 % if (@core_fails) {
 <h4>Fails</h4>
 <p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">report us</a> if they are false.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span2">metric</th><th>remedy</th></tr>
+<tr><th class="col-md-2">metric</th><th>remedy</th></tr>
 </thead>
 <tbody>
 % for my $metric (@core_fails) {
@@ -76,14 +76,14 @@
 % }
 </div>
 
-<div class="span10">
+<div class="col-md-10">
 <h3>Extra metrics</h3>
 % if (@extra_fails) {
 <h4>Fails</h4>
 <p>These fails affect your total Kwalitee score, but don't affect the one for the Game. Some of them should be fixed by all means. Others are just matters of taste.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span2">metric</th><th>remedy</th></tr>
+<tr><th class="col-md-2">metric</th><th>remedy</th></tr>
 </thead>
 <tbody>
 % for my $metric (@extra_fails) {
@@ -100,14 +100,14 @@
 % }
 </div>
 
-<div class="span10">
+<div class="col-md-10">
 <h3>Experimental metrics</h3>
 % if (@exp_fails) {
 <h4>Fails</h4>
 <p>These fails are not serious and don't affect your Kwalitee scores at all.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
-<tr><th class="span2">metric</th><th>remedy</th></tr>
+<tr><th class="col-md-2">metric</th><th>remedy</th></tr>
 </thead>
 <tbody>
 % for my $metric (@exp_fails) {
@@ -127,8 +127,12 @@
 % }
 
 <section>
+<div class="row">
+<div class="col-md-11">
 <h2>History</h2>
 <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</div>
+</div>
 </section>
 <script>
 $(function(){

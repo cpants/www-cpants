@@ -8,13 +8,13 @@
 </div>
 
 <section>
-<div class="span8">
+<div class="col-md-8">
 <%== WWW::CPANTS::Text::markdown("stats/xs") %>
 </div>
 </section>
 
 <section>
-<div class="span11">
+<div class="col-md-11">
 <h2>Stats</h2>
 <table class="tablesorter table-bordered table-striped table-condensed">
 <thead>

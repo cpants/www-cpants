@@ -22,8 +22,8 @@ sub update {
   my @methods = qw/
     fetch_bootstrap_master
     tweak_less_files
-    run_recess
-    concat_js
+    run_grunt
+    copy_files
   /;
 
   for my $method (@methods) {
@@ -31,13 +31,12 @@ sub update {
   }
 }
 
-
 sub fetch_bootstrap_master {
   my $self = shift;
   my $zipball = file("tmp/bootstrap-master.zip");
   if (!$zipball->exists or $self->{force}) {
     $self->log(info => "downloading bootstrap-master");
-    my $url = "https://github.com/twitter/bootstrap/archive/master.zip";
+    my $url = "https://github.com/twbs/bootstrap/archive/master.zip";
     my $furl = Furl->new;
     my $res = $furl->get($url);
     die $res->status_line unless $res->is_success;
@@ -46,50 +45,33 @@ sub fetch_bootstrap_master {
 
   my $zip = Archive::Zip->new("$zipball") or die "Can't read $zipball";
   for ($zip->members) {
-    next unless $_->fileName =~ /\.(png|less|js)$/;
+#    next unless $_->fileName =~ /\.(png|less|js)$/;
     $_->extractToFileNamed(file("tmp/", $_->fileName)->absolute);
   }
 }
 
-sub run_recess {
+sub run_grunt {
   my $self = shift;
 
-  $self->log(info => "processing less files");
+  $self->log(info => "processing");
 
-  for (qw/bootstrap responsive theme_lbrocard theme_book/) {
-    my $out = $_ eq 'responsive' ? 'bootstrap-responsive' : $_;
-    system('@recess', '--compile', file("tmp/bootstrap-master/less/$_.less")->absolute, '>', file("public/css/$out.css")->absolute) and warn "recess error: $_: $?";
-  }
+  chdir dir("tmp/bootstrap-master");
+  system("npm install") and warn "grunt error: $?";
+  system("grunt clean") and warn "grunt error: $?";
+  system("grunt dist-css") and warn "grunt error: $?";
+  system("grunt dist-js") and warn "grunt error: $?";
+  system("grunt copy:fonts") and warn "grunt error: $?";
 }
 
-sub concat_js {
+sub copy_files {
   my $self = shift;
-
-  $self->log(info => "concatenating js files");
-
-  my @names = qw(
-    transition
-    alert
-    button
-    collapse
-    dropdown
-    tooltip
-    tab
-  );
-  my @not_used = qw(
-    affix
-    carousel
-    modal
-    popover
-    scrollspy
-    typeahead
-  );
-
-  my $js = '';
-  for (@names) {
-    $js .= file("tmp/bootstrap-master/js/bootstrap-$_.js")->slurp  . "\n";
+  for my $dir (qw/css fonts js/) {
+    my $distdir = dir("tmp/bootstrap-master/dist/$dir");
+    for my $file ($distdir->children) {
+      $file->copy_to(dir("public/$dir"));
+    }
   }
-  file('public/js/bootstrap.js')->save($js);
+
 }
 
 sub tweak_less_files {
@@ -125,10 +107,6 @@ sub tweak_less_files {
   ]);
 
   $self->_tweak_less_file(breadcrumbs => [
-    '.breadcrumb { background-color:' => '@breadcrumbBackground',
-    '.breadcrumb { .divider { color:' => '@breadcrumbDivider',
-    '.breadcrumb { li { color:' => '@breadcrumbDivider',
-    '.breadcrumb { .active { color:' => '@breadcrumbActive',
     '.breadcrumb { .active { font-weight:' => 'bold',
   ]);
 
@@ -136,67 +114,111 @@ sub tweak_less_files {
   $self->_tweak_less_file(tables => [
     'table.tablesorter { background-color:' => '@white',
     'table.tablesorter { font-size:' => '8pt',
-    'table.tablesorter thead tr th { background-color:' => '@themeColorLighter',
-    'table.tablesorter tfoot tr th { background-color:' => '@themeColorLighter',
+    'table.tablesorter thead tr th { background-color:' => '@theme-color-lighter',
+    'table.tablesorter tfoot tr th { background-color:' => '@theme-color-lighter',
     'table.tablesorter { width:' => '100%',
     'table.tablesorter thead tr .header { cursor:' => 'pointer',
     'table.tablesorter tbody td { vertical-align:' => 'top',
+
+    ".table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th { background-color:" => '@white',
+    ".table-striped tbody > tr:nth-child(even) > td, .table-striped tbody > tr:nth-child(even) > th { background-color:" => '@table-bg-accent',
   ]);
 
   $self->_tweak_less_file(variables => [
-    '@themeColorHighlight:' => 'darken(spin(@themeColor, -60), 30%)',
-    '@themeColorLightest:' => 'lighten(@themeColor, 98% - lightness(@themeColor))',
-    '@themeColorLighter:' => 'lighten(@themeColor, 90% - lightness(@themeColor))',
-    '@themeColorLight:' => 'lighten(@themeColor, 85% - lightness(@themeColor))',
-    '@themeColorDarkest:' => 'darken(@themeColor, 30%)',
-    '@themeColorDarker:' => 'darken(@themeColor, 20%)',
-    '@themeColorDark:' => 'darken(@themeColor, 10%)',
+    '@white:' => '#fff',
+    '@theme-color:' => '#7BB4F3',
+    '@theme-color-highlight:' => 'darken(spin(@theme-color, -60), 30%)',
+    '@theme-color-lightest:' => 'lighten(@theme-color, (95% - lightness(@theme-color)))',
+    '@theme-color-lighter:' => 'lighten(@theme-color, (90% - lightness(@theme-color)))',
+    '@theme-color-light:' => 'lighten(@theme-color, (85% - lightness(@theme-color)))',
+    '@theme-color-darkest:' => 'darken(@theme-color, 30%)',
+    '@theme-color-darker:' => 'darken(@theme-color, 20%)',
+    '@theme-color-dark:' => 'darken(@theme-color, 10%)',
 
-    '@linkColor:' => '@themeColorDark',
-    '@linkColorHover:' => '@themeColorDarker',
-    '@navbarBackgroundHighlight:' => '@themeColor',
-    '@navbarBackground:' => '@themeColorDark',
-    '@navbarLinkColor:' => '@white',
-    '@navbarLinkColorHover:' => '@themeColorDarkest',
-    '@headingsColor:' => '@themeColorDarkest',
-    '@breadcrumbBackground:' => '@themeColorLightest',
-    '@breadcrumbDivider:' => '@linkColor',
-    '@breadcrumbActive:' => '@themeColorHighlight',
-    '@tableBackgroundAccent:' => '@themeColorLightest',
-    '@tableBackgroundHover:' => '@themeColorLightest',
-    '@tableBorder:' => '@themeColorLight',
+    '@link-color:' => '@theme-color-dark',
+    '@link-hover-color:' => '@theme-color-darker',
+    '@navbar-default-link-active-color:' => '@theme-color',
+    '@navbar-default-bg:' => '@theme-color-dark',
+    '@navbar-default-link-color:' => '@white',
+    '@navbar-default-link-hover-color:' => '@theme-color-darkest',
+    '@navbar-default-brand-hover-color:' => '@theme-color-darkest',
+    '@headings-color:' => '@theme-color-darkest',
+
+    '@breadcrumb-bg:' => '@theme-color-lightest',
+    '@breadcrumb-color:' => '@link-color',
+    '@breadcrumb-active-color:' => '@theme-color-highlight',
+
+    '@table-bg-accent:' => '@theme-color-lightest',
+    '@table-bg-hover:' => '@theme-color-lightest',
+    '@table-border-color:' => '@theme-color-light',
   ]);
 
-  $self->_tweak_less_file(bootstrap => [
-    '@themeColor:' => '#7BB4F3',
-  ]);
-  $self->_tweak_less_file(responsive => [
-    '@themeColor:' => '#7BB4F3',
-  ]);
+  my %color_mapping = (
+    lbrocard => '#ff7300',
+    book => '#ff66cc',
+  );
 
-  {
-    my $bootstrap = $self->{less_dir}->file("bootstrap.less");
-    for (qw/lbrocard book/) {
-      my $file = $bootstrap->parent->file("theme_$_.less");
-      $bootstrap->copy_to($file);
-      my $less = $file->slurp;
-      my ($copyright, $body) = split /\n\n/, $less, 2;
-      $less = "$copyright\n\n.pause-$_ {\n$body\n}\n";
-      $file->save($less);
-    }
+  for my $author (keys %color_mapping) {
+    my $file = $self->{less_dir}->file("theme_$author.less");
+    unlink $file if -f $file;
+    $self->_tweak_less_file("theme_$author" => [
+      "\@theme-color-$author:" => $color_mapping{$author},
+      "\@theme-color-highlight-$author:" => "darken(spin(\@theme-color-$author, -60), 30%)",
+      "\@theme-color-lightest-$author:" => "lighten(\@theme-color-$author, (95% - lightness(\@theme-color-$author)))",
+      "\@theme-color-lighter-$author:" => "lighten(\@theme-color-$author, (90% - lightness(\@theme-color-$author)))",
+      "\@theme-color-light-$author:" => "lighten(\@theme-color-$author, (85% - lightness(\@theme-color-$author)))",
+      "\@theme-color-darkest-$author:" => "darken(\@theme-color-$author, 40%)",
+      "\@theme-color-darker-$author:" => "darken(\@theme-color-$author, 20%)",
+      "\@theme-color-dark-$author:" => "darken(\@theme-color-$author, 15%)",
+
+      "\@link-color-$author:" => "\@theme-color-dark-$author",
+      "\@link-hover-color-$author:" => "\@theme-color-darker-$author",
+      "\@headings-color-$author:" => "\@theme-color-darkest-$author",
+      "\@table-border-color-$author:" => "\@theme-color-light-$author",
+      "\@table-bg-accent-$author:" => "\@theme-color-lightest-$author",
+      "\@table-bg-hover-$author:" => "\@theme-color-lightest-$author",
+      "\@breadcrumb-bg-$author:" => "\@theme-color-lightest-$author",
+      "\@breadcrumb-color-$author:" => "\@link-color-$author",
+      "\@breadcrumb-active-color-$author:" => "\@theme-color-highlight-$author",
+
+      ".pause-$author { a { color: " => "\@link-color-$author",
+      ".pause-$author { a:hover { color: " => "\@link-hover-color-$author",
+      ".pause-$author { h1,h2,h3,h4,h5,h6 { color:" => "\@headings-color-$author",
+      ".pause-$author { .table th,.table td { border:" => "1px solid \@table-border-color-$author",
+      ".pause-$author { .table tbody + tbody { border-top:" => "2px solid \@table-border-color-$author",
+      ".pause-$author { .table-bordered { border:" => "1px solid \@table-border-color-$author",
+      ".pause-$author { .table-bordered th, .table-bordered td { border:" => "1px solid \@table-border-color-$author",
+      ".pause-$author { .table-striped tbody > tr:nth-child(even) > td, .table-striped tbody > tr:nth-child(even) > th { background-color:" => "\@table-bg-accent-$author",
+      ".pause-$author { .table-hover tbody > tr:hover td, .table-hover tbody tr:hover > th { background-color:" => "\@table-bg-hover-$author",
+      ".pause-$author { table.tablesorter thead tr th, table.tablesorter thoot tr th { background-color:" => "\@theme-color-lighter-$author",
+      ".pause-$author { table.tablesorter { border-color:" => "\@theme-color-lighter-$author",
+      ".pause-$author { .breadcrumb { background-color:" => "\@breadcrumb-bg-$author",
+      ".pause-$author { .breadcrumb { .active { color:" => "\@breadcrumb-active-color-$author",
+      ".pause-$author { .alert-info { color:" => "\@theme-color-dark-$author",
+      ".pause-$author { .alert-info { background-color:" => "\@theme-color-lightest-$author",
+      ".pause-$author { .alert-info { border-color:" => "\@theme-color-light-$author",
+      ".pause-$author { .navbar-default { background-color:" => "\@theme-color-light-$author",
+      ".pause-$author { .navbar-default { border-color:" => "\@theme-color-light-$author",
+      ".pause-$author { .navbar-default { a:hover,a:active { color:" => "\@theme-color-dark-$author",
+      ".pause-$author { .navbar-default .navbar-nav { li { a:hover,a:active { color:" => "\@theme-color-dark-$author",
+    ]);
   }
 
-  $self->_tweak_less_file(theme_lbrocard => [
-    '.pause-lbrocard { @themeColor:' => '#ff7300',
-  ]);
-
-  $self->_tweak_less_file(theme_book => [
-    '.pause-book { @themeColor:' => '#ff66cc',
-  ]);
+  {
+    my $file = $self->{less_dir}->file("bootstrap.less");
+    my $less = $file->slurp;
+    for my $author (keys %color_mapping) {
+      unless ($less =~ /theme_$author/) {
+        $less .= qq{\@import "theme_$author.less";\n};
+      }
+    }
+    $file->save($less);
+  }
 }
 
 sub _tweak_less_file {
   my ($self, $name, $filters) = @_;
+  $self->log(info => "tweaking $name");
   my $file = $self->{less_dir}->file("$name.less");
   my $less = $file->exists ? $file->slurp : '';
   my $filter = CSS::LESS::Filter->new;
