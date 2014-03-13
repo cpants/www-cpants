@@ -51,7 +51,7 @@
 %   if (defined $dist->{kwalitee}) {
 %     for my $metric (@$metrics) {
 %       next if $metric->{is_experimental};
-<span style="background-color: <%= $dist->{$metric->{key}} ? 'green' : $metric->{is_extra} ? 'orange' : 'red' %>; display: inline-block; width: 9px; border-radius: 4px;" rel="tooltip" title="<%= $metric->{key} %>">&nbsp;</span>
+<span style="color: <%= $dist->{$metric->{key}} ? 'green' : $metric->{is_extra} ? 'orange' : 'red' %>; width: 9px; display: inline-block; border-radius: 4px;" rel="tooltip" title="<%= $metric->{key} %>"><%== $dist->{$metric->{key}} ? '<span class="glyphicon glyphicon-ok"></span>' : $metric->{is_extra} ? '<span class="glyphicon glyphicon-flash"></span>' : '<span class="glyphicon glyphicon-remove"></span>' %></span>
 %     }
 %   }
 </td></tr>
