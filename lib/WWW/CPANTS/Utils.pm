@@ -10,6 +10,7 @@ our @EXPORT = qw/
   date datetime
   decimal percent
   kb hide_internal
+  link_to_package
 /;
 
 sub date {
@@ -55,6 +56,19 @@ sub hide_internal {
   $str =~ s!$root/!!g;
   $str =~ s!$home/!!g;
   $str;
+}
+
+sub link_to_package {
+  my $package = shift;
+  my $base_url = "https://github.com/cpants";
+
+  my ($basename) = $package =~ /::([^:]+)$/;
+  if ($package =~ /::SiteKwalitee::/) {
+    return "$base_url/Module-CPANTS-SiteKwalitee/blob/master/lib/Module/CPANTS/SiteKwalitee/$basename.pm";
+  } elsif ($package =~ /::Kwalitee::/) {
+    return "$base_url/Module-CPANTS-Kwalitee/blob/master/lib/Module/CPANTS/Kwalitee/$basename.pm";
+  }
+  return "#";
 }
 
 1;

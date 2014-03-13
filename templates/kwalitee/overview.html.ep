@@ -28,7 +28,7 @@
 % for my $indicator (@{stash($_) || []}) {
 <tr>
 <td><a href="/kwalitee/<%= $indicator->{key} %>"><%= $indicator->{name} %></a></td>
-<td><%= $indicator->{error} %><br />(defined in <%= $indicator->{defined_in} %>)</td>
+<td><%= $indicator->{error} %><br />(defined in <a href="<%= WWW::CPANTS::Utils::link_to_package($indicator->{defined_in}) %>" target="_blank"><%= $indicator->{defined_in} %></a>)</td>
 <td><%= $indicator->{remedy} %></td>
 <td sort="<%= $indicator->{latest_fails} %>" style="width: 6em"><%= $indicator->{latest_fails} %><br />(<%= $indicator->{latest_fail_rate} %> %)</td>
 <td sort="<%= $indicator->{cpan_fails} %>" style="width: 6em"><%= $indicator->{cpan_fails} %><br />(<%= $indicator->{cpan_fail_rate} %> %)</td>
