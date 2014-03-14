@@ -38,8 +38,11 @@ app->helper(page_title => sub {
 
 under sub {
   my $self = shift;
-  if (appfile('__maintenance__')->exists) {
-    $self->stash(under_maintenance => 1);
+  for my $event (qw/maintenance analyzing/) {
+    if (appfile('__'.$event.'__')->exists) {
+      $self->stash("notice_$event" => 1);
+      last;
+    }
   }
   return 1;
 };
