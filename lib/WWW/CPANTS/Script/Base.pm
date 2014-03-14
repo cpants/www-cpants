@@ -12,6 +12,8 @@ use Time::Seconds;
 our $FORCE_DEBUG = 0;
 our $VERBOSE = $^O eq 'MSWin32' ? 1 : 0;
 
+sub _notice {}
+
 sub options {
   my $self = shift;
   my @options = qw/trace profile/;
@@ -61,12 +63,10 @@ sub run {
   $self->log(info => "$name: started");
   my $start = time;
 
-  my $maintenance_file = appfile('__maintenance__');
-  if ($maintenance_file->exists) {
-    $maintenance_file = '';
-  }
-  else {
-    $maintenance_file->save("$name: $start");
+  my $notice;
+  if ($self->_notice) {
+    $notice = appfile('__'.$self->_notice.'__');
+    $notice->save("$name: $start");
   }
 
   $self->_run(@_);
@@ -81,8 +81,8 @@ sub run {
       "(" . Time::Seconds->new($end - $start)->pretty . ")",
   );
 
-  if ($maintenance_file) {
-    $maintenance_file->remove;
+  if ($notice) {
+    $notice->remove;
   }
 
   $self->_remove_pidfile;

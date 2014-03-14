@@ -88,10 +88,15 @@ var cpants; $(function() { cpants = new CPANTS });
 % }
 <div class="container">
   <div class="row">
-% if (stash('under_maintenance')) {
+% if (stash('notice_maintenance')) {
     <div id="maintenance" class="alert alert-info">
       <h4>The site is under maintenance.</h4>
-      <p>Some of the information may be old or missing tentatively. Sorry for the inconvenience.</p>
+      <p>Most probably the CPANTS databases are being regenerated from scratch behind the scenes due to the major change in Kwalitee metrics or the update of relevant modules/perl. Usually this maintenance takes about a day or two, and some of the information may be old or missing tentatively. Sorry for the inconvenience.</p>
+    </div>
+% } elsif (stash('notice_analyzing')) {
+    <div id="analyzing" class="alert alert-info">
+      <h4>Analyzing.</h4>
+      <p>Scheduled analysis is going on. Some of the information may be inconsistent. Sorry for the inconvenience.</p>
     </div>
 % }
     <div id="main" class="col-md-11">

@@ -17,6 +17,8 @@ use WWW::CPANTS::Pages;
 
 sub _options {qw/workers=n cpan=s backpan=s force profile trace/}
 
+sub _notice { 'analyzing' }
+
 sub _run {
   my ($self, @args) = @_;
 
