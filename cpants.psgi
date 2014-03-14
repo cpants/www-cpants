@@ -26,7 +26,7 @@ else {
   app->mode('production');
   app->log->level('error');
 }
-app->secret(random_regex('\w{40}'));
+app->secrets([random_regex('\w{40}')]);
 
 app->helper(page_title => sub {
   my $self = shift;
