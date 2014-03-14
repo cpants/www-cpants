@@ -21,9 +21,6 @@
 %#=   stylesheet "/css/tablesorter/style.css";
 %#  }
 %= stylesheet "/css/bootstrap.css";
-%= stylesheet "/css/bootstrap-responsive.css";
-%= stylesheet "/css/theme_lbrocard.css";
-%= stylesheet "/css/theme_book.css";
 %= stylesheet "/css/docs.css";
 % }
 %# 
