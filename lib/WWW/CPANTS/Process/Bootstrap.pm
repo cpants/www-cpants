@@ -156,6 +156,7 @@ sub tweak_less_files {
   my %color_mapping = (
     lbrocard => '#ff7300',
     book => '#ff66cc',
+    barbie => '#663376',
   );
 
   for my $author (keys %color_mapping) {

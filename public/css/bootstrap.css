@@ -5524,6 +5524,78 @@ button.close {
     display: none !important;
   }
 }
+.pause-barbie a {
+  color: #381c41;
+}
+.pause-barbie a:hover {
+  color: #28142f;
+}
+.pause-barbie h1,
+.pause-barbie h2,
+.pause-barbie h3,
+.pause-barbie h4,
+.pause-barbie h5,
+.pause-barbie h6 {
+  color: #000;
+}
+.pause-barbie .table th,
+.pause-barbie .table td {
+  border: 1px solid #e1cae8;
+}
+.pause-barbie .table tbody + tbody {
+  border-top: 2px solid #e1cae8;
+}
+.pause-barbie .table-bordered {
+  border: 1px solid #e1cae8;
+}
+.pause-barbie .table-bordered th,
+.pause-barbie .table-bordered td {
+  border: 1px solid #e1cae8;
+}
+.pause-barbie .table-striped tbody > tr:nth-child(even) > td,
+.pause-barbie .table-striped tbody > tr:nth-child(even) > th {
+  background-color: #f5eef8;
+}
+.pause-barbie .table-hover tbody > tr:hover td,
+.pause-barbie .table-hover tbody tr:hover > th {
+  background-color: #f5eef8;
+}
+.pause-barbie table.tablesorter thead tr th,
+.pause-barbie table.tablesorter thoot tr th {
+  background-color: #ebdcf0;
+}
+.pause-barbie table.tablesorter {
+  border-color: #ebdcf0;
+}
+.pause-barbie .breadcrumb {
+  background-color: #f5eef8;
+}
+.pause-barbie .breadcrumb .active {
+  color: #05060b;
+}
+.pause-barbie .alert-info {
+  color: #381c41;
+}
+.pause-barbie .alert-info {
+  background-color: #f5eef8;
+}
+.pause-barbie .alert-info {
+  border-color: #e1cae8;
+}
+.pause-barbie .navbar-default {
+  background-color: #e1cae8;
+}
+.pause-barbie .navbar-default {
+  border-color: #e1cae8;
+}
+.pause-barbie .navbar-default a:hover,
+.pause-barbie .navbar-default a:active {
+  color: #381c41;
+}
+.pause-barbie .navbar-default .navbar-nav li a:hover,
+.pause-barbie .navbar-default .navbar-nav li a:active {
+  color: #381c41;
+}
 .pause-lbrocard a {
   color: #b35100;
 }
