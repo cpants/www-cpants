@@ -19,6 +19,9 @@ my @tests = (
 
   # ignore inc/Devel/CheckLib
   ['D/DJ/DJERIUS/Lua-API-0.02.tar.gz', 1],
+
+  # https://github.com/cpants/www-cpants/issues/44
+  ['NEILB/Business-CCCheck-0.09.tar.gz', 1],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
