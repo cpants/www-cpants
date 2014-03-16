@@ -36,7 +36,7 @@ requires 'Sub::Install' => 0;
 requires 'Text::Markdown' => 0;
 requires 'Time::Piece' => '1.16'; # tz issue
 requires 'Timer::Simple' => 0;
-requires 'WorePAN' => '0.07';  # for better author names
+requires 'WorePAN' => '0.09';  # for PAUSEID/Dist convention
 
 # Plack Application Management
 requires 'Plack::Builder::Conditionals' => 0;
