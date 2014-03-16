@@ -49,8 +49,8 @@ if ($^O ne 'MSWin32') {
 
 # minifier
 requires 'CSS::LESS::Filter' => '0.02';
-requires 'CSS::Minifier::XS' => 0;
-requires 'JavaScript::Minifier::XS' => 0;
+requires 'CSS::Minifier::XS' => '0.09';
+requires 'JavaScript::Minifier::XS' => '0.09';
 
 # feed
 requires 'XML::Atom::SimpleFeed' => 0;
