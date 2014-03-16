@@ -4,16 +4,16 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
 my @tests = (
-  ['I/ID/IDIVISION/nginx.pm.tar.gz', 0], # 1059
-  ['A/AN/ANDK/Memo-bindist-any-bin-2-archname-compiler.tar.gz', 0], # 1076
-  ['D/DA/DAMOG/WWW-Tumblr-0.tar.gz', 0], # 1235
-  ['P/PI/PIROLIX/MIME_Base32_Readable.zip', 0], # 1461
-  ['S/ST/STEFANOS/Text-Phonetic-MatchRatingCodex-1-0.tar.gz', 0], # 1466
-  ['W/WI/WILSONPM/OutlineNumber.tar.gz', 0], # 1798
-  ['S/ST/STEFANOS/Text-Phonetic-Caverphone.tar.gz', 0], # 1912
-  ['J/JA/JACKS/SelfStubber.tar.gz', 0], # 1934
-  ['D/DA/DAHILLMA/Geo-GoogleEarth-Document-modules.tar.gz', 0], # 1965
-  ['S/SM/SMAN/rpn.tar.gz', 0], # 1966
+  ['IDIVISION/nginx.pm.tar.gz', 0], # 1059
+  ['ANDK/Memo-bindist-any-bin-2-archname-compiler.tar.gz', 0], # 1076
+  ['DAMOG/WWW-Tumblr-0.tar.gz', 0], # 1235
+  ['PIROLIX/MIME_Base32_Readable.zip', 0], # 1461
+  ['STEFANOS/Text-Phonetic-MatchRatingCodex-1-0.tar.gz', 0], # 1466
+  ['WILSONPM/OutlineNumber.tar.gz', 0], # 1798
+  ['STEFANOS/Text-Phonetic-Caverphone.tar.gz', 0], # 1912
+  ['JACKS/SelfStubber.tar.gz', 0], # 1934
+  ['DAHILLMA/Geo-GoogleEarth-Document-modules.tar.gz', 0], # 1965
+  ['SMAN/rpn.tar.gz', 0], # 1966
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);

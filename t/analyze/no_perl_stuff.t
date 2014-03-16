@@ -4,7 +4,7 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
 my @paths = (
-  'H/HM/HMBRAND/cshmen-3.50_01.tgz',
+  'HMBRAND/cshmen-3.50_01.tgz',
 );
 
 my $mirror = setup_mirror(@paths);

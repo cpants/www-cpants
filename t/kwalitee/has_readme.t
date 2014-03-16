@@ -4,16 +4,16 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
 my @tests = (
-  ['S/SE/SEVEAS/Term-Multiplexed-0.1.0.tar.gz', 0], # 1701
-  ['S/SR/SROMANOV/App-Nopaste-Service-Dpaste-0.01.tar.gz', 0], # 2448
-  ['S/SR/SROMANOV/Games-Chess-Position-Unicode-0.01.tar.gz', 0], # 2629
-  ['N/NI/NIELSD/Speech-Google-0.5.tar.gz', 0], # 2907
-  ['B/BO/BOOK/Bundle-MetaSyntactic-1.026.tar.gz', 0], # 3178
-  ['B/BE/BENMEYER/Finance-btce-0.02.tar.gz', 0], # 3575
-  ['S/SY/SYSADM/Mojolicious-Plugin-DeCSRF-0.94.tar.gz', 0], # 3654
-  ['B/BK/BKB/Lingua-EN-PluralToSingular-0.06.tar.gz', 0], # 3747
-  ['M/MA/MANIGREW/SEG7-1.0.1.tar.gz', 0], # 3847
-  ['B/BK/BKB/Lingua-JA-Gairaigo-Fuzzy-0.02.tar.gz', 0], # 4159
+  ['SEVEAS/Term-Multiplexed-0.1.0.tar.gz', 0], # 1701
+  ['SROMANOV/App-Nopaste-Service-Dpaste-0.01.tar.gz', 0], # 2448
+  ['SROMANOV/Games-Chess-Position-Unicode-0.01.tar.gz', 0], # 2629
+  ['NIELSD/Speech-Google-0.5.tar.gz', 0], # 2907
+  ['BOOK/Bundle-MetaSyntactic-1.026.tar.gz', 0], # 3178
+  ['BENMEYER/Finance-btce-0.02.tar.gz', 0], # 3575
+  ['SYSADM/Mojolicious-Plugin-DeCSRF-0.94.tar.gz', 0], # 3654
+  ['BKB/Lingua-EN-PluralToSingular-0.06.tar.gz', 0], # 3747
+  ['MANIGREW/SEG7-1.0.1.tar.gz', 0], # 3847
+  ['BKB/Lingua-JA-Gairaigo-Fuzzy-0.02.tar.gz', 0], # 4159
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);

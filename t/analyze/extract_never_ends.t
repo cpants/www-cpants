@@ -4,7 +4,7 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
 my @paths = qw(
-  J/JC/JCAMACHO/Catalyst-Controller-FormBuilder-0.01_01.tar.gz
+  JCAMACHO/Catalyst-Controller-FormBuilder-0.01_01.tar.gz
 );
 
 my $mirror = setup_mirror(@paths);

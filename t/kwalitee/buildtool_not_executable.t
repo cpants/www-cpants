@@ -6,16 +6,16 @@ use WWW::CPANTS::Analyze;
 plan skip_all => "This test doesn't work well under Windows" if $^O eq 'MSWin32';
 
 my @tests = (
-  ['C/CO/COOLMEN/Test-More-Color-0.04.tar.gz', 0], # 2963
-  ['C/CO/CODECHILD/Thread-SharedTreeSet-0.01.tar.gz', 0], # 3191
-  ['C/CO/CODECHILD/Set-Definition-0.01.tar.gz', 0], # 4242
-  ['J/JE/JEEN/WebService-Aladdin-0.08.tar.gz', 0], # 4287
-  ['D/DS/DSYRTM/Guitar-Scale-0.06.tar.gz', 0], # 4469
-  ['O/OV/OVNTATAR/GitHub-Jobs-0.04.tar.gz', 0], # 5322
-  ['E/EG/EGILES/X11-Terminal-v1.0.0.tar.gz', 0], # 6205
-  ['L/LT/LTP/Game-Life-0.05.tar.gz', 0], # 6535
-  ['L/LT/LTP/IBM-SONAS-0.021.tar.gz', 0], # 7177
-  ['D/DS/DSYRTM/File-BetweenTree-1.02.tar.gz', 0], # 7590
+  ['COOLMEN/Test-More-Color-0.04.tar.gz', 0], # 2963
+  ['CODECHILD/Thread-SharedTreeSet-0.01.tar.gz', 0], # 3191
+  ['CODECHILD/Set-Definition-0.01.tar.gz', 0], # 4242
+  ['JEEN/WebService-Aladdin-0.08.tar.gz', 0], # 4287
+  ['DSYRTM/Guitar-Scale-0.06.tar.gz', 0], # 4469
+  ['OVNTATAR/GitHub-Jobs-0.04.tar.gz', 0], # 5322
+  ['EGILES/X11-Terminal-v1.0.0.tar.gz', 0], # 6205
+  ['LTP/Game-Life-0.05.tar.gz', 0], # 6535
+  ['LTP/IBM-SONAS-0.021.tar.gz', 0], # 7177
+  ['DSYRTM/File-BetweenTree-1.02.tar.gz', 0], # 7590
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);

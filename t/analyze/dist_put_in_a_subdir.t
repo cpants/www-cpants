@@ -4,7 +4,7 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
 my @paths = (
-  'I/IN/INA/Char/Latin10/Char-Latin10-0.87.tar.gz',
+  'INA/Char/Latin10/Char-Latin10-0.87.tar.gz',
 );
 
 my $mirror = setup_mirror(@paths);

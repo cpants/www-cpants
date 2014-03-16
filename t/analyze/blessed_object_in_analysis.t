@@ -5,19 +5,19 @@ use WWW::CPANTS::Analyze;
 
 my @paths = (
   # meta_yml/version
-  'S/SU/SUNNAVY/BBS-Perm-v0.0.3.tar.gz',
+  'SUNNAVY/BBS-Perm-v0.0.3.tar.gz',
 
   # meta_yml/abstract
-  'A/AS/ASCOPE/MT-Import-Mbox-Importer-1.0.tar.gz',
+  'ASCOPE/MT-Import-Mbox-Importer-1.0.tar.gz',
 
   # meta_yml/author
-  'D/DM/DMAKI/DateTime-Format-Japanese-0.01.tar.gz',
+  'DMAKI/DateTime-Format-Japanese-0.01.tar.gz',
 
   # meta_yml/requires/version
-  'W/WH/WHYNOT/File-AptFetch-0.0.7.tar.gz',
+  'WHYNOT/File-AptFetch-0.0.7.tar.gz',
 
   # meta_yml/version (Module::Build::Version)
-  'D/DP/DPRICE/Time-Piece-Adaptive-0.03.tar.gz',
+  'DPRICE/Time-Piece-Adaptive-0.03.tar.gz',
 );
 
 my $mirror = setup_mirror(@paths);
