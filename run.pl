@@ -8,6 +8,7 @@ WWW::CPANTS::Script::run->run_directly;
 package WWW::CPANTS::Script::run;
 use base 'WWW::CPANTS::Script::Base';
 use WWW::CPANTS::Process::Uploads;
+use WWW::CPANTS::Process::Permissions;
 use WWW::CPANTS::Process::CPAN;
 use WWW::CPANTS::Process::Queue;
 use WWW::CPANTS::Process::Analysis;
@@ -29,6 +30,7 @@ sub _run {
 
   save_metrics();
   WWW::CPANTS::Process::Uploads->new(%$self)->update;
+  WWW::CPANTS::Process::Permissions->new(%$self)->update;
   WWW::CPANTS::Process::CPAN->new(%$self)->update;
   WWW::CPANTS::Process::Queue->new(%$self)->enqueue_cpan;
   WWW::CPANTS::Process::Analysis->new(%$self)->process_queue;

@@ -29,6 +29,7 @@ sub update {
   my @order = qw/
     IsCPAN
     LatestDists
+    Permissions
     PrereqDist
     UsedModuleDist
     DistDependents

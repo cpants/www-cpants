@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
 use WWW::CPANTS::Analyze::Metrics;
+use Scope::OnExit;
 use Time::Piece;
 
 sub _columns {
@@ -144,6 +145,26 @@ sub mark_cpan {
   {
     my $placeholders = substr('?,' x @$dists, 0, -1);
     $dbh->do("update kwalitee set is_cpan = 1 where distv in ($placeholders)", undef, @$dists);
+  }
+}
+
+sub mark_unauthorized {
+  my ($self, $ids) = @_;
+  my $dbh = $self->dbh;
+  $self->do('update kwalitee set no_unauthorized_packages = 1');
+
+  if (@$ids > 500) {
+    my $placeholders = substr('?,' x 500, 0, -1);
+    my $sth = $dbh->prepare("update kwalitee set no_unauthorized_packages = 0 where analysis_id in ($placeholders)");
+
+    while(@$ids > 500) {
+      $sth->execute(splice @$ids, 0, 500);
+    }
+  }
+
+  {
+    my $placeholders = substr('?,' x @$ids, 0, -1);
+    $dbh->do("update kwalitee set no_unauthorized_packages = 0 where analysis_id in ($placeholders)", undef, @$ids);
   }
 }
 
