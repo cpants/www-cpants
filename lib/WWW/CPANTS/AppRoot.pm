@@ -25,7 +25,7 @@ sub root {
   if ($ENV{HARNESS_ACTIVE}) {
     $TESTROOT ||= do {
 
-      appdir(tempdir(DIR => appdir('tmp')->mkdir->path, CLEANUP => 1));
+      appdir(tempdir(DIR => appdir('tmp/test')->mkdir->path, CLEANUP => 1));
     };
     return $TESTROOT;
   }
