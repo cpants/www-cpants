@@ -110,4 +110,4 @@ requires 'Module::Signature' => '0.70'; # CHECK: less warnings
 
 ### Version
 requires 'Parse::LocalDistribution' => '0.07'; # CHECK
-requires 'Parse::PMFile' => '0.12'; # CHECK
+requires 'Parse::PMFile' => '0.15'; # CHECK
