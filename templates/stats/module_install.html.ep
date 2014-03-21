@@ -7,7 +7,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/module_install") %>
+<%== markdown("stats/module_install") %>
 </div>
 </section>
 

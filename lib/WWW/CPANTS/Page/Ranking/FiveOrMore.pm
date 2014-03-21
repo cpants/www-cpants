@@ -3,7 +3,7 @@ package WWW::CPANTS::Page::Ranking::FiveOrMore;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 
 sub title { 'For Authors with 5 or more dists' }
 

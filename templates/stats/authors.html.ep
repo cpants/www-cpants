@@ -11,7 +11,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/authors", {
+<%== markdown("stats/authors", {
   total => $total,
   contributed => $contributed,
   contribution_rate => $contribution_rate,

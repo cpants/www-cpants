@@ -3,8 +3,7 @@ package WWW::CPANTS::Page::Dist::Overview;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
-use WWW::CPANTS::Utils;
+use WWW::CPANTS::Analyze::Metrics;
 
 sub load_data {
   my ($class, $name) = @_;

@@ -4,7 +4,8 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
-use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Util::Parallel;
+use WWW::CPANTS::Util::JSON;
 use Path::Extended;
 
 sub new {
@@ -19,7 +20,7 @@ sub enqueue_cpan {
   my $dir = dir($cpan)->subdir('authors/id');
   die "$dir seems not a CPAN mirror" unless $dir->exists;
 
-  my $pm = WWW::CPANTS::Parallel->new(
+  my $pm = WWW::CPANTS::Util::Parallel->new(
     max_workers => $args{workers} || $self->{workers},
   );
 

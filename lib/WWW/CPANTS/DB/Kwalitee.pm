@@ -3,7 +3,7 @@ package WWW::CPANTS::DB::Kwalitee;
 use strict;
 use warnings;
 use base 'WWW::CPANTS::DB::Base';
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 use Time::Piece;
 
 sub _columns {

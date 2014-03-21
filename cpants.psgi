@@ -11,9 +11,9 @@ use String::CamelCase 'camelize';
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log ();
 use WWW::CPANTS::Pages;
-use WWW::CPANTS::Text ();
 use WWW::CPANTS::StatusImage;
 use WWW::CPANTS::Config;
+use WWW::CPANTS::Util::Markdown ();
 use Compress::Zlib;
 
 $ENV{MOJO_REVERSE_PROXY} = 1;
@@ -32,6 +32,10 @@ app->helper(page_title => sub {
   my $self = shift;
   $self->stash('page_title') ||
   join ' - ', map {$_->{name}} @{$self->stash('breadcrumbs') || []};
+});
+app->helper(markdown => sub {
+  my $self = shift;
+  WWW::CPANTS::Util::Markdown::markdown(@_);
 });
 
 # ------------ For Browsers -----------------

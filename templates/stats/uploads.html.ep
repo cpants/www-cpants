@@ -12,7 +12,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/uploads", {
+<%== markdown("stats/uploads", {
   uploads => $uploads,
   total => $total,
   cpan_rate => $cpan_rate,

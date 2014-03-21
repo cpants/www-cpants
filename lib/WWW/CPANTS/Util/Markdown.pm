@@ -1,19 +1,17 @@
-package WWW::CPANTS::Text;
+package WWW::CPANTS::Util::Markdown;
 
 use strict;
 use warnings;
-use Text::Markdown ();
+use Text::Markdown::Hoedown ();
 use Exporter::Lite;
 use WWW::CPANTS::AppRoot;
 use Mojo::Template;
 
 our @EXPORT = qw/markdown/;
 
-my $parser = Text::Markdown->new;
-
 sub markdown {
   my ($path, @args) = @_;
-  my $cachefile = file("data/$path.md.html");
+  my $cachefile = file("tmp/data/$path.md.html");
   my $mdfile = file("texts/$path.md");
   return "" unless -f $mdfile;
 
@@ -33,7 +31,7 @@ sub markdown {
     $text = $template->render($text, @args);
   }
 
-  if (my $html = $parser->markdown($text)) {
+  if (my $html = Text::Markdown::Hoedown::markdown($text)) {
     $cachefile->save($html, mkdir => 1);
     return $html;
   }
@@ -46,7 +44,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::Text
+WWW::CPANTS::Util::Markdown
 
 =head1 SYNOPSIS
 

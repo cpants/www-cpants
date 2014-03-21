@@ -12,7 +12,7 @@ use WWW::CPANTS::Process::CPAN;
 use WWW::CPANTS::Process::Queue;
 use WWW::CPANTS::Process::Analysis;
 use WWW::CPANTS::Process::Kwalitee;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 use WWW::CPANTS::Pages;
 
 sub _options {qw/workers=n cpan=s backpan=s force profile trace/}

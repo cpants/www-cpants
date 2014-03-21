@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
-use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Util::Parallel;
 use CPAN::DistnameInfo;
 use Time::Piece;
 use Path::Extended;
@@ -28,7 +28,7 @@ sub update {
 
   db('Uploads')->setup;
 
-  my $pm = WWW::CPANTS::Parallel->new(
+  my $pm = WWW::CPANTS::Util::Parallel->new(
     max_workers => $args{workers} || $self->{workers},
   );
 

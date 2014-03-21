@@ -3,7 +3,7 @@ package WWW::CPANTS::Page::Author::Fails;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 use WWW::CPANTS::Utils;
 
 sub load_data {

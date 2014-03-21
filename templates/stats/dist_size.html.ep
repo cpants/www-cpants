@@ -9,7 +9,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/dist_size", {
+<%== markdown("stats/dist_size", {
   total => $total,
 }) %>
 </div>

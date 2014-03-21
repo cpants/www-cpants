@@ -2,7 +2,7 @@ package WWW::CPANTS::Page::Ranking;
 
 use strict;
 use warnings;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use Module::Find;
 use String::CamelCase qw/decamelize/;
 

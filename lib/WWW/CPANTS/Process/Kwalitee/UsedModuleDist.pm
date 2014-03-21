@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::CoreList;
-use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Util::CoreList;
+use WWW::CPANTS::Util::Parallel;
 
 sub new {
   my ($class, %args) = @_;
@@ -22,7 +22,7 @@ sub update {
   my $modules = $used_db->fetch_all_used_modules;
   $self->log(debug => 'Processing '.(scalar @$modules).' modules');
 
-  my $pm = WWW::CPANTS::Parallel->new(
+  my $pm = WWW::CPANTS::Util::Parallel->new(
     max_workers => $self->{workers},
   );
 

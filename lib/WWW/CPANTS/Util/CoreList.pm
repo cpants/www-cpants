@@ -1,4 +1,4 @@
-package WWW::CPANTS::CoreList;
+package WWW::CPANTS::Util::CoreList;
 
 use strict;
 use warnings;
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::CoreList
+WWW::CPANTS::Util::CoreList
 
 =head1 SYNOPSIS
 

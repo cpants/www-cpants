@@ -1,4 +1,4 @@
-package WWW::CPANTS::JSON;
+package WWW::CPANTS::Util::JSON;
 
 use strict;
 use warnings;
@@ -60,7 +60,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::JSON
+WWW::CPANTS::Util::JSON
 
 =head1 SYNOPSIS
 

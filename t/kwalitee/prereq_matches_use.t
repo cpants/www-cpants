@@ -4,7 +4,7 @@ use CPAN::DistnameInfo;
 use WWW::CPANTS::Extlib;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Analyze;
 use WWW::CPANTS::Process::Uploads;
 use WWW::CPANTS::Process::CPAN;

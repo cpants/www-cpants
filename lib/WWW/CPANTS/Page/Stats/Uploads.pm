@@ -3,7 +3,7 @@ package WWW::CPANTS::Page::Stats::Uploads;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Utils;
 
 sub title { 'CPAN Uploads' }

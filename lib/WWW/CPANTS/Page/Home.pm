@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Extlib;
 use String::CamelCase 'camelize';
 

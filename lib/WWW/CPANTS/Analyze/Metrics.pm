@@ -1,9 +1,9 @@
-package WWW::CPANTS::Kwalitee;
+package WWW::CPANTS::Analyze::Metrics;
 
 use strict;
 use warnings;
 use List::Util qw/first/;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Extlib;
 use Sub::Install qw/reinstall_sub/;
 
@@ -44,7 +44,7 @@ sub save_metrics {
     my $i = $_;
     +{
       map { $_ => $i->{$_} }
-      qw/name error remedy is_extra is_experimental is_disabled defined_in/
+      qw/name error remedy is_extra is_experimental is_disabled defined_in ignorable/
     }
   } $kwalitee->get_indicators;
   $METRICS = \@indicators;
@@ -75,6 +75,7 @@ sub sorted_metrics {
       value           => $value,
       is_extra        => $metric->{is_extra},
       is_experimental => $metric->{is_experimental},
+      ignorable       => $metric->{ignorable},
     };
     if (!$value && $opts{requires_remedy}) {
       $entry->{error}  = $metric->{error};
@@ -95,7 +96,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::Kwalitee
+WWW::CPANTS::Analyze::Metrics
 
 =head1 SYNOPSIS
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 
 sub new {
   my ($class, %args) = @_;

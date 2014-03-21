@@ -3,7 +3,7 @@ package WWW::CPANTS::Page::Stats::DistSize;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Utils;
 use List::Util qw/sum/;
 

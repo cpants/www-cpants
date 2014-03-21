@@ -10,7 +10,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/dependencies") %>
+<%== markdown("stats/dependencies") %>
 </div>
 </section>
 

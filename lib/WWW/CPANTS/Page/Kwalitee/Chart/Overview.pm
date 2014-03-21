@@ -2,8 +2,7 @@ package WWW::CPANTS::Page::Kwalitee::Chart::Overview;
 
 use strict;
 use warnings;
-use WWW::CPANTS::JSON;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Util::JSON;
 
 sub load_data {
   my $class = shift;

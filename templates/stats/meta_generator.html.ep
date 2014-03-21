@@ -19,7 +19,7 @@
 
 <section>
 <div class="col-md-8">
-<%== WWW::CPANTS::Text::markdown("stats/meta_generator") %>
+<%== markdown("stats/meta_generator") %>
 </div>
 </section>
 

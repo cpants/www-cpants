@@ -3,8 +3,6 @@ package WWW::CPANTS::Page::Dist::Prereq;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
-use WWW::CPANTS::Utils;
 use List::MoreUtils qw/uniq/;
 
 sub load_data {

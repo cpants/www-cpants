@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 
 {
   my $db = db('Kwalitee', explain => 1);

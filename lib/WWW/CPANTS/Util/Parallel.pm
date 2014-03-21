@@ -1,8 +1,8 @@
-package WWW::CPANTS::Parallel;
+package WWW::CPANTS::Util::Parallel;
 
 use strict;
 use warnings;
-use base 'WWW::CPANTS::Parallel::Runner';
+use base 'WWW::CPANTS::Util::Parallel::Runner';
 
 1;
 
@@ -10,7 +10,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::Parallel
+WWW::CPANTS::Util::Parallel
 
 =head1 SYNOPSIS
 

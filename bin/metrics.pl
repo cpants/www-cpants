@@ -7,7 +7,7 @@ WWW::CPANTS::Script::metrics->run_directly;
 
 package WWW::CPANTS::Script::metrics;
 use base 'WWW::CPANTS::Script::Base';
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 
 sub _run {
   my $self = shift;

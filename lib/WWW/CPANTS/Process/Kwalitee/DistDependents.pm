@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Util::Parallel;
 
 sub new {
   my ($class, %args) = @_;
@@ -22,7 +22,7 @@ sub update {
   my $dists = $prereq_db->fetch_all_prereq_dists;
   $self->log(debug => 'Processing '.(scalar @$dists).' dists');
 
-  my $pm = WWW::CPANTS::Parallel->new(
+  my $pm = WWW::CPANTS::Util::Parallel->new(
     max_workers => $self->{workers},
   );
 

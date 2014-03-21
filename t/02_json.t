@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 
 my $expected = {test => 1};
 

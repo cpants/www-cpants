@@ -3,7 +3,7 @@ package WWW::CPANTS::Process::Analysis::MetaYML;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 
 sub new {
   bless {

@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use FindBin;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Analyze::Metrics;
 
 save_metrics();
 

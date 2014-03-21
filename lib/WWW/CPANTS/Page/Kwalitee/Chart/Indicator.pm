@@ -3,8 +3,8 @@ package WWW::CPANTS::Page::Kwalitee::Chart::Indicator;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Util::JSON;
+use WWW::CPANTS::Analyze::Metrics;
 
 sub load_data {
   my ($class, $name) = @_;

@@ -6,7 +6,7 @@ use Archive::Any::Lite;
 use CPAN::DistnameInfo;
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use File::Spec;
 use File::Basename;
 use Path::Extended;

@@ -5,7 +5,7 @@ use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::Analyze::Context;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 
 sub new {
   my ($class, %args) = @_;

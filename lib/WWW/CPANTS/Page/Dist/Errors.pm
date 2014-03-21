@@ -3,8 +3,6 @@ package WWW::CPANTS::Page::Dist::Errors;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Kwalitee;
-use WWW::CPANTS::Utils;
 
 sub load_data {
   my ($class, $name) = @_;

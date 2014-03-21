@@ -3,8 +3,8 @@ package WWW::CPANTS::Page::Kwalitee;
 use strict;
 use warnings;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::JSON;
-use WWW::CPANTS::Kwalitee;
+use WWW::CPANTS::Util::JSON;
+use WWW::CPANTS::Analyze::Metrics;
 use WWW::CPANTS::Utils;
 
 sub title { 'Kwalitee' };

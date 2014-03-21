@@ -1,4 +1,4 @@
-package WWW::CPANTS::Parallel::ForkManager;
+package WWW::CPANTS::Util::Parallel::ForkManager;
 
 use strict;
 use warnings;
@@ -69,7 +69,7 @@ __END__
 
 =head1 NAME
 
-WWW::CPANTS::Parallel::ForkManager
+WWW::CPANTS::Util::Parallel::ForkManager
 
 =head1 SYNOPSIS
 
