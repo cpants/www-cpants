@@ -52,7 +52,6 @@
 <div class="col-md-10">
 <h3>Core metrics</h3>
 % if (@core_fails) {
-<h4>Fails</h4>
 <p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">report us</a> if they are false.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
@@ -76,7 +75,6 @@
 <div class="col-md-10">
 <h3>Extra metrics</h3>
 % if (@extra_fails) {
-<h4>Fails</h4>
 <p>These fails affect your total Kwalitee score, but don't affect the one for the Game. Some of them should be fixed by all means. Others are just matters of taste.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
@@ -100,7 +98,6 @@
 <div class="col-md-10">
 <h3>Experimental metrics</h3>
 % if (@exp_fails) {
-<h4>Fails</h4>
 <p>These fails are not serious and don't affect your Kwalitee scores at all.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
