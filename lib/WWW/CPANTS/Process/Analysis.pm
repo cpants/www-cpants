@@ -99,6 +99,7 @@ sub process_queue {
     });
   }
   $pm->wait_all_children;
+  dir('tmp/analyze')->rmtree;
 }
 
 sub _load_extra_packages {
