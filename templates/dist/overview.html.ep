@@ -11,10 +11,16 @@
 
 %= include 'dist/_subnav';
 
+<div class="row">
+<div class="col-md-2 col-md-push-10">
+
 <section>
-<table class="table-bordered table-striped table-condensed">
-<tr><th>Author/Maintainer</th><td><a href="/author/<%= lc $dist->{author} %>"><%= $dist->{author} %></a></td></tr>
-<tr><th>Version</th><td>
+<h2></h2>
+<dl>
+<dt>Author/Maintainer</dt>
+<dd><a href="/author/<%= lc $dist->{author} %>"><%= $dist->{author} %></a></dd>
+<dt>Version</dt>
+<dd>
 <div class="dropdown"><%= $dist->{version} %><%= $dist->{is_latest} ?  " (latest)" : "" %>
 <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
 % if (@recent) {
@@ -29,11 +35,14 @@
 <ul>
 % }
 </div>
-</td></tr>
-<tr><th>Release Date</th><td><%= WWW::CPANTS::Utils::date($dist->{released}) %></td></tr>
-<tr><th>Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %></td></tr>
-<tr><th>Core Kwalitee</th><td><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></td></tr>
-<tr><th>External Links</th><td>
+</dd>
+<dt>Release Date</dt>
+<dd><%= WWW::CPANTS::Utils::date($dist->{released}) %></dd>
+<dt>Kwalitee</dt>
+<dd><%= WWW::CPANTS::Utils::decimal($dist->{kwalitee}) %></dd>
+<dt>Core Kwalitee</dt>
+<dd><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></dd>
+<dt>External Resources</dt>
 <ul class="list-unstyled">
 <li><a href="http://metacpan.org/release/<%= $dist->{author} %>/<%= $distv %>">metacpan.org</a></li>
 <li><a href="http://search.cpan.org/dist/<%= $distname %>">search.cpan.org</a></li>
@@ -41,15 +50,17 @@
 <li><a href="http://www.cpantesters.org/distro/<%= substr($distname, 0, 1) %>/<%= $distname %>.html">www.cpantesters.org</a>
 <li><a href="http://cpanratings.perl.org/dist/<%= $distname %>">cpanratings.perl.org</a></li>
 </ul>
-</td></tr>
-</table>
+</dd>
+</dl>
 </section>
+
+</div>
+<div class="col-md-10 col-md-pull-2">
 
 <section>
 % if (@core_fails or @extra_fails or @exp_fails) {
 <h2>Kwalitee Fails</h2>
 
-<div class="col-md-10">
 <h3>Core metrics</h3>
 % if (@core_fails) {
 <p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">report us</a> if they are false.</p>
@@ -70,9 +81,7 @@
 % } else {
 <p>Excellent. This distribution passes all the core metrics.</p>
 % }
-</div>
 
-<div class="col-md-10">
 <h3>Extra metrics</h3>
 % if (@extra_fails) {
 <p>These fails affect your total Kwalitee score, but don't affect the one for the Game. Some of them should be fixed by all means. Others are just matters of taste.</p>
@@ -93,9 +102,7 @@
 % } else {
 <p>Excellent. Your distribution passes all the extra metrics.</p>
 % }
-</div>
 
-<div class="col-md-10">
 <h3>Experimental metrics</h3>
 % if (@exp_fails) {
 <p>These fails are not serious and don't affect your Kwalitee scores at all.</p>
@@ -116,22 +123,20 @@
 % } else {
 <p>Excellent. Your distribution passes all the experimental metrics.</p>
 % }
-</div>
 </section>
 % }
 
 <section>
-<div class="row">
-<div class="col-md-11">
 <h2>History</h2>
 <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-</div>
-</div>
 </section>
+
+</div>
+</div>
+
 <script>
 $(function(){
   var chart = cpants.init_linechart('chart');
   cpants.load_chart(chart, '/api/chart/dist/<%= $dist->{dist} %>');
 });
 </script>
-</section>
