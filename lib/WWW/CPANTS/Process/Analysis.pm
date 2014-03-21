@@ -40,6 +40,7 @@ sub process_queue {
   my @extra_packages = $self->_load_extra_packages;
 
   my $checker = db_r('Queue');
+  my $first_id = $checker->fetch_first_id or return;
   while(1) {
     last unless $checker->fetch_first_id;
     $pm->run(sub {
@@ -63,6 +64,8 @@ sub process_queue {
           next unless $args{force} || $self->{force};
         }
         $self->log(debug => "processing $path");
+        my $processed = $id - $first_id;
+        $self->log(info => "processing ${processed}th") if $processed && $processed % 1000 == 0;
         my $start = time;
         my $analyze = WWW::CPANTS::Analyze->new(
           no_capture => !$capture,
