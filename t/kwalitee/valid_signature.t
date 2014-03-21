@@ -3,6 +3,11 @@ use warnings;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Analyze;
 
+eval {
+  require Socket;
+  Socket::inet_aton('pool.sks-keyservers.net')
+} or plan skip_all => "This test requires network";
+
 my @tests = (
   ['HUGUEI/Net-Stomp-Receipt-0.36.tar.gz', 0], # 3686
   ['CRAIHA/Geo-Coordinates-Parser-0.01.tar.gz', 0], # 4009
