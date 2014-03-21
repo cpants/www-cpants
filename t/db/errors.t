@@ -8,17 +8,17 @@ use WWW::CPANTS::DB;
 
   for (0..1) { # repetition doesn't break things?
     $db->set_test_data(
-      cols => [qw/distv category error/],
+      cols => [qw/analysis_id distv category error/],
       rows => [
-        [qw/DistA-0.01 category1 errorA/],
-        [qw/DistA-0.01 category2 errorB/],
-        [qw/DistB-0.01 category1 errorC/],
-        [qw/DistB-0.02 category2 errorD/],
+        [qw/1 DistA-0.01 category1 errorA/],
+        [qw/1 DistA-0.01 category2 errorB/],
+        [qw/2 DistB-0.01 category1 errorC/],
+        [qw/3 DistB-0.02 category2 errorD/],
       ],
     );
 
     no_scan_table {
-      my $errors = $db->fetch_distv_errors('DistA-0.01');
+      my $errors = $db->fetch_distv_errors(1); # DistA-0.01
       eq_or_diff $errors => [
         {category => 'category1', error => 'errorA'},
         {category => 'category2', error => 'errorB'},
@@ -26,7 +26,7 @@ use WWW::CPANTS::DB;
     };
 
     no_scan_table {
-      my $errors = $db->fetch_distv_errors('DistB-0.01');
+      my $errors = $db->fetch_distv_errors(2); # DistB-0.01
       eq_or_diff $errors => [
         {category => 'category1', error => 'errorC'},
       ], "DistB-0.01 errors";
@@ -45,6 +45,7 @@ use WWW::CPANTS::DB;
     $db->mark(qw/category1/);
 
     $db->bulk_insert({
+      analysis_id => 2,
       distv => 'DistB-0.01',
       category => 'category1',
       error => 'errorC',

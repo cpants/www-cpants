@@ -16,6 +16,7 @@ sub update {
 
   my $errors = $data->{error} || {};
   $self->{db}->bulk_insert({
+    analysis_id => $data->{id},
     distv => $data->{vname},
     category => $_,
     error => ref $errors->{$_} ? encode_json($errors->{$_}) : $errors->{$_},

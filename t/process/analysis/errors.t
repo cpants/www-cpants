@@ -5,6 +5,7 @@ use WWW::CPANTS::Process::Analysis::Errors;
 
 my @data = (
   {
+    id => 1,
     vname => 'DistA-0.01',
     error => {
       scalar => 'ScalarError',
@@ -12,6 +13,7 @@ my @data = (
     },
   },
   {
+    id => 2,
     vname => 'DistA-0.02',
     error => {
       scalar => 'ScalarError2',

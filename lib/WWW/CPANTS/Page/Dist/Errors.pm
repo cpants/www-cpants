@@ -12,7 +12,7 @@ sub load_data {
   my $dist = db_r('Kwalitee')->fetch_distv($name);
   return unless $dist && $dist->{distv};
 
-  my $errors = db_r('Errors')->fetch_distv_errors($dist->{distv});
+  my $errors = db_r('Errors')->fetch_distv_errors($dist->{analysis_id});
 
   my %data = (
     dist => $dist,

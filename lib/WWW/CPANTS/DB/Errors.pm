@@ -5,6 +5,7 @@ use warnings;
 use base 'WWW::CPANTS::DB::Base';
 
 sub _columns {(
+  [analysis_id => 'integer not null', {bulk_key => 1}],
   [distv => 'text', {bulk_key => 1}],
   [category => 'text', {bulk_key => 1}],
   [error => 'text'],
@@ -12,7 +13,7 @@ sub _columns {(
 )}
 
 sub _indices {(
-  unique => ['distv', 'category'],
+  unique => ['analysis_id', 'category'],
 )}
 
 # - Process::Kwalitee::PrereqMatchesUse -
@@ -44,8 +45,8 @@ sub unmark {
 # - currently for testing only -
 
 sub fetch_distv_errors {
-  my ($self, $distv) = @_;
-  $self->fetchall('select category, error from errors where distv = ?', $distv);
+  my ($self, $analysis_id) = @_;
+  $self->fetchall('select category, error from errors where analysis_id = ?', $analysis_id);
 }
 
 sub fetch_category_errors {

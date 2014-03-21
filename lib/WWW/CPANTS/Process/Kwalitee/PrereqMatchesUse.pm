@@ -53,6 +53,7 @@ sub _update {
   my $used_db = db_r('UsedModules');
 
   for my $row (@$rows) {
+    my $analysis_id = $row->{analysis_id};
     my $distv = $row->{distv};
     my $used = $used_db->fetch_used_modules_of($distv);
     my @not_core = grep { $_->{module_dist} && $_->{module_dist} ne 'perl' && !is_core($_->{module}) } @$used;
@@ -84,12 +85,14 @@ sub _update {
     }
 
     $errors_db->bulk_insert({
+      analysis_id => $analysis_id,
       distv => $distv,
       category => 'missing_prereqs',
       error => $missing_prereqs,
     }) if $missing_prereqs;
 
     $errors_db->bulk_insert({
+      analysis_id => $analysis_id,
       distv => $distv,
       category => 'missing_build_prereqs',
       error => $missing_build_prereqs,
