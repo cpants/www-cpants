@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Analyze;
-use WWW::CPANTS::JSON;
+use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Log;
-use WWW::CPANTS::Parallel;
+use WWW::CPANTS::Util::Parallel;
 use WWW::CPANTS::Utils;
 use Path::Extended;
 use Module::Find;
@@ -33,7 +33,7 @@ sub process_queue {
 
   $timeout = 0 if $timeout < 0;
 
-  my $pm = WWW::CPANTS::Parallel->new(
+  my $pm = WWW::CPANTS::Util::Parallel->new(
     max_workers => $args{workers} || $self->{workers},
   );
 
