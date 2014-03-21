@@ -14,6 +14,9 @@ my @tests = (
   ['FIBO/Task-Viral-20130508.tar.gz', 0], # 8128
   ['JSOBRIER/WebService-Browshot-1.11.0.tar.gz', 0], # 9434
   ['SALVA/Class-StateMachine-0.23.tar.gz', 0], # 9859
+
+  # broken pod for testing should not be counted
+  ['RJBS/Pod-Elemental-0.103000.tar.gz', 1],
 );
 
 my $mirror = setup_mirror(map {$_->[0]} @tests);
