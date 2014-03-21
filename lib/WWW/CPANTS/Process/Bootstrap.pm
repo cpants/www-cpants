@@ -201,10 +201,10 @@ sub tweak_less_files {
       ".pause-$author { .alert-info { color:" => "\@theme-color-dark-$author",
       ".pause-$author { .alert-info { background-color:" => "\@theme-color-lightest-$author",
       ".pause-$author { .alert-info { border-color:" => "\@theme-color-light-$author",
-      ".pause-$author { .navbar-default { background-color:" => "\@theme-color-light-$author",
-      ".pause-$author { .navbar-default { border-color:" => "\@theme-color-light-$author",
-      ".pause-$author { .navbar-default { a:hover,a:active { color:" => "\@theme-color-dark-$author",
-      ".pause-$author { .navbar-default .navbar-nav { li { a:hover,a:active { color:" => "\@theme-color-dark-$author",
+      ".pause-$author { .navbar-default { background-color:" => "\@theme-color-$author",
+      ".pause-$author { .navbar-default { border-color:" => "\@theme-color-dark-$author",
+      ".pause-$author { .navbar-default { a:hover,a:active { color:" => "\@theme-color-darkest-$author",
+      ".pause-$author { .navbar-default .navbar-nav { li { a:hover,a:active { color:" => "\@theme-color-darkest-$author",
     ]);
   }
 
