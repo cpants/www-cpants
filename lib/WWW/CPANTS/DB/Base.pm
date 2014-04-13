@@ -208,7 +208,7 @@ sub _prepare_bulk_insert {
   my $dbh = $self->dbh;
   $dbh->do("pragma synchronous = off");
 
-  my (@keys, @cols, @key_types, @col_types);
+  my (@keys, @cols, @key_types, @col_types, @key_defaults, @col_defaults);
   for ($self->_columns) {
     if ($_->[2] && $_->[2]{bulk_key}) {
       push @keys, $_->[0];
@@ -216,6 +216,7 @@ sub _prepare_bulk_insert {
         $_->[1] =~ /integer/ ? SQL_INTEGER :
         $_->[1] =~ /float/ ? SQL_FLOAT :
         SQL_VARCHAR;
+      push @key_defaults, $_->[1] =~ /default (\S+)/ ? $1 : undef;
     }
     elsif (!$_->[2] or !$_->[2]{no_bulk}) {
       push @cols, $_->[0];
@@ -223,6 +224,7 @@ sub _prepare_bulk_insert {
         $_->[1] =~ /integer/ ? SQL_INTEGER :
         $_->[1] =~ /float/ ? SQL_FLOAT :
         SQL_VARCHAR;
+      push @col_defaults, $_->[1] =~ /default (\S+)/ ? $1 : undef;
     }
   }
   my $table = $self->table;
@@ -246,6 +248,7 @@ sub _prepare_bulk_insert {
   $self->{_bulk_insert_sths} = \@sths;
   $self->{_bulk_insert_cols} = [@cols, @keys];
   $self->{_bulk_insert_types} = [@col_types, @key_types];
+  $self->{_bulk_insert_defaults} = [@col_defaults, @key_defaults];
 }
 
 sub bulk_insert {
@@ -267,8 +270,9 @@ sub bulk_insert {
         for my $row (@$rows) {
           my $sth = $self->{_bulk_insert_sths}[0];
           my $types = $self->{_bulk_insert_types};
+          my $defaults = $self->{_bulk_insert_defaults};
           for my $i (0 .. @$row-1) {
-            $sth->bind_param($i + 1, $row->[$i], {TYPE => $types->[$i]});
+            $sth->bind_param($i + 1, $row->[$i] //= $defaults->[$i], {TYPE => $types->[$i]});
           }
           my $ret = $sth->execute;
           if ((!$ret or $ret eq '0E0') and $self->{_bulk_insert_sths}[1]) {
@@ -312,8 +316,9 @@ sub finalize_bulk_insert {
         for my $row (@{$self->{_bulk_insert_rows}}) {
           my $sth = $self->{_bulk_insert_sths}[0];
           my $types = $self->{_bulk_insert_types};
+          my $defaults = $self->{_bulk_insert_defaults};
           for my $i (0 .. @$row-1) {
-            $sth->bind_param($i + 1, $row->[$i], {TYPE => $types->[$i]});
+            $sth->bind_param($i + 1, $row->[$i] //= $defaults->[$i], {TYPE => $types->[$i]});
           }
           my $ret = $sth->execute;
           if ((!$ret or $ret eq '0E0') and $self->{_bulk_insert_sths}[1]) {
@@ -345,6 +350,7 @@ sub finalize_bulk_insert {
   delete $self->{_bulk_insert_rows};
   delete $self->{_bulk_insert_sths};
   delete $self->{_bulk_insert_types};
+  delete $self->{_bulk_insert_defaults};
 
   $dbh->do("pragma synchronous = on");
 }
