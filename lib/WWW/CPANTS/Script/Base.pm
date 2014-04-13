@@ -27,11 +27,9 @@ sub run {
   my $self = shift;
 
   my ($class) = lc(ref $self || $self) =~ /::([^:]+)$/;
-  my $pidfile = $self->{_pidfile} = file("tmp/pids/$class.pid");
-  die "another process is running\n" if $pidfile->exists;
-  $pidfile->save($$, {mkdir => 1});
+  my $pidfile = $self->{_pidfile} = WWW::CPANTS::Script::Base::Pid->new($class) or die "another process is running\n";
 
-  local $SIG{INT} = sub { warn "Terminating on SIGINT"; $self->_remove_pidfile; exit };
+  local $SIG{INT} = sub { warn "Terminating on SIGINT"; undef $pidfile; exit };
 
   $self->{cpan}    ||= WWW::CPANTS::Config->cpan;
   $self->{backpan} ||= WWW::CPANTS::Config->backpan;
@@ -84,15 +82,28 @@ sub run {
   if ($notice) {
     $notice->remove;
   }
-
-  $self->_remove_pidfile;
 }
 
 sub _run { die "not implemented\n" }
 
-sub _remove_pidfile {
+package WWW::CPANTS::Script::Base::Pid;
+use WWW::CPANTS::AppRoot;
+
+sub new {
+  my ($class, $id) = @_;
+
+  my $pidfile = file("tmp/pids/$id.pid");
+
+  return if $pidfile->exists;
+
+  $pidfile->save($$, {mkdir => 1});
+
+  bless { file => $pidfile }, $class;
+}
+
+sub DESTROY {
   my $self = shift;
-  my $pidfile = $self->{_pidfile} or return;
+  my $pidfile = $self->{file} or return;
   return unless $pidfile->exists;
   my $pid = $pidfile->slurp;
   $pidfile->remove if $pid && $pid eq $$;
