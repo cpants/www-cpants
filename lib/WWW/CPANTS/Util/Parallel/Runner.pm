@@ -29,6 +29,7 @@ sub new {
         if ($runner->pid eq $$) {
           warn localtime." $$: signalling workers\n";
           $runner->killall($sig);
+          $runner->finish;
         }
         exit;
       };
