@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Log;
-use Furl;
+use HTTP::Tiny;
 use Archive::Zip;
 use CSS::LESS::Filter;
 use String::CamelCase qw/decamelize/;
@@ -37,10 +37,10 @@ sub fetch_bootstrap_master {
   if (!$zipball->exists or $self->{force}) {
     $self->log(info => "downloading bootstrap-master");
     my $url = "https://github.com/twbs/bootstrap/archive/master.zip";
-    my $furl = Furl->new;
-    my $res = $furl->get($url);
-    die $res->status_line unless $res->is_success;
-    $zipball->save($res->content, binmode => 1);
+    my $ua = HTTP::Tiny->new;
+    my $res = $ua->get($url);
+    die "$res->{status} $res->{reason}" unless $res->{success};
+    $zipball->save($res->{content}, binmode => 1);
   }
 
   my $zip = Archive::Zip->new("$zipball") or die "Can't read $zipball";
