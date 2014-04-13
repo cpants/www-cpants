@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use WWW::CPANTS::Log;
 use WWW::CPANTS::DB;
-use WWW::CPANTS::Util::Parallel;
 
 sub new {
   my ($class, %args) = @_;
@@ -22,20 +21,13 @@ sub update {
   my $dists = $prereq_db->fetch_all_prereq_dists;
   $self->log(debug => 'Processing '.(scalar @$dists).' dists');
 
-  my $pm = WWW::CPANTS::Util::Parallel->new(
-    max_workers => $self->{workers},
-  );
-
   $deps_db->mark;
   my $ct = 0;
   while (my @d = splice @$dists, 0, 1000) {
     $ct += @d;
     $self->log(debug => "processing $ct dists");
-    $pm->run(sub {
-      $self->_update(\@d);
-    });
+    $self->_update(\@d);
   }
-  $pm->wait_all_children;
   $deps_db->unmark;
 }
 
