@@ -415,7 +415,7 @@ builder {
   }
   enable "AxsLog",
     combined => 1,
-    reponse_time => 1,
+    response_time => 1,
     long_response_time => 1000000,
     logger => sub { WWW::CPANTS::Log->log(alert => @_) };
   app->start;
