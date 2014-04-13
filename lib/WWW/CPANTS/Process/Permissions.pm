@@ -11,25 +11,18 @@ sub new {
 }
 
 sub update {
-  my $self = shift;
-  my $cpan = $self->{cpan} or die "requires CPAN mirror";
+  my ($self, %args) = @_;
+  my $cpan = $args{cpan} || $self->{cpan} or die "requires CPAN mirror";
   my $file = Path::Extended::Dir->new($cpan)->file("modules/06perms.txt");
   unless ($file->exists) {
     $self->log(debug => "downloading 06perms.txt.gz");
     my $gzfile = Path::Extended::File->new($file.".gz");
-    require Furl::HTTP;
-    my $ua = Furl::HTTP->new;
-    $gzfile->openw;
-    $gzfile->binmode;
-    my (undef, $code, $msg) = $ua->request(
-      url => "http://www.cpan.org/modules/06perms.txt.gz",
-      write_file => $gzfile->_handle,
-    );
-    $gzfile->close;
-    if ($code =~ /^2/ and $gzfile->size) {
+    require HTTP::Tiny;
+    my $ua = HTTP::Tiny->new;
+    my $res = $ua->mirror("http://cpan.cpanauthors.org/modules/06perms.txt.gz", "$gzfile");
+    if ($res->{success}) {
       require IO::Uncompress::Gunzip;
       IO::Uncompress::Gunzip::gunzip("$gzfile" => "$file") or die "gunzip failed: $IO::Uncompress::Gunzip::GunzipError";
-      $gzfile->unlink;
       $self->log(debug => "gunzipped 06perms.txt.gz");
     }
   }
