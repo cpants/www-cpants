@@ -63,7 +63,7 @@
 
 <h3>Core metrics</h3>
 % if (@core_fails) {
-<p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">report us</a> if they are false.</p>
+<p>These fails do affect your Kwalitee scores. This distribution may not be installed cleanly, or may have some issues in license or documentation. Please consider fixing them, or <a href="https://github.com/cpants/www-cpants/issues">tell us</a> if they are false.</p>
 <table class="tablesorter table-condensed table-bordered table-striped">
 <thead>
 <tr><th class="col-md-2">metric</th><th>remedy</th></tr>
