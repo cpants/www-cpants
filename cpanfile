@@ -23,7 +23,7 @@ requires 'JSON::XS' => 0;
 requires 'List::MoreUtils' => 0;
 requires 'List::Util' => 0;
 requires 'Log::Handler' => 0;
-requires 'Module::CoreList' => '3.00'; # CHECK: should always use the latest
+requires 'Module::CoreList' => '3.09'; # CHECK: should always use the latest
 requires 'Module::Find' => 0;
 requires 'Mojolicious' => '4.63';
 requires 'Parallel::Runner' => 0;  # seems working well
@@ -109,5 +109,5 @@ requires 'File::chdir' => 0;
 requires 'Module::Signature' => '0.70'; # CHECK: less warnings
 
 ### Version
-requires 'Parse::LocalDistribution' => '0.07'; # CHECK
-requires 'Parse::PMFile' => '0.15'; # CHECK
+requires 'Parse::LocalDistribution' => '0.09'; # CHECK
+requires 'Parse::PMFile' => '0.16'; # CHECK
