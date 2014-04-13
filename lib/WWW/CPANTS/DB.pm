@@ -32,6 +32,7 @@ sub db_r {
 sub load_all {
   for my $package (usesub 'WWW::CPANTS::DB') {
     my ($name) = $package =~ /::(\w+)$/;
+    next if $name eq 'Base';
     $loaded{$name} = $package;
   }
 }
