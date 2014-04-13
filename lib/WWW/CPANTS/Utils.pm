@@ -66,7 +66,7 @@ sub link_to_package {
   if ($package =~ /::SiteKwalitee::/) {
     return "$base_url/Module-CPANTS-SiteKwalitee/blob/master/lib/Module/CPANTS/SiteKwalitee/$basename.pm";
   } elsif ($package =~ /::Kwalitee::/) {
-    return "$base_url/Module-CPANTS-Kwalitee/blob/master/lib/Module/CPANTS/Kwalitee/$basename.pm";
+    return "$base_url/Module-CPANTS-Analyse/blob/master/lib/Module/CPANTS/Kwalitee/$basename.pm";
   }
   return "#";
 }
