@@ -32,6 +32,16 @@ sub update {
 sub _update_authors {
   my ($self, $worepan) = @_;
 
+  if (!$worepan->whois->exists) {
+    $self->log(debug => "downloading whois");
+    require HTTP::Tiny;
+    my $ua = HTTP::Tiny->new;
+    my $res = $ua->mirror("http://cpan.cpanauthors.org/authors/00whois.xml", $worepan->whois."");
+    unless ($res->{success}) {
+      die "$res->{status} $res->{reason}";
+    }
+  }
+
   my $db = WWW::CPANTS::DB::Authors->new;
   $db->mark;
   my $ct = 0;
