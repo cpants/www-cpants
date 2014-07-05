@@ -22,6 +22,7 @@
 <li><a href="http://metacpan.org/author/<%= uc $id %>">metacpan.org</a>
 <li><a href="http://search.cpan.org/~<%= lc $id %>">search.cpan.org</a>
 <li><a href="http://www.cpantesters.org/author/<%= uc substr($id, 0, 1) %>/<%= uc $id %>.html">www.cpantesters.org</a></li>
+<li><a href="http://cpanold.chorny.net/?a=<%= uc $id %>">cpanold.chorny.net</a></li>
 <ul>
 </td></tr>
 </table>
