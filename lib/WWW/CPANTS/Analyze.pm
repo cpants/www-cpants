@@ -120,27 +120,30 @@ sub calc_kwalitee {
   $context->set(kwalitee => {});
   my $kwalitee = 0;
   my $total_kwalitee = 0;
-  my @aggregators;
-  for my $module (@{ $self->{kwalitee}->generators }) {
-    for my $indicator (@{ $module->kwalitee_indicators }) {
-      next if $indicator->{needs_db};
-      next if $indicator->{is_disabled};
-      if ($indicator->{aggregating}) {
-        push @aggregators, $indicator;
-        next;
+  my %x_ignore = %{ $context->x_opts->{ignore} || {} };
+  for my $indicator (@{ $self->{kwalitee}->get_indicators }) {
+    next if $indicator->{needs_db};
+    next if $indicator->{is_disabled};
+    my $ret;
+    {
+      my @warnings;
+      local $SIG{__WARN__} = sub { push @warnings, @_ };
+      $ret = $indicator->{code}($context->stash, $indicator);
+      if (@warnings) {
+        $context->set_error(cpants_warnings => $indicator->{name}.": ".join '', @warnings);
       }
-      my $ret = $indicator->{code}($context->stash, $indicator);
-      $ret = $ret > 0 ? 1 : 0;  # normalize
-      $context->set_kwalitee($indicator->{name} => $ret);
-      next if $indicator->{is_experimental};
-      $kwalitee += $ret;
-      $total_kwalitee++;
     }
-  }
-  for my $indicator (@aggregators) {
-    my $ret = $indicator->{code}($context->stash, $indicator);
     $ret = $ret > 0 ? 1 : 0;  # normalize
-    $context->set_kwalitee($indicator->{name} => $ret);
+
+    my $name = $indicator->{name};
+    if ($x_ignore{$name} && $indicator->{ignorable}) {
+      $ret = 1;
+      if (my $error = $context->stash->{error}{$name}) {
+        $context->set_error($name => "$error [ignored]");
+      }
+    }
+
+    $context->set_kwalitee($name => $ret);
     next if $indicator->{is_experimental};
     $kwalitee += $ret;
     $total_kwalitee++;
