@@ -68,7 +68,7 @@ on 'test' => sub {
 
 # For Kwalitee (Module::CPANTS::Analyse deps)
 requires 'Archive::Any::Lite' => '0.04'; # CHECK
-requires 'Archive::Tar' => '1.48'; # CHECK
+requires 'Archive::Tar' => '1.98'; # CHECK # for PAX headers
 requires 'Archive::Zip' => 0; # CHECK
 requires 'Class::Accessor' => '0.19';
 requires 'IO::Capture' => '0.05';

@@ -123,20 +123,10 @@ sub extract {
   my $tmpfile = $self->tmpfile or return;
   my $tmpdir  = $self->tmpdir;
 
-  $self->set(no_pax_headers => 1);
-  if ($tmpfile =~ /\.(?:tar\.gz|tgz)$/ && -r $tmpfile) {
-    if (my $fh = IO::Zlib->new($tmpfile->path, 'rb')) {
-      my $buf;
-      $fh->read($buf, 1024);
-      if ($buf =~ /PaxHeaders/) {
-        $self->set(no_pax_headers => 0);
-      }
-    }
-  }
-
   my $archive;
   my @warnings;
   my @link_errors;
+  my @pax_headers;
   eval {
     local $Archive::Zip::ErrorHandler = sub { die @_ };
     local $SIG{__WARN__} = sub {
@@ -157,8 +147,22 @@ sub extract {
     # here to check buildtool_not_executable.
     local $Archive::Tar::CHMOD = 1;
     $archive = Archive::Any::Lite->new($tmpfile) or die "Can't extract $tmpfile";
-    $archive->extract($tmpdir);
+    $archive->extract($tmpdir, {tar_filter_cb => sub {
+      my $entry = shift;
+      if ($entry->name eq Archive::Tar::Constant::PAX_HEADER() or $entry->type eq 'x' or $entry->type eq 'g') {
+        push @pax_headers, $entry->name;
+        return;
+      }
+      return 1;
+    }});
   };
+  if (@pax_headers) {
+    $self->set(no_pax_headers => 0);
+    $self->set_error(no_pax_headers => join ',', @pax_headers);
+  } else {
+    $self->set(no_pax_headers => 1);
+  }
+
   if (my $error = $@) {
     $self->set(extractable => 0);
     $self->set_error(extractable => $error);
