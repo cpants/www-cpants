@@ -44,7 +44,7 @@ sub save_metrics {
     my $i = $_;
     +{
       map { $_ => $i->{$_} }
-      qw/name error remedy is_extra is_experimental is_disabled defined_in ignorable/
+      qw/name error remedy is_extra is_experimental is_disabled defined_in ignorable needs_db/
     }
   } $kwalitee->get_indicators;
   $METRICS = \@indicators;
