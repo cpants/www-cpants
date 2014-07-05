@@ -246,6 +246,25 @@ sub opts { shift->{args} }
 sub capture_stdout { shift->{capture}{out} }
 sub capture_stderr { shift->{capture}{err} }
 
+sub x_opts {
+  my $self = shift;
+  unless ($self->{_x_opts}) {
+    my %opts;
+    if (my $x_cpants = $self->stash->{meta_yml}{x_cpants}) {
+      if (my $ignore = $x_cpants->{ignore}) {
+        if (ref $ignore eq ref {}) {
+          $opts{ignore} = $ignore;
+        }
+        else {
+          $self->set_error(x_cpants => "x_cpants ignore should be a hash reference (key: metric, value: reason to ignore)");
+        }
+      }
+    }
+    $self->{_x_opts} = \%opts;
+  }
+  $self->{_x_opts};
+}
+
 sub DESTROY {
   my $self = shift;
   $self->stop_capturing;
@@ -287,6 +306,7 @@ WWW::CPANTS::Analyze::Context
 =head2 capture_stderr
 =head2 mck
 =head2 opts
+=head2 x_opts
 =head2 tarball
 =head2 testdir
 =head2 testfile
