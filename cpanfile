@@ -96,7 +96,7 @@ requires 'CPAN::Meta::YAML' => 0; # CHECK
 requires 'CPAN::Meta::Validator' => '2.133380'; # CHECK
 
 ### Uses
-requires 'Module::ExtractUse' => '0.31'; # CHECK: used_in_eval
+requires 'Module::ExtractUse' => '0.33'; # CHECK: no support
 requires 'Set::Scalar' => 0;
 
 ### SiteKwalitee

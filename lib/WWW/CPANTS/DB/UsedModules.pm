@@ -9,12 +9,11 @@ sub _columns {(
   [distv => 'text', {bulk_key => 1}],
   [module => 'text', {bulk_key => 1}],
   [module_dist => 'text'],
-  [in_code => 'integer default 0'],
-  [in_tests => 'integer default 0'],
-  [in_config => 'integer default 0'],
-  [evals_in_code => 'integer default 0'],
-  [evals_in_tests => 'integer default 0'],
-  [evals_in_config => 'integer default 0'],
+  (map { [$_ => 'integer default 0'] }
+   map { ($_.'_in_code', $_.'_in_tests', $_.'_in_config') }
+   map { ($_, $_.'_in_eval') }
+   qw/used required noed/
+  ),
 )}
 
 sub _indices {(
@@ -28,7 +27,7 @@ sub _indices {(
 
 sub fetch_used_modules_of {
   my ($self, $distv) = @_;
-  $self->fetchall('select module, module_dist, in_code, in_tests, evals_in_code, evals_in_tests from used_modules where distv = ?', $distv);
+  $self->fetchall('select * from used_modules where distv = ?', $distv);
 }
 
 # - Process::Kwalitee::UsedModuleDist -
