@@ -94,6 +94,7 @@ sub analyze {
   # remove redundant information that can be easily generated.
   delete $context->stash->{$_} for qw/
     dirs_list files_list ignored_files_list
+    files dirs test_files ignored_files_array
   /;
 
   # make sure the dist has some perl stuff
