@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('easily_repackageable_by_fedora',
   ['CHENGANG/Log-Lite-0.05.tar.gz', 0], # 2739
   ['ANANSI/Anansi-Library-0.02.tar.gz', 0], # 3365
   ['HITHIM/Socket-Mmsg-0.02.tar.gz', 0], # 3946
@@ -15,22 +14,5 @@ my @tests = (
   ['IAMCAL/Flickr-API-1.06.tar.gz', 0], # 5172
   ['SMUELLER/Math-Symbolic-Custom-CCompiler-1.03.tar.gz', 0], # 5244
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('easily_repackageable_by_fedora');
-  my $result = $metric->{code}->($context->stash, $metric);
-  is $result => $test->[1], $tarball->basename . " easily_repackageable_by_fedora: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

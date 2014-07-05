@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
 my @tests = (
   ['DGL/Acme-mA-1337.1.tar.gz', 0], # 3411
@@ -20,21 +19,6 @@ push @tests, (
   ['PERFSONAR/perfSONAR_PS-Client-LS-Remote-0.09.tar.gz', 0], # 8232
 ) unless $^O eq 'MSWin32';
 
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('portable_filenames');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " portable_filenames: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
+test_kwalitee('portable_filenames', @tests);
 
 done_testing;

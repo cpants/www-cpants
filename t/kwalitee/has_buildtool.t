@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('has_buildtool',
   ['LAWSONK/Gtk2-Ex-MPlayerEmbed-0.03.tar.gz', 0], # 465
   ['HEDWIG/Template-Plugin-Duration-0.01.tar.gz', 0], # 474
   ['WEBY/Mojolicious-Plugin-Mobi-0.02.tar.gz', 0], # 474
@@ -15,22 +14,5 @@ my @tests = (
   ['ABCABC/CFTP_01.tar.gz', 0], # 897
   ['DAMBAR/Catalyst-Plugin-Imager-0.01.tar.gz', 0], # 1026
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('has_buildtool');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " has_buildtool: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

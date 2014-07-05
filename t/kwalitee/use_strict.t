@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('use_strict',
   ['TOBYINK/Platform-Windows-0.002.tar.gz', 0], # 2206
   ['TOBYINK/Platform-Unix-0.002.tar.gz', 0], # 2264
   ['SCILLEY/POE/Component/IRC/Plugin/IRCDHelp-0.02.tar.gz', 0], # 3243
@@ -21,23 +20,7 @@ my @tests = (
 
   # no .pm files
   ['RCLAMP/cvn-0.02.tar.gz', 1],
+
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('use_strict');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " use_strict: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

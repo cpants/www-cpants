@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('has_proper_version',
   ['WINTRU/Mica-1.a.0.tar.gz', 0], # 1196
   ['TSUNODA/Sledge-Plugin-SNMP-0.01a.tar.gz', 0], # 1767
   ['TIMA/Bundle-Melody-Test-0.9.6a.tar.gz', 0], # 2042
@@ -15,22 +14,5 @@ my @tests = (
   ['TSKIRVIN/HTML-FormRemove-0.3a.tar.gz', 0], # 3625
   ['SHY/Wifi/Wifi-0.01a.tar.gz', 0], # 3767
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('has_proper_version');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " has_proper_version: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

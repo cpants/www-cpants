@@ -23,7 +23,7 @@ $SIG{__DIE__} = sub { croak(@_) };
 our @EXPORT = (
   @Test::More::EXPORT,
   @Test::Differences::EXPORT,
-  qw/setup_mirror no_scan_table epoch/,
+  qw/setup_mirror no_scan_table epoch test_kwalitee/,
 );
 
 my $worepan;
@@ -85,6 +85,30 @@ sub no_scan_table (&;$) {
 
 sub epoch { Time::Piece->strptime(shift, '%Y-%m-%d')->epoch }
 
+sub test_kwalitee {
+  my ($name, @tests) = @_;
+
+  require WWW::CPANTS::Analyze;
+  my $mirror = setup_mirror(map {$_->[0]} @tests);
+
+  for my $test (@tests) {
+    my $tarball = $mirror->file($test->[0]);
+    my $analyzer = WWW::CPANTS::Analyze->new;
+    my $context = $analyzer->analyze(dist => $tarball);
+
+    my $metric = $analyzer->metric($name);
+    my $result = $metric->{code}->($context->stash, $metric);
+    is $result => $test->[1], $test->[0] . " $name: $result";
+
+note explain $context->stash;
+
+    if (!$result) {
+      my $details = $metric->{details}->($context->stash) || '';
+      ok $details, ref $details ? explain $details : $details;
+    }
+  }
+}
+
 END {
   if (Test::More->builder->is_passing) {
     if ($pid && $pid == $$) {
@@ -111,6 +135,7 @@ WWW::CPANTS::Test
 =head2 setup_mirror
 =head2 no_scan_table
 =head2 epoch
+=head2 test_kwalitee
 
 =head1 AUTHOR
 

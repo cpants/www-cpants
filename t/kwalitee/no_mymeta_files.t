@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('no_mymeta_files',
   ['SZABGAB/File-Open-OOP-0.01.tar.gz', 0], # 2431
   ['JHTHORSEN/The-synthesizer-0.01.tar.gz', 0], # 2514
   ['TENGU/Catalyst-Authentication-Credential-MultiFactor-1.0.tar.gz', 0], # 2577
@@ -15,22 +14,5 @@ my @tests = (
   ['ZZZ/Here-Template-0.2.tar.gz', 0], # 2902
   ['KIMOTO/Mojolicious-Plugin-AutoRoute-0.02.tar.gz', 0], # 2902
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('no_mymeta_files');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " no_mymeta_files: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

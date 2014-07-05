@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('metayml_has_provides',
   ['TOBYINK/Platform-Windows-0.002.tar.gz', 0], # 2206
   ['TOBYINK/Platform-Unix-0.002.tar.gz', 0], # 2264
   ['COOLMEN/Test-More-Color-0.04.tar.gz', 0], # 2963
@@ -15,22 +14,5 @@ my @tests = (
   ['SMUELLER/Math-Symbolic-Custom-CCompiler-1.03.tar.gz', 0], # 5244
   ['LTP/Game-Life-0.05.tar.gz', 0], # 6535
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('metayml_has_provides');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " metayml_has_provides: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

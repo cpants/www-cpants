@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('metayml_is_parsable',
   # No META.yml
   ['UNBIT/Net-uwsgi-1.1.tar.gz', 0], # 2409
   ['ANANSI/Anansi-Singleton-0.02.tar.gz', 0], # 2664
@@ -18,22 +17,5 @@ my @tests = (
   # Stream does not end with newline character
   ['SCILLEY/POE/Component/IRC/Plugin/IRCDHelp-0.02.tar.gz', 0], # 3243
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('metayml_is_parsable');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " metayml_is_parsable: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

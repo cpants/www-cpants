@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('has_tests_in_t_dir',
   ['SEVEAS/Term-Multiplexed-0.1.0.tar.gz', 0], # 1701
   ['UNBIT/Net-uwsgi-1.1.tar.gz', 0], # 2409
   ['NIELSD/Speech-Google-0.5.tar.gz', 0], # 2907
@@ -15,22 +14,5 @@ my @tests = (
   ['ADAMBA/Algorithm-MOS-0.001.tar.gz', 0], # 8570
   ['FIBO/Task-BeLike-FIBO-20130508.tar.gz', 0], # 8922
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('has_tests_in_t_dir');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " has_tests_in_t_dir: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

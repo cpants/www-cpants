@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('no_invalid_versions',
   # string in version
   ['TIMA/Bundle-Melody-Test-0.9.6a.tar.gz', 0], # 2042
   ['JHARDING/Text-Typoifier-0.04a.tar.gz', 0], # 2334
@@ -26,23 +25,5 @@ my @tests = (
   # others
   ['ARTO/CGI-Application-Plugin-Config-IniFiles-0.03.tar.gz', 0], # 3004
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('no_invalid_versions');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " no_invalid_versions: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details;
-    note explain $details;
-  }
-}
 
 done_testing;

@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('has_meta_yml',
   ['UNBIT/Net-uwsgi-1.1.tar.gz', 0], # 2409
   ['ANANSI/Anansi-Singleton-0.02.tar.gz', 0], # 2664
   ['NIELSD/Speech-Google-0.5.tar.gz', 0], # 2907
@@ -15,22 +14,5 @@ my @tests = (
   ['HITHIM/Socket-Mmsg-0.02.tar.gz', 0], # 3946
   ['STEFANOS/Net-SMTP_auth-SSL-0.2.tar.gz', 0], # 4058
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('has_meta_yml');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " has_meta_yml: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;

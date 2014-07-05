@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use WWW::CPANTS::Test;
-use WWW::CPANTS::Analyze;
 
-my @tests = (
+test_kwalitee('package_version_matches_dist_version',
   ['JEROMEMCK/Net-ICQ-On-1.7.tar.gz', 0], # 1005
   ['ARCANEZ/WWW-Mailchimp-0.006_02.tar.gz', 0], # 1007
   ['MEWILCOX/apache.authznetldap.02.tar.gz', 0], # 1051
@@ -17,23 +16,8 @@ my @tests = (
 
   # illegal provides
   ['DJERIUS/Lua-API-0.02.tar.gz', 0],
+
+
 );
-
-my $mirror = setup_mirror(map {$_->[0]} @tests);
-
-for my $test (@tests) {
-  my $tarball = $mirror->file($test->[0]);
-  my $analyzer = WWW::CPANTS::Analyze->new;
-  my $context = $analyzer->analyze(dist => $tarball);
-
-  my $metric = $analyzer->metric('package_version_matches_dist_version');
-  my $result = $metric->{code}->($context->stash);
-  is $result => $test->[1], $tarball->basename . " package_version_matches_dist_version: $result";
-
-  if (!$result) {
-    my $details = $metric->{details}->($context->stash) || '';
-    ok $details, $details;
-  }
-}
 
 done_testing;
