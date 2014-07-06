@@ -83,11 +83,26 @@ sub stash { shift->{stash} }
 sub dump_stash {
   my ($self, $pretty) = @_;
   if ($pretty) {
-    encode_pretty_json($self->{stash});
+    hide_internal(encode_pretty_json($self->{stash}));
   }
   else {
-    encode_json($self->{stash});
+    hide_internal(encode_json($self->{stash}));
   }
+}
+
+sub hide_internal {
+  my $str = shift;
+  my $root = WWW::CPANTS::AppRoot::approot->path;
+  (my $home = $root) =~ s|^(/home/[^/]+)/.+|$1|;
+  no warnings 'uninitialized';
+  $str =~ s!$home/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
+  $str =~ s!$home/.plenv/versions/[^/]+/lib/perl5/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
+  $str =~ s!$home/((?:backpan|cpan)/)!$1!g;
+  $str =~ s!$root/tmp/analyze/[^/]+/[^/]+/!!g;
+  $str =~ s!$root/extlib/[^/]+/!!g;
+  $str =~ s!$root/!!g;
+  $str =~ s!$home/!!g;
+  $str;
 }
 
 sub tmpdir {
@@ -297,6 +312,7 @@ WWW::CPANTS::Analyze::Context
 =head2 set_kwalitee
 =head2 stash
 =head2 stop_capturing
+=head2 hide_internal
 
 =head2 d
 =head2 dist

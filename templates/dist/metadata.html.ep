@@ -1,5 +1,4 @@
 % layout 'layout';
-% require HTML::Entities;
 % my $dist = stash('dist') || {};
 % my $distname = $dist->{dist};
 % my $meta = stash('meta') || {};
@@ -13,7 +12,7 @@
 <p class="section-lead">Analyzed metadata and errors of <%= $distname %>.</p>
 
 <pre>
-<%= WWW::CPANTS::Utils::hide_internal(JSON::XS->new->pretty->canonical->encode($meta)) %>
+<%= JSON::XS->new->pretty->canonical->encode($meta) %>
 </pre>
 
 </section>

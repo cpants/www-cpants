@@ -19,7 +19,7 @@
 </thead>
 <tbody>
 % for my $error (@$errors) {
-<tr><td><%= $error->{category} %></td><td><%= WWW::CPANTS::Utils::hide_internal($error->{error}) %></td></tr>
+<tr><td><%= $error->{category} %></td><td><%= $error->{error} %></td></tr>
 % }
 </tbody>
 </table>

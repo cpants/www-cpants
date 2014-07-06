@@ -80,16 +80,18 @@ sub process_queue {
         }
         next if $context->stash->{has_no_perl_stuff};
 
+        my $json = $context->dump_stash;
         my $analysis_id = $analysis_db->insert_or_update({
           path => $path,
           distv => $context->stash->{vname},
           author => $context->stash->{author},
-          json => hide_internal($context->dump_stash),
+          json => $json,
           duration => time - $start,
         });
-        $context->stash->{id} = $analysis_id;
+        my $stash = decode_json($json);
+        $context->stash->{id} = $stash->{id} = $analysis_id;
 
-        $_->update($context->stash) for @extra_databases;
+        $_->update($stash) for @extra_databases;
 
         $queue->mark_done($id);
       }
@@ -139,7 +141,8 @@ sub recalc_kwalitee {
     my $new_json = $context->dump_stash;
     if ($row->{json} ne $new_json) {
       $db->bulk_update_json($row->{id}, $new_json);
-      $_->update($context->stash) for @databases;
+      my $stash = decode_json($new_json);
+      $_->update($stash) for @databases;
       $updated++;
     }
     $self->log(debug => "processed $ct (updated: $updated)") unless ++$ct % 1000;

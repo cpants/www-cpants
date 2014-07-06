@@ -8,8 +8,7 @@ use WWW::CPANTS::AppRoot;
 
 our @EXPORT = qw/
   date datetime
-  decimal percent
-  kb hide_internal
+  decimal percent kb
   link_to_package
 /;
 
@@ -45,19 +44,6 @@ sub kb {
   return $byte . ' bytes';
 }
 
-sub hide_internal {
-  my $str = shift;
-  my $root = WWW::CPANTS::AppRoot::approot->stringify;
-  (my $home = $root) =~ s|^(/home/[^/]+)/.+|$1|;
-  $str =~ s!$home/perl5/perlbrew/perls/[^/]+/lib/(site_perl/)?5\.\d+\.\d+/!$1lib/!g;
-  $str =~ s!$home/((?:backpan|cpan)/)!$1!g;
-  $str =~ s!$root/tmp/analyze/[^/]+/[^/]+/!!g;
-  $str =~ s!$root/extlib/[^/]+/!!g;
-  $str =~ s!$root/!!g;
-  $str =~ s!$home/!!g;
-  $str;
-}
-
 sub link_to_package {
   my $package = shift;
   my $base_url = "https://github.com/cpants";
@@ -89,7 +75,6 @@ WWW::CPANTS::Utils
 =head2 decimal
 =head2 percent
 =head2 kb
-=head2 hide_internal
 
 =head1 AUTHOR
 
