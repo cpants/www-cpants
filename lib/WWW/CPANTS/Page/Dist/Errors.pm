@@ -11,6 +11,7 @@ sub load_data {
   return unless $dist && $dist->{distv};
 
   my $errors = db_r('Errors')->fetch_distv_errors($dist->{analysis_id});
+  $errors = [grep {$_->{category} ne 'cpants_warnings'} @$errors];
 
   my %data = (
     dist => $dist,
