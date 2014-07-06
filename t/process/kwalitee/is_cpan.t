@@ -77,7 +77,7 @@ WWW::CPANTS::Process::Kwalitee::IsCPAN->new->update;
   ok !$rows[2]{is_cpan}, 'DistA-0.03 is not on the cpan';
 
   ok !$rows[0]{is_latest}, 'DistA-0.01 is not the latest';
-  ok !$rows[1]{is_latest}, 'DistA-0.02 is not the latest';
+  ok $rows[1]{is_latest}, 'DistA-0.02 is the latest (until 0.04 is processed)';
   ok !$rows[2]{is_latest}, 'DistA-0.03 is not the latest';
 }
 

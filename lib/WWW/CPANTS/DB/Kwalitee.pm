@@ -115,7 +115,8 @@ sub mark_latest {
 
 sub mark_implicit_latest {
   my $self = shift;
-  $self->do("update kwalitee set is_latest = 1 where distv in (select distv from kwalitee where is_cpan > 0 group by dist having ifnull(min(is_latest), 0) < 1 and released = max(released))");
+
+  $self->do("update kwalitee set is_latest = 1 where distv in (select distv from kwalitee where is_cpan > 0 group by dist having ifnull(max(is_latest), 0) < 1 and released = max(released))");
 }
 
 sub mark_current_cpan {
