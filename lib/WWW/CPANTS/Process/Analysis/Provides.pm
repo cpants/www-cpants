@@ -15,7 +15,7 @@ sub update {
 
   my %versions = %{$data->{versions} || {}};
   for my $file (keys %versions) {
-    my @packages = keys $versions{$file};
+    my @packages = keys %{$versions{$file} || {}};
     my $primary = _find_primary($file, \@packages);
     for my $package (@packages) {
       my $version = $versions{$file}{$package} // 'undef';
