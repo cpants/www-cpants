@@ -13,11 +13,11 @@ sub new {
 sub update {
   my ($self, $data) = @_;
 
-  return unless $data->{module_install_version};
+  return unless $data->{module_install}{version};
 
   $self->{db}->bulk_insert({
     analysis_id => $data->{id},
-    version => $data->{module_install_version},
+    version => $data->{module_install}{version},
     dist_released => $data->{released_epoch},
   });
 }

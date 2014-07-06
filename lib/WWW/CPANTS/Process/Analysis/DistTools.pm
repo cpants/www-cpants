@@ -40,7 +40,7 @@ sub update {
     released => $data->{released_epoch},
     has_makefile_pl => $data->{file_makefile_pl} ? 1 : 0,
     has_build_pl => $data->{file_build_pl} ? 1 : 0,
-    has_module_install => $data->{module_install_version} ? 1 : 0,
+    has_module_install => $data->{module_install}{version} ? 1 : 0,
     has_dist_ini => $data->{files_hash}{"dist.ini"} ? 1 : 0,
     has_cpanfile => $data->{files_hash}{"cpanfile"} ? 1 : 0,
     has_meta_yml => $data->{file_meta_yml} ? 1 : 0,

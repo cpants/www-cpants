@@ -6,12 +6,12 @@ use WWW::CPANTS::Process::Analysis::ModuleInstall;
 my @data = (
   {
     id => 1,
-    module_install_version => '1.00',
+    module_install => {version => '1.00'},
     released_epoch => epoch('2013-01-01'),
   },
   {
     id => 2,
-    module_install_version => '1.05',
+    module_install => {version => '1.05'},
     released_epoch => epoch('2013-01-01'),
   },
   {
