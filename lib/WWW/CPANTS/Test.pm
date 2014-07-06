@@ -100,8 +100,6 @@ sub test_kwalitee {
     my $result = $metric->{code}->($context->stash, $metric);
     is $result => $test->[1], $test->[0] . " $name: $result";
 
-note explain $context->stash;
-
     if (!$result) {
       my $details = $metric->{details}->($context->stash) || '';
       ok $details, ref $details ? explain $details : $details;
