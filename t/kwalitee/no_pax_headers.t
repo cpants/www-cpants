@@ -13,6 +13,7 @@ test_kwalitee('no_pax_headers',
   ['MARKOV/Net-OAuth2-0.53.tar.gz', 0], # 20529
   ['MARKOV/XML-LibXML-Simple-0.93.tar.gz', 0], # 22821
   ['TBENK/App-nrun-v1.0.0_1.tar.gz', 0], # 27074
+  ['MSCHILLI/libwww-perl-6.06.tar.gz', 0],
 );
 
 done_testing;

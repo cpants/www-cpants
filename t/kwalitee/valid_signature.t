@@ -2,10 +2,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Test;
 
-eval {
-  require Socket;
-  Socket::inet_aton('pool.sks-keyservers.net')
-} or plan skip_all => "This test requires network";
+test_network('pool.sks-keyservers.net');
 
 test_kwalitee('valid_signature',
   ['HUGUEI/Net-Stomp-Receipt-0.36.tar.gz', 0], # 3686

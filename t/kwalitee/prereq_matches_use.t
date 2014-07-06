@@ -26,6 +26,14 @@ my @tests = (
     ['MAKAMAKA/JSON-2.57.tar.gz'],
     ['DOY/Try-Tiny-0.12.tar.gz'],
   ],
+  [
+    ['ETHER/Dist-Zilla-Plugin-Test-CleanNamespaces-0.004.tar.gz', 1],
+    ['RJBS/Dist-Zilla-5.019.tar.gz'],
+    ['ETHER/Moose-2.1209.tar.gz'],
+    ['DAGOLDEN/MooseX-Types-Stringlike-0.003.tar.gz'],
+    ['DAGOLDEN/Path-Tiny-0.054.tar.gz'],
+    ['ETHER/namespace-autoclean-0.19.tar.gz'],
+  ],
 );
 
 for my $test (@tests) {
