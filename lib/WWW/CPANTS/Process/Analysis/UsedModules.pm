@@ -14,18 +14,30 @@ sub update {
   my ($self, $data) = @_;
 
   my $uses = $data->{uses} || {};
+  my %modules;
   for my $key (keys %$uses) {
-    next if !$key; # ignore evaled stuff
-    next if $key =~ /^v?5/; # ignore perl
-    next if $key =~ /[^A-Za-z0-9_:]/; # not a valid package
+    for my $mod (keys %{$uses->{$key}}) {
+      $modules{$mod}{$key} += $uses->{$key}{$mod};
+    }
+  }
+
+  for my $module (keys %modules) {
+    next if !$module; # ignore evaled stuff
+    next if $module =~ /^v?5/; # ignore perl
+    next if $module =~ /[^A-Za-z0-9_:]/; # not a valid package
+
     $self->{db}->bulk_insert({
       dist     => $data->{dist},
       distv    => $data->{vname},
-      module   => $key,
-      in_code  => $uses->{$key}{in_code} || 0,
-      in_tests => $uses->{$key}{in_tests} || 0,
-      evals_in_code  => $uses->{$key}{evals_in_code} || 0,
-      evals_in_tests => $uses->{$key}{evals_in_tests} || 0,
+      module   => $module,
+      (map {$_ => $modules{$module}{$_}} qw/
+        used_in_code used_in_tests used_in_config
+        used_in_eval_in_code used_in_eval_in_tests used_in_eval_in_config
+        required_in_code required_in_tests required_in_config
+        required_in_eval_in_code required_in_eval_in_tests required_in_eval_in_config
+        noed_in_code noed_in_tests noed_in_config
+        noed_in_eval_in_code noed_in_eval_in_tests noed_in_eval_in_config
+      /),
     });
   }
 }

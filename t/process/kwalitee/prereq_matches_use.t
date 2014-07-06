@@ -24,7 +24,7 @@ use WWW::CPANTS::Process::Kwalitee::PrereqMatchesUse;
   );
 
   db('UsedModules')->set_test_data(
-    cols => [qw/distv module module_dist in_code in_tests/],
+    cols => [qw/distv module module_dist used_in_code used_in_tests/],
     rows => [
       [qw/DistA-0.01 ModuleA ModDistA 1 0/],
       [qw/DistA-0.01 ModuleB ModDistB 1 0/],

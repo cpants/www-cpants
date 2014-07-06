@@ -8,16 +8,24 @@ my @data = (
     dist => 'DistA',
     vname => 'DistA-0.01',
     uses => {
-      'ModuleA' => { in_code => 1 },
-      'ModuleB' => { in_tests => 1 },
+      used_in_code => {
+        'ModuleA' => 1,
+      },
+      used_in_tests => {
+        'ModuleB' => 1,
+      },
     },
   },
   {
     dist => 'DistB',
     vname => 'DistB-0.01',
     uses => {
-      'ModuleC' => { in_code => 1 },
-      'ModuleD' => { in_tests => 1 },
+      used_in_code => {
+        'ModuleC' => 1,
+      },
+      used_in_tests => {
+        'ModuleD' => 1,
+      },
     },
   },
   {

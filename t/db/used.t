@@ -8,7 +8,7 @@ use WWW::CPANTS::DB;
 
   for (0..1) { # repetition doesn't break things?
     $db->set_test_data(
-      cols => [qw/distv module in_code in_tests/],
+      cols => [qw/distv module used_in_code used_in_tests/],
       rows => [
         [qw/DistA-0.01 ModuleA 1 1/],
         [qw/DistA-0.01 ModuleB 1 0/],
@@ -42,31 +42,39 @@ use WWW::CPANTS::DB;
     };
 
     no_scan_table {
+      my %empty =
+        map {$_ => 0}
+        map {($_.'_in_code', $_.'_in_tests', $_.'_in_config')}
+        map {($_, $_.'_in_eval')}
+        qw/used required noed/;
+      my %dist_info = (
+          dist => undef,
+          distv => 'DistA-0.01',
+      );
+
       my $dists = $db->fetch_used_modules_of('DistA-0.01');
       eq_or_diff [sort {$a->{module_dist} cmp $b->{module_dist}} @$dists] => [
         {
+          %dist_info,
           module => 'ModuleA',
           module_dist => 'DistA',
-          in_code => 1,
-          in_tests => 1,
-          evals_in_code => undef,
-          evals_in_tests	 => undef,
+          %empty,
+          used_in_code => 1,
+          used_in_tests => 1,
         },
         {
+          %dist_info,
           module => 'ModuleB',
           module_dist => 'DistA',
-          in_code => 1,
-          in_tests => 0,
-          evals_in_code => undef,
-          evals_in_tests	 => undef,
+          %empty,
+          used_in_code => 1,
         },
         {
+          %dist_info,
           module => 'Test::ModuleC',
           module_dist => 'TestDistC',
-          in_code => 0,
-          in_tests => 2,
-          evals_in_code => undef,
-          evals_in_tests	 => undef,
+          %empty,
+          used_in_tests => 2,
         },
       ], "correct dists of DistA-0.01";
     };
