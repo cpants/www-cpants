@@ -67,7 +67,7 @@ on 'test' => sub {
 # Dependencies for external libs
 
 # For Kwalitee (Module::CPANTS::Analyse deps)
-requires 'Archive::Any::Lite' => '0.04'; # CHECK
+requires 'Archive::Any::Lite' => '0.08'; # CHECK
 requires 'Archive::Tar' => '1.98'; # CHECK # for PAX headers
 requires 'Archive::Zip' => 0; # CHECK
 requires 'Class::Accessor' => '0.19';
@@ -79,8 +79,6 @@ requires 'CPAN::DistnameInfo' => '0.06';
 ### Kwalitee
 
 ### Files
-requires 'File::Find::Rule::VCS' => '0';
-requires 'File::Slurp' => '0';
 
 ### License
 # requires a tweak not to take too much time to guess
@@ -92,8 +90,9 @@ requires 'Array::Diff' => '0.04';
 requires 'ExtUtils::Manifest' => 0;
 
 ### MetaYML
-requires 'CPAN::Meta::YAML' => 0; # CHECK
+requires 'CPAN::Meta::YAML' => '0.011'; # CHECK
 requires 'CPAN::Meta::Validator' => '2.133380'; # CHECK
+requires 'Parse::CPAN::Meta' => '1.4410'; # CPAN::Meta::YAML->errstr deprecation
 
 ### Uses
 requires 'Module::ExtractUse' => '0.33'; # CHECK: no support
@@ -109,5 +108,5 @@ requires 'File::chdir' => 0;
 requires 'Module::Signature' => '0.70'; # CHECK: less warnings
 
 ### Version
-requires 'Parse::LocalDistribution' => '0.09'; # CHECK
-requires 'Parse::PMFile' => '0.16'; # CHECK
+requires 'Parse::LocalDistribution' => '0.10'; # CHECK
+requires 'Parse::PMFile' => '0.19'; # CHECK
