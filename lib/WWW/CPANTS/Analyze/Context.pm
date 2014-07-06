@@ -207,7 +207,7 @@ sub extract {
       if (-d $self->distdir) {
         my $distvname = $self->distvname;
         $distvname =~ s/\-withoutworldwritables//;
-        $distvname =~ s/\-TRIAL//;
+        $distvname =~ s/\-TRIAL[0-9]*//;
         $self->set(extracts_nicely => ($distvname eq $entities[0] ? 1 : 0));
       }
       else {
