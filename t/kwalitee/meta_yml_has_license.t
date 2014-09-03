@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use WWW::CPANTS::Test;
 
-test_kwalitee('metayml_has_license',
+test_kwalitee('meta_yml_has_license',
   ['CHENGANG/Log-Lite-0.05.tar.gz', 0], # 2739
   ['SCILLEY/POE/Component/IRC/Plugin/IRCDHelp-0.02.tar.gz', 0], # 3243
   ['ANANSI/Anansi-Library-0.02.tar.gz', 0], # 3365
