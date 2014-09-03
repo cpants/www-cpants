@@ -22,6 +22,9 @@ test_kwalitee('package_version_matches_dist_version',
   ['DOMM/Module-ExtractUse-0.33.tar.gz', 1],
 
   ['MEWILCOX/apache.authznetldap.02.tar.gz', 1], # 1051
+
+  # provides without version(s)
+  ['BURNERSK/Encoding-HandleUtf8-0.002.tar.gz', 0],
 );
 
 done_testing;
