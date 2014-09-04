@@ -44,7 +44,7 @@ sub update {
     has_dist_ini => $data->{files_hash}{"dist.ini"} ? 1 : 0,
     has_cpanfile => $data->{files_hash}{"cpanfile"} ? 1 : 0,
     has_meta_yml => $data->{file_meta_yml} ? 1 : 0,
-    has_meta_json => $data->{files_hash}{"META.json"} ? 1 : 0,
+    has_meta_json => $data->{file_meta_json} ? 1 : 0,
     has_mymeta_yml => $data->{files_hash}{"MYMETA.yml"} ? 1 : 0,
     has_mymeta_json => $data->{files_hash}{"MYMETA.json"} ? 1 : 0,
     generated_by => $generator,
