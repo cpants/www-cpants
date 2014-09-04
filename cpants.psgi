@@ -171,7 +171,8 @@ get '/dist/#distname/:tab' => sub {
   my $tab = $self->param('tab');
   my $tabclass = camelize($tab);
   return $self->render_not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
-  my $data = load_page("Dist\::$tabclass", $name) or return $self->render_not_found;
+  my $page = $self->param('page');
+  my $data = load_page("Dist\::$tabclass", $name, $page) or return $self->render_not_found;
   my $format = $self->stash('format') || '';
   if ($format eq 'json') {
     return $self->render(json => $data);

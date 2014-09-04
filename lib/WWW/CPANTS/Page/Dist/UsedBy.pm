@@ -5,18 +5,37 @@ use warnings;
 use WWW::CPANTS::DB;
 
 sub load_data {
-  my ($class, $name) = @_;
+  my ($class, $name, $page) = @_;
+
+  $page ||= 1;
+  my $per_page = 1000;
+  my $start = ($page - 1) * $per_page + 1;
+  my $end = $page * $per_page;
 
   my $kwalitee_db = db('Kwalitee');
   my $dist = $kwalitee_db->fetch_distv($name);
   return unless $dist && $dist->{distv};
 
-  my $dependents = db('PrereqModules')->fetch_dependents($dist->{dist});
-  my $deps = $kwalitee_db->fetch_latest_dists(@$dependents);
+  my $dependents = db('DistDependents')->fetch_dependents($dist->{dist});
+  my $total = @$dependents;
+  my ($deps, $prev, $next);
+  if ($start > $total) {
+    # nothing
+  } else {
+    my @slice = @$dependents[$start - 1 .. ($end > $total ? $total : $end) - 1];
+    $deps = $kwalitee_db->fetch_latest_dists(@slice);
+    $prev = $page > 1 ? $page - 1 : 0;
+    $next = $total > $end ? $page + 1 : 0;
+  }
 
   my %data = (
     dist => $dist,
     deps => $deps,
+    prev => $prev,
+    next => $next,
+    total => $total,
+    page => $page,
+    pages => int(($total - 1) / $per_page) + 1,
   );
   return \%data;
 }
