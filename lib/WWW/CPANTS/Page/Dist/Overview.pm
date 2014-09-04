@@ -15,10 +15,13 @@ sub load_data {
 
   my $kwalitee = [sorted_metrics($dist, requires_remedy => 1)];
 
+  my $urls = db_r('MetaYML')->fetch_urls($dist->{analysis_id});
+
   return {
     dist => $dist,
     recent => $recent,
     kwalitee => $kwalitee,
+    resource_urls => $urls,
   };
 }
 

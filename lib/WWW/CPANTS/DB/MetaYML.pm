@@ -28,6 +28,11 @@ sub _indices {(
   unique => ['analysis_id'],
 )}
 
+sub fetch_urls {
+  my ($self, $analysis_id) = @_;
+  $self->fetch('select bugtracker, homepage, repository from meta_yml where analysis_id = ?', $analysis_id);
+}
+
 1;
 
 __END__
@@ -41,6 +46,8 @@ WWW::CPANTS::DB::MetaYML
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=head2 fetch_urls
 
 =head1 AUTHOR
 

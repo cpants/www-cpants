@@ -7,6 +7,7 @@
 % my $distname = stash('distname');
 % my $distv = $dist->{distv};
 % my @recent = @{ stash('recent') || [] };
+% my %resource_urls = %{ stash('resource_urls') || {} };
 <h1><%= $dist->{dist} %></h1>
 
 %= include 'dist/_subnav';
@@ -44,11 +45,22 @@
 <dd><%= WWW::CPANTS::Utils::decimal($dist->{core_kwalitee}) %></dd>
 <dt>External Resources</dt>
 <ul class="list-unstyled">
+% if ($dist->{is_latest} or $dist->{is_cpan}) {
 <li><a href="http://metacpan.org/release/<%= $dist->{author} %>/<%= $distv %>">metacpan.org</a></li>
 <li><a href="http://search.cpan.org/dist/<%= $distname %>">search.cpan.org</a></li>
+% }
+% if ($resource_urls{bugtracker}) {
+<li><a href="<%= $resource_urls{bugtracker} %>">bugtracker</a></li>
+% } else {
 <li><a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=<%= $distname %>">rt.cpan.org</a></li>
-<li><a href="http://www.cpantesters.org/distro/<%= substr($distname, 0, 1) %>/<%= $distname %>.html">www.cpantesters.org</a>
-<li><a href="http://cpanratings.perl.org/dist/<%= $distname %>">cpanratings.perl.org</a></li>
+% }
+% if ($resource_urls{homepage}) {
+<li><a href="<%= $resource_urls{homepage} %>">homepage</a></li>
+% }
+% if ($resource_urls{repository}) {
+<li><a href="<%= $resource_urls{repository} %>">repository</a></li>
+% }
+<li><a href="http://www.cpantesters.org/distro/<%= substr($distname, 0, 1) %>/<%= $distname %>.html">CPAN Testers</a>
 </ul>
 </dd>
 </dl>
