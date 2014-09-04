@@ -79,6 +79,8 @@ sub update {
     });
   }
   $pm->wait_all_children;
+
+  db('Uploads')->update_first_release;
 }
 
 

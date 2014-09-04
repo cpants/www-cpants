@@ -16,6 +16,7 @@ sub _columns {(
   [released => 'integer'],
   [removed => 'integer'],
   [year => 'integer'],
+  [first_release => 'integer default 0', {no_bulk => 1}],
 )}
 
 sub _indices {(
@@ -82,6 +83,11 @@ sub latest_dists {
 sub latest_stable_dists {
   my $self = shift;
   $self->fetchall_1('select distv from uploads where type = "cpan" and version not like "%\\_%" escape "\\" and version not like "%-%" group by dist having max(released)');
+}
+
+sub update_first_release {
+  my $self = shift;
+  $self->do('update uploads set first_release = 1 where path in (select path from uploads group by dist having min(released))');
 }
 
 # - Page::API::Uploads -
