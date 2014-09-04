@@ -75,6 +75,7 @@ WWW::CPANTS::Utils
 =head2 decimal
 =head2 percent
 =head2 kb
+=head2 link_to_package
 
 =head1 AUTHOR
 

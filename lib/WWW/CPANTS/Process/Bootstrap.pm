@@ -246,9 +246,9 @@ WWW::CPANTS::Process::Bootstrap
 =head1 METHODS
 
 =head2 new
-=head2 concat_js
+=head2 copy_files
 =head2 fetch_bootstrap_master
-=head2 run_recess
+=head2 run_grunt
 =head2 tweak_less_files
 =head2 update
 
