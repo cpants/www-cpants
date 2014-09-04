@@ -39,6 +39,11 @@ sub load_all {
 
 sub loaded { sort keys %loaded }
 
+sub setup_all {
+  load_all();
+  $_->new->setup for values %loaded;
+}
+
 1;
 
 __END__
@@ -56,6 +61,7 @@ WWW::CPANTS::DB
 =head2 db, db_r
 =head2 load_all
 =head2 loaded
+=head2 setup_all
 
 =head1 AUTHOR
 
