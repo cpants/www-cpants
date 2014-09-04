@@ -163,7 +163,7 @@ WWW::CPANTS::Test
 =head2 epoch
 =head2 test_network
 =head2 test_kwalitee
-=head2 test_context
+=head2 test_context_stash
 
 =head1 AUTHOR
 

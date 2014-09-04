@@ -364,6 +364,7 @@ WWW::CPANTS::DB::Kwalitee
 =head2 mark_current_latest
 =head2 mark_implicit_latest
 =head2 mark_latest
+=head2 mark_unauthorized
 =head2 search_dists
 =head2 fetch_distv_kwalitee
 =head2 unmark_previous_cpan

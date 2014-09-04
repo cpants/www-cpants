@@ -225,6 +225,7 @@ WWW::CPANTS::DB::Uploads
 =head2 fetch_recent_uploads
 =head2 fetch_recent_versions
 =head2 finalize_update_type
+=head2 update_first_release
 =head2 update_type
 
 =head1 AUTHOR
