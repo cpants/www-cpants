@@ -265,7 +265,7 @@ sub x_opts {
   my $self = shift;
   unless ($self->{_x_opts}) {
     my %opts;
-    if (my $x_cpants = $self->stash->{meta_yml}{x_cpants}) {
+    if ($self->stash->{meta_yml} and my $x_cpants = $self->stash->{meta_yml}{x_cpants}) {
       if (my $ignore = $x_cpants->{ignore}) {
         if (ref $ignore eq ref {}) {
           $opts{ignore} = $ignore;
