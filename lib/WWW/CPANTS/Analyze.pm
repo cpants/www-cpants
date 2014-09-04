@@ -39,7 +39,7 @@ sub analyze {
         };
         $elapsed{$module} = time - $started;
         if (@warnings) {
-          $context->set_error(cpants_warnings => "$args{dist}: ".join '', @warnings);
+          $context->set_error(cpants_warnings => "$module: ".join '', @warnings);
         }
         if (my $error = $@) {
           if ($error eq "timeout\n") {
