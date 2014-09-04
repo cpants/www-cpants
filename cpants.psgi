@@ -9,6 +9,7 @@ use Plack::Builder;
 use String::Random 'random_regex';
 use String::CamelCase 'camelize';
 use WWW::CPANTS::AppRoot;
+use WWW::CPANTS::Extlib;
 use WWW::CPANTS::Log ();
 use WWW::CPANTS::Pages;
 use WWW::CPANTS::StatusImage;
