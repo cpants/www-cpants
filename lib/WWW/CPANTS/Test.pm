@@ -7,11 +7,13 @@ use Test::Differences;
 use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::DB;
 use WWW::CPANTS::Log;
+use WWW::CPANTS::Extlib;
 use Exporter::Lite;
 use WorePAN;
 use Carp;
 use IO::Capture::Stderr;
 use Time::Piece;
+use JSON::XS;
 
 local $ENV{WWW_CPANTS_SLOW_QUERY} = 1;
 
@@ -23,7 +25,8 @@ $SIG{__DIE__} = sub { croak(@_) };
 our @EXPORT = (
   @Test::More::EXPORT,
   @Test::Differences::EXPORT,
-  qw/setup_mirror no_scan_table epoch test_kwalitee/,
+  qw/setup_mirror no_scan_table epoch test_network
+  test_kwalitee test_context_stash/,
 );
 
 my $worepan;
@@ -85,6 +88,13 @@ sub no_scan_table (&;$) {
 
 sub epoch { Time::Piece->strptime(shift, '%Y-%m-%d')->epoch }
 
+sub test_network {
+  my $host = shift;
+  require Socket;
+  eval { Socket::inet_aton($host) }
+    or plan skip_all => "This test requires network to $host";
+}
+
 sub test_kwalitee {
   my ($name, @tests) = @_;
 
@@ -102,8 +112,26 @@ sub test_kwalitee {
 
     if (!$result) {
       my $details = $metric->{details}->($context->stash) || '';
-      ok $details, ref $details ? explain $details : $details;
+      ok $details, ref $details ? encode_json($details) : $details;
     }
+    if ($test->[2]) {
+      note explain $context->stash;
+    }
+  }
+}
+
+sub test_context_stash {
+  my ($tests, $code) = @_;
+
+  require WWW::CPANTS::Analyze;
+  my $mirror = setup_mirror(@$tests);
+
+  for my $test (@$tests) {
+    my $tarball = $mirror->file($test);
+    my $analyzer = WWW::CPANTS::Analyze->new;
+    my $context = $analyzer->analyze(dist => $tarball);
+    ok $context;
+    $code->(decode_json($context->dump_stash));
   }
 }
 
@@ -133,7 +161,9 @@ WWW::CPANTS::Test
 =head2 setup_mirror
 =head2 no_scan_table
 =head2 epoch
+=head2 test_network
 =head2 test_kwalitee
+=head2 test_context
 
 =head1 AUTHOR
 
