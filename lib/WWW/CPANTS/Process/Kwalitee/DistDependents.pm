@@ -37,11 +37,11 @@ sub _update {
   my $deps_db = db('DistDependents');
   my $prereq_db = db_r('PrereqModules');
 
-  for (@$dists) {
-    my $deps = $prereq_db->fetch_dependents($_);
+  my $deps = $prereq_db->fetch_dependents($dists);
+  for (@$deps) {
     $deps_db->bulk_insert({
-      dist => $_,
-      dependents => join(',', @$deps),
+      dist => $_->{prereq_dist},
+      dependents => $_->{dependents},
     });
   }
   $deps_db->finalize_bulk_insert;
