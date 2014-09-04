@@ -29,11 +29,14 @@ sub fetch_all_prereq_dists {
   $self->fetchall_1('select distinct(prereq_dist) from prereq_modules');
 }
 
-# - Process::Kwalitee::DistDependents, Page::Dist::UsedBy -
+# - Process::Kwalitee::DistDependents -
 
 sub fetch_dependents {
-  my ($self, $dist) = @_;
-  $self->fetchall_1('select dist from prereq_modules where prereq_dist = ? group by dist', $dist);
+  my ($self, $dists) = @_;
+  my $params = $self->_in_params($dists);
+  $self->attach('Uploads');
+  on_scope_exit { $self->detach('Uploads') };
+  $self->fetchall("select prereq_dist, group_concat(distinct(p.dist)) as dependents from prereq_modules as p join (select dist from uploads group by dist having type = 'cpan') as u on p.dist = u.dist where prereq_dist in ($params) group by prereq_dist");
 }
 
 # - Process::Kwalitee::IsPrereq -
