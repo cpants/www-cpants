@@ -23,9 +23,9 @@ requires 'JSON::XS' => 0;
 requires 'List::MoreUtils' => 0;
 requires 'List::Util' => 0;
 requires 'Log::Handler' => 0;
-requires 'Module::CoreList' => '3.09'; # CHECK: should always use the latest
+requires 'Module::CoreList' => '5.021003'; # CHECK: should always use the latest
 requires 'Module::Find' => 0;
-requires 'Mojolicious' => '4.63';
+requires 'Mojolicious' => '5.00'; # secrets
 requires 'Parallel::Runner' => 0;  # seems working well
 requires 'Parallel::ForkManager' => 0;
 requires 'Path::Extended' => '0.21'; # better error message
@@ -36,7 +36,7 @@ requires 'Sub::Install' => 0;
 requires 'Text::Markdown::Hoedown' => '0.07';
 requires 'Time::Piece' => '1.16'; # tz issue
 requires 'Timer::Simple' => 0;
-requires 'WorePAN' => '0.09';  # for PAUSEID/Dist convention
+requires 'WorePAN' => '0.13';  # for lighter deps
 
 # Plack Application Management
 requires 'Plack::Builder::Conditionals' => 0;
@@ -108,5 +108,5 @@ requires 'File::chdir' => 0;
 requires 'Module::Signature' => '0.70'; # CHECK: less warnings
 
 ### Version
-requires 'Parse::LocalDistribution' => '0.10'; # CHECK
-requires 'Parse::PMFile' => '0.19'; # CHECK
+requires 'Parse::LocalDistribution' => '0.13'; # CHECK
+requires 'Parse::PMFile' => '0.20'; # CHECK
