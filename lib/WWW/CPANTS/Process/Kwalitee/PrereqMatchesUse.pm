@@ -61,6 +61,10 @@ sub _update {
     my %should_be_prereq = map { $_->{module_dist} => 1 } grep { $_->{used_in_code} or $_->{required_in_code} } @not_core;
     my %should_be_build_prereq = map { $_->{module_dist} => 1 } grep { $_->{used_in_tests} or $_->{required_in_tests} } @not_core;
 
+    # remove dist itself
+    delete $should_be_prereq{$row->{dist}};
+    delete $should_be_build_prereq{$row->{dist}};
+
     my $prereqs = $prereq_db->fetch_prereqs_of($distv);
     for my $prereq (@$prereqs) {
       next unless $prereq->{prereq_dist};
