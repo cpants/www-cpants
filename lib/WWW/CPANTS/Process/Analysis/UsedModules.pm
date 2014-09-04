@@ -21,6 +21,8 @@ sub update {
     }
   }
 
+  my %included = map {$_ => 1} @{ $data->{included_modules} || [] };
+
   for my $module (keys %modules) {
     next if !$module; # ignore evaled stuff
     next if $module =~ /^v?5/; # ignore perl
@@ -38,6 +40,7 @@ sub update {
         noed_in_code noed_in_tests noed_in_config
         noed_in_eval_in_code noed_in_eval_in_tests noed_in_eval_in_config
       /),
+      included => $included{$module} ? 1 : 0,
     });
   }
 }

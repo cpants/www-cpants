@@ -56,7 +56,7 @@ sub _update {
     my $analysis_id = $row->{analysis_id};
     my $distv = $row->{distv};
     my $used = $used_db->fetch_used_modules_of($distv);
-    my @not_core = grep { $_->{module_dist} && $_->{module_dist} ne 'perl' && !is_core($_->{module}) } @$used;
+    my @not_core = grep { $_->{module_dist} && $_->{module_dist} ne 'perl' && !is_core($_->{module}) && !$_->{included} } @$used;
 
     my %should_be_prereq = map { $_->{module_dist} => 1 } grep { $_->{used_in_code} or $_->{required_in_code} } @not_core;
     my %should_be_build_prereq = map { $_->{module_dist} => 1 } grep { $_->{used_in_tests} or $_->{required_in_tests} } @not_core;

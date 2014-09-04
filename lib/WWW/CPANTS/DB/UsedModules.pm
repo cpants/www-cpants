@@ -14,6 +14,7 @@ sub _columns {(
    map { ($_, $_.'_in_eval') }
    qw/used required noed/
   ),
+  [included => 'integer'],
 )}
 
 sub _indices {(
