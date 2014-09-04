@@ -21,6 +21,15 @@ use WWW::CPANTS::DB;
       ],
     );
 
+    my $uploads_db = db('Uploads', explain => 1);
+    $uploads_db->set_test_data(
+      cols => [qw/type dist distv version/],
+      rows => [
+        [qw/cpan DistA DistA-0.01 0.01/],
+        [qw/cpan DistB DistB-0.01 0.01/],
+      ],
+    );
+
     no_scan_table {
       my $prereqs = $db->fetch_all_prereqs;
       eq_or_diff [sort map {$_->{prereq}} @$prereqs] => [qw/ModuleA ModuleB ModuleD Test::ModuleC Test::ModuleE/], "correct prereqs";
@@ -86,7 +95,7 @@ use WWW::CPANTS::DB;
 
     no_scan_table {
       my $dists = $db->fetch_dependents('BuildPrereqDistC');
-      eq_or_diff $dists => [qw/DistA DistB/], "correct dependents";
+      eq_or_diff $dists->[0]{dependents} => 'DistA,DistB', "correct dependents";
     };
 
     # PrereqDistA is required by DistA (by Foo) and DistB (by Bar).

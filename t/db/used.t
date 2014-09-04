@@ -50,6 +50,7 @@ use WWW::CPANTS::DB;
       my %dist_info = (
           dist => undef,
           distv => 'DistA-0.01',
+          included => undef,
       );
 
       my $dists = $db->fetch_used_modules_of('DistA-0.01');
