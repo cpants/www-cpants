@@ -17,9 +17,9 @@
 % if (app->mode eq 'production') {
 %= stylesheet "/css/cpants.min.css";
 % } else {
-%#  if (stash('requires_tablesorter')) {
-%#=   stylesheet "/css/tablesorter/style.css";
-%#  }
+%  if (stash('requires_tablesorter')) {
+%=   stylesheet "/css/tablesorter/style.css";
+%  }
 %= stylesheet "/css/bootstrap.css";
 %= stylesheet "/css/docs.css";
 % }
