@@ -134,7 +134,7 @@ sub calc_kwalitee {
         $context->set_error(cpants_warnings => $indicator->{name}.": ".join '', @warnings);
       }
     }
-    $ret = $ret > 0 ? 1 : 0;  # normalize
+    $ret = ($ret && $ret > 0) ? 1 : 0;  # normalize
 
     my $name = $indicator->{name};
     if ($x_ignore{$name} && $indicator->{ignorable}) {
