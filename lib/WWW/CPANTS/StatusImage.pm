@@ -6,6 +6,7 @@ use WWW::CPANTS::AppRoot;
 use WWW::CPANTS::Config;
 use Imager;
 use Imager::Font;
+use Imager::Filter::RoundedCorner;
 
 sub new {
   my ($class, $score) = @_;
@@ -33,13 +34,13 @@ sub _generate {
                $score >=  80 ? ["#ff0", "black"] :
                                ["#900", "white"] ;
 
-  my $font = Imager::Font->new(%{ WWW::CPANTS::Config->font }, size => 10) or die;
+  my $font = Imager::Font->new(%{ WWW::CPANTS::Config->font }, size => 11) or die;
   my $heading = $class->_size($font, "kwalitee");
   my $value   = $class->_size($font, "999.99");
 
   my $image = Imager->new(
     xsize => $heading->{xmax} + $value->{xmax},
-    ysize => $heading->{ymax},
+    ysize => $heading->{ymax} + 5,
   );
 
   $image->box(@{$heading->{qw/xmin ymin xmax ymax/}},
@@ -47,18 +48,23 @@ sub _generate {
 
   $image->box(xmin => $heading->{xmax}, ymin => $value->{ymin},
               xmax => $heading->{xmax} + $value->{xmax},
-              ymax => $value->{ymax},
+              ymax => $value->{ymax} + 5,
               filled => 1, color => $colors->[0]);
 
   $font->align(image => $image, string => 'kwalitee',
                color => 'white',
                x => $heading->{x},
-               y => $heading->{y},
+               y => $heading->{y} + 2,
   );
   $font->align(image => $image, string => $score,
                color => $colors->[1],
                x => $heading->{xmax} + $value->{x},
-               y => $value->{y},
+               y => $value->{y} + 2,
+  );
+  $image->filter(
+    type => 'rounded_corner',
+    radius => 3,
+    bg => '#fff',
   );
 
   $image;

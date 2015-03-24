@@ -19,6 +19,7 @@ requires 'File::Spec' => 0;
 requires 'File::Temp' => 0;
 requires 'HTTP::Tiny' => 0;
 requires 'Imager' => 0;
+requires 'Imager::Filter::RoundedCorner' => 0;
 requires 'JSON::XS' => 0;
 requires 'List::MoreUtils' => 0;
 requires 'List::Util' => 0;
