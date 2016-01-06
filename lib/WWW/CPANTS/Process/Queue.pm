@@ -45,6 +45,9 @@ sub enqueue_cpan {
         # ignore old scripts
         return unless $relpath =~ m{^[A-Z]/[A-Z][A-Z]/};
 
+        # ignore Perl6 subdir
+        return if $path =~ m{^[A-Z]/[^/]+/[^/]+/Perl6/};
+
         # ignore meta files
         return if $basename eq 'CHECKSUMS';
         return if $basename =~ /\.(?:readme|meta)$/i;
