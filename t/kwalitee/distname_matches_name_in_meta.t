@@ -1,5 +1,4 @@
-use strict;
-use warnings;
+use WWW::CPANTS;
 use WWW::CPANTS::Test;
 
 test_kwalitee('distname_matches_name_in_meta',

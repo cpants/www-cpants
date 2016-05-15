@@ -1,113 +1,103 @@
-on 'configure' => sub {
-  requires 'ExtUtils::MakeMaker::CPANfile' => '0.04';
+requires 'Archive::Any::Lite', '0.06';
+requires 'Archive::Tar', '1.98';
+requires 'Array::Diff', '0.04';
+requires 'CPAN::DistnameInfo', '0.06';
+requires 'CPAN::Meta::Validator', '2.133380';
+requires 'CPAN::Meta::YAML', '0.008';
+requires 'Capture::Tiny';
+requires 'Class::Accessor', '0.19';
+requires 'Class::Load::XS';
+requires 'Const::Fast';
+requires 'DBD::SQLite';
+requires 'DBI';
+requires 'DBIx::TransactionManager';
+requires 'Data::Dump';
+requires 'Digest::FNV::XS';
+requires 'Email::Sender', '1.300028';
+requires 'Email::Sender::Simple';
+requires 'Email::Sender::Transport::Print';
+requires 'Email::Sender::Util';
+requires 'Email::Simple';
+requires 'File::Find::Object', 'v0.2.1';
+requires 'File::Spec';
+requires 'File::chdir';
+requires 'Gravatar::URL';
+requires 'HTML::Entities';
+requires 'HTTP::Parser::XS';
+requires 'Imager';
+requires 'Imager::Filter::RoundedCorner';
+requires 'Imager::Font';
+requires 'JSON::Diffable';
+requires 'JSON::MaybeXS';
+requires 'JavaScript::Value::Escape';
+requires 'LWP::Protocol::PSGI';
+requires 'LWP::Protocol::https';
+requires 'LWP::UserAgent';
+requires 'List::Util', '1.33';
+requires 'Log::Handler';
+requires 'Log::Handler::Output::File::Stamper';
+requires 'Modern::Perl';
+requires 'Module::ExtractUse', '0.33';
+requires 'Module::Find';
+requires 'Module::Pluggable', '2.96';
+requires 'Module::Runtime';
+requires 'Module::Signature', '0.70';
+requires 'Module::Version';
+requires 'Mojo::Template';
+requires 'Mojolicious';
+requires 'Mojolicious::Controller';
+requires 'Mojolicious::Plugin';
+requires 'Parallel::Runner';
+requires 'Params::Validate';
+requires 'Parse::CPAN::Whois';
+requires 'Parse::LocalDistribution', '0.18';
+requires 'Parse::PMFile', '0.35';
+requires 'Path::Tiny';
+requires 'Plack::Builder::Conditionals';
+requires 'Plack::Middleware::AxsLog';
+requires 'Plack::Middleware::ReverseProxy';
+requires 'Pod::Simple::Checker', '2.02';
+requires 'Role::Basic';
+requires 'Software::License', '0.103012';
+requires 'String::CamelCase';
+requires 'Text::Balanced';
+requires 'Text::Diff';
+requires 'Text::Markdown::Hoedown';
+requires 'Time::Duration';
+requires 'Try::Catch';
+requires 'URI';
+requires 'URI::QueryParam';
+requires 'Unicode::UTF8';
+requires 'WorePAN';
+requires 'XML::Atom::SimpleFeed';
+requires 'XML::LibXML';
+requires 'version', '0.73';
+suggests 'Plack::Middleware::ServerStatus::Lite';
+suggests 'Starman';
+
+on configure => sub {
+    requires 'ExtUtils::MakeMaker::CPANfile';
+    requires 'perl', '5.020';
 };
 
-on 'build' => sub {
-  # for cpanm --installdeps .
-  requires 'ExtUtils::MakeMaker::CPANfile' => '0.04';
+on test => sub {
+    requires 'Cwd';
+    requires 'Test::FailWarnings';
+    requires 'Test::More', '0.88';
+    requires 'Test::UseAllModules', '0.10';
+    requires 'WorePAN', '0.14';
 };
 
-# For site/scripts
-requires 'CLI::Dispatch' => '0.15';
-requires 'CPAN::DistnameInfo' => '0.06'; # CHECK
-requires 'DBD::SQLite' => '1.37';
-requires 'DBI' => '1.609';
-requires 'Digest::MD5' => 0;
-requires 'Exporter::Lite' => 0;
-requires 'File::HomeDir' => 0;
-requires 'File::Spec' => 0;
-requires 'File::Temp' => 0;
-requires 'HTTP::Tiny' => 0;
-requires 'Imager' => 0;
-requires 'Imager::Filter::RoundedCorner' => 0;
-requires 'JSON::XS' => 0;
-requires 'List::MoreUtils' => 0;
-requires 'List::Util' => 0;
-requires 'Log::Handler' => 0;
-requires 'Module::CoreList' => '5.021003'; # CHECK: should always use the latest
-requires 'Module::Find' => 0;
-requires 'Mojolicious' => '5.00'; # secrets
-requires 'Parallel::Runner' => 0;  # seems working well
-requires 'Parallel::ForkManager' => 0;
-requires 'Path::Extended' => '0.21'; # better error message
-requires 'Scope::OnExit' => 0;
-requires 'String::CamelCase' => 0;
-requires 'String::Random' => 0;
-requires 'Sub::Install' => 0;
-requires 'Text::Markdown::Hoedown' => '0.07';
-requires 'Time::Piece' => '1.16'; # tz issue
-requires 'Timer::Simple' => 0;
-requires 'WorePAN' => '0.13';  # for lighter deps
-
-# Plack Application Management
-requires 'Plack::Builder::Conditionals' => 0;
-requires 'Plack::Middleware::AxsLog' => 0;
-requires 'Plack::Middleware::ReverseProxy' => 0;
-if ($^O ne 'MSWin32') {
-  requires 'Plack::Middleware::ServerStatus::Lite' => 0;
-  requires 'Starman' => 0;
-}
-
-# minifier
-requires 'CSS::LESS::Filter' => '0.02';
-requires 'CSS::Minifier::XS' => '0.09';
-requires 'JavaScript::Minifier::XS' => '0.09';
-
-# feed
-requires 'XML::Atom::SimpleFeed' => 0;
-
-# For tests
-on 'test' => sub {
-  requires 'Capture::Tiny' => 0;
-  requires 'Module::CPANfile' => 0;
-  requires 'Test::Differences' => 0;
-  requires 'Test::More' => '0.88';
-  requires 'Test::UseAllModules' => '0.10';
+on develop => sub {
+    requires 'Data::Dump';
+    requires 'Hash::Diff';
+    requires 'Menlo::CLI::Compat';
+    requires 'Modern::Perl';
+    requires 'Module::CPANfile';
+    requires 'Module::Version';
+    requires 'Path::Extended::Tiny';
+    requires 'Path::Tiny';
+    requires 'Perl::PrereqScanner::NotQuiteLite::App';
+    suggests 'Test::Pod', '1.18';
+    suggests 'Test::Pod::Coverage', '1.04';
 };
-
-# Dependencies for external libs
-
-# For Kwalitee (Module::CPANTS::Analyse deps)
-requires 'Archive::Any::Lite' => '0.08'; # CHECK
-requires 'Archive::Tar' => '1.98'; # CHECK # for PAX headers
-requires 'Archive::Zip' => 0; # CHECK
-requires 'Class::Accessor' => '0.19';
-requires 'IO::Capture' => '0.05';
-requires 'Module::Pluggable' => '0';
-requires 'version' => '0.73'; # CHECK
-requires 'CPAN::DistnameInfo' => '0.06';
-
-### Kwalitee
-
-### Files
-
-### License
-# requires a tweak not to take too much time to guess
-requires 'Software::License' => '0.103008'; # CHECK
-requires 'Software::License::CC_BY_SA_3_0' => '0';
-
-### Manifest
-requires 'Array::Diff' => '0.04';
-requires 'ExtUtils::Manifest' => 0;
-
-### MetaYML
-requires 'CPAN::Meta::YAML' => '0.011'; # CHECK
-requires 'CPAN::Meta::Validator' => '2.133380'; # CHECK
-requires 'Parse::CPAN::Meta' => '1.4410'; # CPAN::Meta::YAML->errstr deprecation
-
-### Uses
-requires 'Module::ExtractUse' => '0.33'; # CHECK: no support
-requires 'Set::Scalar' => 0;
-
-### SiteKwalitee
-
-### Pod
-requires 'Pod::Simple::Checker' => '2.02'; # CHECK
-
-### Signature; though highly controversial...
-requires 'File::chdir' => 0;
-requires 'Module::Signature' => '0.70'; # CHECK: less warnings
-
-### Version
-requires 'Parse::LocalDistribution' => '0.13'; # CHECK
-requires 'Parse::PMFile' => '0.20'; # CHECK

@@ -1,0 +1,63 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h2>Kwalitee Indicators</h2>
+
+% my $table = begin
+% my ($class, $indicators, $description) = @_;
+  <div role="tab" id="heading_<%= $class %>">
+    <h3><%= ucfirst $class %> indicators</h3>
+      <p><%= $description %></p>
+      <p class="text-right small"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<%= $class %>" aria-expanded="true" aria-controls="collapse_<%= $class %>"><span id="<%= $class %>_button"><%= $class eq 'core' ? 'Hide' : 'Show' %> Details</span></a></p>
+    </div>
+    <div id="collapse_<%= $class %>" class="collapse<%= $class eq 'core' ? ' in' :'' %>" role="tabpanel" aria-labelledby="heading_<%= $class %>">
+    <table id="<%= $class %>_table" class="display compact small">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Fail<br>(Latest)</th>
+          <th>Fail<br>(CPAN)</th>
+          <th>Fail<br>(BackPAN)</th>
+        </tr>
+      </thead>
+      <tbody>
+      % for my $indicator (sort {$a->{name} cmp $b->{name}} @{$indicators // []}) {
+        <tr>
+          <td><a href="/kwalitee/<%= $indicator->{name} %>"><%= $indicator->{name} %></a></td>
+          <td><%= $indicator->{description} %><br>(defined in <%= $indicator->{defined_in} %>)</td>
+          <td><%= $indicator->{latest_fails} %><br>(<%= $indicator->{latest_fail_rate} %> %)</td>
+          <td><%= $indicator->{cpan_fails} %><br>(<%= $indicator->{cpan_fail_rate} %> %)</td>
+          <td><%= $indicator->{backpan_fails} %><br>(<%= $indicator->{backpan_fail_rate} %> %)</td>
+        </tr>
+      % }
+      </tbody>
+    </table>
+  </div>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#collapse_<%= $class %>').on('show.bs.collapse', function() { $('#<%= $class %>_button').text('Hide Details'); });
+    $('#collapse_<%= $class %>').on('hide.bs.collapse', function() { $('#<%= $class %>_button').text('Show Details'); });
+    $('#<%= $class %>_table').dataTable({
+    });
+  });
+  % end
+  % end
+% end
+
+  <div id="according" role="tablist" aria-multiselectable="false">
+    <%= $table->('core', $data->{core_indicators} // [], "These indicators are for important issues everyone should fix if found. These are also used to calculate your score and ranking.") %>
+    <%= $table->('extra', $data->{extra_indicators} // [], "These indicators are for less important (or more controversial) issues that you might or might not want to ignore. These are not used while calculating your ranking.") %>
+    <%= $table->('experimental', $data->{experimental_indicators} // [], "These indicators are mainly for issues that are too new or too picky and there are a lot of failing distributions on the CPAN, or just to gather information. These are not used while calculating your score and ranking.") %>
+  </div>
+  </section>
+
+</div>

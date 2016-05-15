@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+
+use Modern::Perl;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use WWW::CPANTS::Bin::Runner;
+
+WWW::CPANTS::Bin::Runner->run(
+  tasks => [qw/EnqueueJobs/],
+  jobs => [qw/
+    UpdatePackagesDetails
+    UpdateWhois
+    Traverse
+    Enqueue
+    AnalyzeAll
+    UpdateWebPages
+  /]
+);

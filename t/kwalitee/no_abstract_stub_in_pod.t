@@ -1,5 +1,4 @@
-use strict;
-use warnings;
+use WWW::CPANTS;
 use WWW::CPANTS::Test;
 
 test_kwalitee('no_abstract_stub_in_pod',

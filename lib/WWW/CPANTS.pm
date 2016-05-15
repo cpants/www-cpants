@@ -1,13 +1,32 @@
 package WWW::CPANTS;
 
-use strict;
-use warnings;
+use Modern::Perl;
+use experimental 'signatures';
+use Carp;
+use Data::Dump;
+use JSON::PP (); # to avoid warnings when Cpanel::JSON::XS is loaded somewhere earlier
 
-our $VERSION = '0.01';
+our $VERSION = '4.00';
+our $CONTEXT;
+
+sub import ($class, @args) {
+  Modern::Perl->import('2015');
+  experimental->import(qw/signatures/);
+  Carp->export_to_level(1, @_);
+  my $caller = caller;
+  no strict 'refs';
+  *{"$caller\::dump"} = \&Data::Dump::dump;
+}
+
+sub is_testing ($class) { $ENV{HARNESS_ACTIVE} ? 1 : 0 }
+
+sub context ($class) { $CONTEXT }
 
 1;
 
 __END__
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -23,9 +42,9 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2012 by Kenichi Ishigaki.
+This software is copyright (c) 2012-2015 by Kenichi Ishigaki.
 
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

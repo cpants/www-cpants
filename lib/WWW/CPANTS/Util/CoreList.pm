@@ -1,55 +1,26 @@
 package WWW::CPANTS::Util::CoreList;
 
-use strict;
-use warnings;
-use Exporter::Lite;
+use WWW::CPANTS;
+use Exporter qw/import/;
 use Module::CoreList;
 
-our @EXPORT = qw/is_core/;
+our @EXPORT = qw/is_core core_since removed_core_since deprecated_core_since/;
+our $MinPerlVersion = 5.008001;
 
-my $perl_version = $^V->numify;
-my $list;
-
-sub perl_version {
-  if (@_) {
-    $perl_version = shift;
-  }
-  $list = $Module::CoreList::version{$perl_version};
-  $perl_version;
+sub is_core ($module, $perl_version = $MinPerlVersion) {
+  Module::CoreList::is_core($module, undef, $perl_version);
 }
 
-sub is_core {
-  $list ||= $Module::CoreList::version{$perl_version};
+sub core_since ($module, $version = 0) {
+  Module::CoreList::first_release($module, $version);
+}
 
-  exists $list->{$_[0]} ? 1 : 0;
+sub removed_core_since ($module) {
+  Module::CoreList::removed_from($module);
+}
+
+sub deprecated_core_since ($module) {
+  Module::CoreList::deprecated_in($module);
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-WWW::CPANTS::Util::CoreList
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-=head1 METHODS
-
-=head2 is_core
-=head2 perl_version
-
-=head1 AUTHOR
-
-Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2012 by Kenichi Ishigaki.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
-=cut

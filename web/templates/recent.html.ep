@@ -1,0 +1,69 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $releases = $data->{releases} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>Recent CPAN releases</h3>
+
+  <table id="releases" class="display compact small">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Version</th>
+        <th>Released by</th>
+        <th>Released on</th>
+        <th>Kwalitee</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#releases').dataTable({
+      "ajax": "/api/v4/table/recent_releases?days=30",
+      "serverSide": true,
+      "info": true,
+      "paging": true,
+      "pageLength": 50,
+      "columns": [
+        {"data": "name",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/release/'+row.pause_id+'/'+data+'-'+row.version+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "version"},
+        {"data": "pause_id",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/author/'+data+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "date",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? strftime('%F', new Date(data))
+            : data;
+        }},
+        {"data": "score",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? data ? sprintf('%.02f', data) : '-'
+            : data;
+        }}
+      ]
+    });
+  });
+  % end
+  % end
+  </div>
+  </section>
+
+</div>

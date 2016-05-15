@@ -1,0 +1,19 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $distribution = $stash->{distribution};
+% layout 'layout', 'cpants.requires_jsonview' => 1;
+
+%= include 'dist/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+%= include 'dist/_tab';
+
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>Metadata</h3>
+  <pre id="json-collapsed" data="<%= $data->{metadata} %>" class="small"></pre>
+  </div>
+  </section>
+
+</div>

@@ -1,0 +1,25 @@
+% my @tabs = (['' => 'Overview'], [prereq => 'Prerequisites'], [used_by => 'Users'], [errors => 'Errors'], [releases => 'Releases'], [metadata => 'Metadata']);
+
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $dist = $data->{distribution} // $stash->{distribution} // {};
+% my $tab = stash('tab') // '';
+
+<h2 class="hidden-xs"><%= $dist->{name} %> <%= $dist->{version} %>
+
+% if (!$dist->{cpan}) {
+<small><span class="label label-danger" data-toggle="tooltip" title="This release has already been deleted from CPAN!">Deleted</span></small>
+% } elsif ($dist->{latest_stable_uid} and $dist->{latest_stable_uid} eq $dist->{uid}) {
+<small><span class="label label-success" data-toggle="tooltip" title="This is the latest stable release most of users should be using">Latest</span></small>
+% } elsif ($dist->{latest_dev_uid} and $dist->{latest_dev_uid} eq $dist->{uid}) {
+<small><span class="label label-success" data-toggle="tooltip" title="This is the latest developer release">Latest Dev</span></small>
+% }
+</h2>
+
+% # latest? avaliability? score? badge? feeds?
+
+<ul class="nav nav-tabs">
+% for (@tabs) {
+  <li role="presentation" class="<%= $tab eq $_->[0] ? 'active' : '' %>"><a href="/release/<%= $dist->{author} %>/<%= $dist->{name_version} %><%= $_->[0] ? "/$_->[0]" : "" %>"><%= $_->[1] %></a></li>
+% }
+</ul>

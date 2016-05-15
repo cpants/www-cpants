@@ -1,0 +1,81 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $distribution = $stash->{distribution};
+% my $releases = $data->{releases} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+%= include 'dist/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+%= include 'dist/_tab';
+
+<section>
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+<h3>Releases</h3>
+
+% if (@$releases) {
+  <table id="releases" class="display compact small">
+    <thead>
+      <tr>
+        <th class="hidden">Name</th>
+        <th>Version</th>
+        <th>Release Date</th>
+        <th>Released by</th>
+        <th>Availability</th>
+        <th>Core Kwalitee</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  % }
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#releases').dataTable({
+      "ajax": "/api/v4/table/releases_of?name=<%= $distribution->{name} %>",
+      "serverSide": true,
+      "info": true,
+      "paging": true,
+      "pageLength": 25,
+      "columns": [
+        {"data": "name",
+         "visible": false
+        },
+        {"data": "version",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/release/'+row.author+'/'+row.name+'-'+data+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "date",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? strftime('%F', new Date(data))
+            : data;
+        }},
+        {"data": "author",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/author/'+data+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "availability"},
+        {"data": "score",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? sprintf('%.02f', data)
+            : data;
+        }},
+      ]
+    });
+  });
+  % end
+  % end
+
+  </div>
+  </section>
+
+</div>

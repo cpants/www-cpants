@@ -1,49 +1,64 @@
 package WWW::CPANTS::Util::JSON;
 
-use strict;
-use warnings;
-use JSON::XS ();
-use Exporter::Lite;
-use WWW::CPANTS::AppRoot;
+use WWW::CPANTS;
+use WWW::CPANTS::Util::Path;
+use Module::Runtime qw/use_module/;
+use Exporter qw/import/;
+use JSON::Diffable ();
+use Text::Diff ();
 
 our @EXPORT = qw/
-  slurp_json save_json json_file
-  encode_json decode_json encode_pretty_json
+  slurp_json save_json json_file json_dir
+  decode_json decode_relaxed_json decode_if_json
+  encode_json encode_pretty_json
+  diff_json
 /;
 
-my $parser = JSON::XS->new->utf8->canonical->convert_blessed(1);
+my $JSON_CLASS = use_module($ENV{CPAN_META_JSON_BACKEND} || $ENV{PERL_JSON_BACKEND} || 'JSON::XS');
+my $JSON = $JSON_CLASS->new->utf8->canonical->convert_blessed(1);
 
-sub decode_json ($) { $parser->decode(@_) }
-sub encode_json ($) { $parser->encode(@_) }
-sub encode_pretty_json ($) { $parser->pretty->encode(@_) }
-
-sub json_file {
-  my $file = shift;
-  file($file =~ /\.json$/ ? $file : 'tmp/data/'.$file.'.json');
+sub decode_json ($json) { my $val = eval { $JSON->decode($json) }; confess $@ if $@; $val }
+sub decode_relaxed_json ($json) { $JSON->relaxed->decode($json) }
+sub encode_json ($data) { $JSON->encode($data) }
+sub encode_pretty_json ($data) { $JSON->pretty->encode($data) }
+sub diff_json ($old, $new) {
+  return if $old eq $new;
+  $old = JSON::Diffable::encode_json(decode_if_json($old // {}));
+  $new = JSON::Diffable::encode_json(decode_if_json($new // {}));
+  return if $old eq $new;
+  Text::Diff::diff(\$old, \$new, {STYLE => 'Unified'});
 }
 
-sub slurp {
-  my $file = json_file(shift);
+sub decode_if_json ($maybe_json) {
+  return $maybe_json unless $maybe_json =~ /^[\[{]/;
+  decode_relaxed_json($maybe_json);
+}
+
+sub json_file ($path) {
+  file($path =~ /\.json$/ ? $path : "tmp/json/$path.json");
+}
+
+sub json_dir ($path) {
+  dir("tmp/json/$path");
+}
+
+sub slurp_json ($name) {
+  my $file = json_file($name);
   return unless $file->exists;
-  my $json = $file->slurp;
+  my $json = $file->slurp_utf8;
   return unless defined $json;
   decode_json($json);
 }
 
-sub save {
-  my $file = json_file(shift);
-  $file->parent->mkdir;
-  my $data = shift;
+sub save_json ($name, $data = undef) {
+  my $file = json_file($name);
   if (defined $data) {
-    $file->save(encode_json($data));
-  }
-  else {
-    $file->remove;
+    $file->parent->mkpath;
+    $file->spew_utf8(encode_json($data));
+  } else {
+    $file->remove if $file->exists;
   }
 }
-
-*slurp_json = \&slurp;
-*save_json = \&save;
 
 # to convert version objects in the stash
 # XXX: of course it's best not to use these costly conversions
@@ -55,33 +70,3 @@ sub save {
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-WWW::CPANTS::Util::JSON
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-=head1 METHODS
-
-=head2 json_file
-=head2 slurp, slurp_json
-=head2 save, save_json
-=head2 decode_json, encode_json, encode_pretty_json
-
-=head1 AUTHOR
-
-Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2012 by Kenichi Ishigaki.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
-=cut

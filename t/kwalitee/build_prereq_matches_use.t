@@ -1,6 +1,7 @@
-use strict;
-use warnings;
+use WWW::CPANTS;
 use WWW::CPANTS::Test;
+
+plan skip_all => 'todo';
 
 test_kwalitee('build_prereq_matches_use',
   ['JEEN/Lingua-KO-TypoCorrector-0.04.tar.gz', 0], # 3308

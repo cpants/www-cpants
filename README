@@ -6,21 +6,19 @@ Yet another CPANTS frontend.
 HOW TO USE
 ----------
 
-1. Clone git://github.com/charsbar/www-cpants into somewhere.
-2. Run "perl Makefile.PL" there.
-3. Run "cpanm --installdeps ." for install dependencies.
-4. Run "perl bin/configure.pl" to create a config file.
-5. Run "prove -lwr t/" to make sure if it works.
-6. Run "perl bin/run.pl --workers 3 --target backpan".
-7. Run "plackup (or starman, etc) cpants.psgi".
-8. Register bin/run.pl to your crontab.
+1. Clone git://github.com/cpants/www-cpants into somewhere.
+2. Install dependencies by "cpanm --installdeps ." or "carton install"
+3. Run "prove -lwr t/" to make sure if it works.
+4. Run "perl bin/run_all --workers 3".
+5. Run "plackup (or starman, etc) web/cpants.psgi".
+6. Register bin/run_all to your crontab.
 
 I advise you not to "install" this into your Perl lib directories.
 
 COPYRIGHT AND LICENSE
 ---------------------
 
-Copyright (C) 2012 Kenichi Ishigaki
+Copyright (C) 2012- Kenichi Ishigaki
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

@@ -1,0 +1,122 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $indicator = $data->{indicator};
+% my $stats = $data->{stats} // [];
+% my $latest_fails = $data->{failing_latest_releases} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h2>Kwalitee Indicator: <%= $indicator->{name} %> <span class="small"><span class="small label label-info"><%= $indicator->{level} %></span></span></h2>
+
+  <p><%= $indicator->{description} %>
+
+  <h3>How to fix</h3>
+  <p><%= $indicator->{remedy} %>
+
+  <h3>Yearly Statistics</h3>
+  % if (@$stats) {
+    <table id="stats" class="display compact small">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Fails (Latest)</th>
+          <th>Releases (Latest)</th>
+          <th>Fails (CPAN)</th>
+          <th>Releases (CPAN)</th>
+          <th>Fails (BackPAN)</th>
+          <th>Releases (BackPAN)</th>
+        </tr>
+      </thead>
+      <tbody>
+      % for my $year (@$stats) {
+        <tr>
+          <td><%= $year->{year} %></td>
+          <td><%= $year->{latest_fails} %></td>
+          <td><%= $year->{latest_uploads} %></td>
+          <td><%= $year->{cpan_fails} %></td>
+          <td><%= $year->{cpan_uploads} %></td>
+          <td><%= $year->{backpan_fails} %></td>
+          <td><%= $year->{backpan_uploads} %></td>
+        </tr>
+      % }
+      </tbody>
+    </table>
+
+    % content_for javascript => begin
+    %= javascript begin
+    $(function(){
+      $('#stats').dataTable({
+      });
+    });
+    % end
+    % end
+
+  % }
+
+  <hr>
+
+  % if (@$latest_fails) {
+    <h3>Latest Fails</h3>
+    <table id="fails" class="display compact small">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Released by</th>
+          <th>Released on</th>
+        </tr>
+      </thead>
+      <tbody>
+      % for my $release (@$latest_fails) {
+        <tr>
+          <td><%= $release->{name_version} %></td>
+          <td><%= $release->{author} %></td>
+          <td><%= $release->{date} %></td>
+        </tr>
+      % }
+      </tbody>
+    </table>
+
+    % content_for javascript => begin
+    %= javascript begin
+
+    $(function(){
+      $('#fails').dataTable({
+        "ajax": "/api/v4/table/fails_in?name=<%= $indicator->{name} %>",
+        "serverSide": true,
+        "deferLoading": <%= $stash->{total_failing_latest_releases} // 0 %>,
+        "columns": [
+          {"data": "name_version",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? '<a href="/release/'+row.author+'/'+data+'">'+data+'</a>'
+              : data;
+          }},
+          {"data": "author",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? '<a href="/author/'+data+'">'+data+'</a>'
+              : data;
+          }},
+          {"data": "date",
+           "render": function(data,type,row){
+            return type === 'display' ? strftime('%F', new Date(data)) : data;
+          }}
+        ],
+        "info": true,
+        "paging": true
+      });
+    });
+    % end
+    % end
+
+  % }
+
+  </div>
+  </section>
+
+</div>
+
+%= include 'kwalitee/_sidebar';

@@ -1,0 +1,79 @@
+% my $stash = stash('cpants');
+% my $authors = $stash->{authors} // [];
+% my $dists = $stash->{dists} // [];
+
+% layout 'layout';
+
+<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+
+<form method="POST" id="search_form" autocomplete="off" class="form-inline" role="form">
+  <input type="text" name="name" id="search" value="<%= param('name') %>" class="form-control"> <input type="submit" class="btn" name="submit" value="Search" />
+</form>
+
+</div>
+
+<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+
+<div id="authors">
+  <ul class="list-unstyled">
+  % for (@$authors) {
+    <li><a href="/author/<%= $_ %>"><%= $_ %></a></li>
+  % }
+  </ul>
+</div>
+
+<div id="dists">
+  <ul class="list-unstyled">
+  % for (@$dists) {
+    <li><a href="/dist/<%= $_ %>"><%= $_ %></a></li>
+  % }
+  </ul>
+</div>
+
+</div>
+
+% content_for 'javascript' => begin
+%= javascript begin
+$(function(){
+  var last = '',
+      in_process = 0;
+  $('#search').keyup(function(){
+    var current = this.value;
+    if (in_process) return;
+    if (!current.length) {
+      $('#authors ul').empty();
+      $('#dists ul').empty();
+      in_process = 0;
+      last = '';
+    } else if (last != current) {
+      last = current;
+      in_process = 1;
+      $.ajax({
+        url: "/api/v4/search",
+        type: "POST",
+        data: {name: current},
+        success: function(data, dataType) {
+          var html = "",
+              authors = data.authors,
+              dists = data.dists,
+              authors_ul = $('#authors ul').empty(),
+              dists_ul = $('#dists ul').empty();
+          for (var i = 0, m = authors.length; i < m; i++) {
+            var author = authors[i];
+            html += '<li><a href="/author/' + author + '">' + author + '</a></li>';
+          }
+          authors_ul.html(html);
+          html = "";
+          for (var i = 0, m = dists.length; i < m; i++) {
+            var dist = dists[i];
+            html += '<li><a href="/dist/' + dist + '">' + dist + '</a></li>';
+          }
+          dists_ul.html(html);
+        },
+        complete: function(xhr, status) { in_process = 0 }
+      });
+    }
+  });
+});
+% end
+% end

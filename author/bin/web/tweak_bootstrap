@@ -1,0 +1,156 @@
+#!/usr/bin/env perl
+
+use Modern::Perl;
+use FindBin;
+use lib "$FindBin::Bin/../../../lib";
+use WWW::CPANTS;
+use WWW::CPANTS::Util;
+use CSS::LESS::Filter;
+use File::pushd;
+
+our @NotUsed = qw/
+  accordion
+  carousel
+  hero-unit
+  modals
+  popovers
+  progress-bars
+  thumbnails
+  wells
+/;
+
+our %ColorMapping = (
+  lbrocard => '#ff7300',
+  book => '#ff66cc',
+  barbie => '#663376',
+  rjbs => '#bb00ff',
+  vpit => '#ffb033',
+  pjcj => '#71558e',
+);
+
+my $LessDir = app_dir("web/bower/bootstrap/less");
+
+croak "bootstrap less doesn't exist" unless -d $LessDir;
+
+# remove not-used files
+$LessDir->child("$_.less")->remove for @NotUsed;
+
+tweak_less_file(bootstrap => [
+  '@import' => sub ($value) {
+    for (@NotUsed) {
+      return if $value =~ /['"]$_\.less['"]/;
+    };
+    $value;
+  }
+]);
+
+tweak_less_file(breadcrumbs => [
+  '.breadcrumb { .active { font-weight:' => 'bold',
+]);
+
+tweak_less_file(variables => [
+  '@font-family-sans-serif:' => 'Tahoma, Verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;',
+  '@white:' => '#fff',
+  '@theme-color:' => '#7BB4F3',
+  '@theme-color-highlight:' => 'darken(spin(@theme-color, -60), 30%)',
+  '@theme-color-lightest:' => 'lighten(@theme-color, (95% - lightness(@theme-color)))',
+  '@theme-color-lighter:' => 'lighten(@theme-color, (90% - lightness(@theme-color)))',
+  '@theme-color-light:' => 'lighten(@theme-color, (85% - lightness(@theme-color)))',
+  '@theme-color-darkest:' => 'darken(@theme-color, 30%)',
+  '@theme-color-darker:' => 'darken(@theme-color, 20%)',
+  '@theme-color-dark:' => 'darken(@theme-color, 10%)',
+
+  '@link-color:' => '@theme-color-dark',
+  '@link-hover-color:' => '@theme-color-darker',
+  '@navbar-default-link-active-color:' => '@theme-color',
+  '@navbar-default-bg:' => '@theme-color-dark',
+  '@navbar-default-link-color:' => '@white',
+  '@navbar-default-link-hover-color:' => '@theme-color-darkest',
+  '@navbar-default-brand-hover-color:' => '@theme-color-darkest',
+  '@navbar-default-toggle-border-color:' => '@theme-color-darker',
+  '@navbar-default-toggle-hover-bg:' => '@theme-color-light',
+  '@navbar-default-toggle-icon-bar-bg:' => '@theme-color-darkest',
+  '@headings-color:' => '@theme-color-darkest',
+
+  '@breadcrumb-bg:' => '@theme-color-lightest',
+  '@breadcrumb-color:' => '@link-color',
+  '@breadcrumb-active-color:' => '@theme-color-highlight',
+
+  '@table-bg-accent:' => '@theme-color-lightest',
+  '@table-bg-hover:' => '@theme-color-lightest',
+  '@table-border-color:' => '@theme-color-light',
+]);
+
+for my $author (keys %ColorMapping) {
+  my $file = $LessDir->child("theme_$author.less");
+  unlink $file if -f $file;
+  tweak_less_file("theme_$author" => [
+    "\@theme-color-$author:" => $ColorMapping{$author},
+    "\@theme-color-highlight-$author:" => "darken(spin(\@theme-color-$author, -60), 30%)",
+    "\@theme-color-lightest-$author:" => "lighten(\@theme-color-$author, (95% - lightness(\@theme-color-$author)))",
+    "\@theme-color-lighter-$author:" => "lighten(\@theme-color-$author, (90% - lightness(\@theme-color-$author)))",
+    "\@theme-color-light-$author:" => "lighten(\@theme-color-$author, (85% - lightness(\@theme-color-$author)))",
+    "\@theme-color-darkest-$author:" => "darken(\@theme-color-$author, 40%)",
+    "\@theme-color-darker-$author:" => "darken(\@theme-color-$author, 20%)",
+    "\@theme-color-dark-$author:" => "darken(\@theme-color-$author, 15%)",
+
+    "\@link-color-$author:" => "\@theme-color-dark-$author",
+    "\@link-hover-color-$author:" => "\@theme-color-darker-$author",
+    "\@headings-color-$author:" => "\@theme-color-darkest-$author",
+    "\@table-border-color-$author:" => "\@theme-color-light-$author",
+    "\@table-bg-accent-$author:" => "\@theme-color-lightest-$author",
+    "\@table-bg-hover-$author:" => "\@theme-color-lightest-$author",
+    "\@breadcrumb-bg-$author:" => "\@theme-color-lightest-$author",
+    "\@breadcrumb-color-$author:" => "\@link-color-$author",
+    "\@breadcrumb-active-color-$author:" => "\@theme-color-highlight-$author",
+
+    ".pause-$author { a { color: " => "\@link-color-$author",
+    ".pause-$author { a:hover { color: " => "\@link-hover-color-$author",
+    ".pause-$author { h1,h2,h3,h4,h5,h6 { color:" => "\@headings-color-$author",
+    ".pause-$author { .table th,.table td { border:" => "1px solid \@table-border-color-$author",
+    ".pause-$author { .table tbody + tbody { border-top:" => "2px solid \@table-border-color-$author",
+    ".pause-$author { .table-bordered { border:" => "1px solid \@table-border-color-$author",
+    ".pause-$author { .table-bordered th, .table-bordered td { border:" => "1px solid \@table-border-color-$author",
+    ".pause-$author { .table-striped tbody > tr:nth-child(even) > td, .table-striped tbody > tr:nth-child(even) > th { background-color:" => "\@table-bg-accent-$author",
+    ".pause-$author { .table-hover tbody > tr:hover td, .table-hover tbody tr:hover > th { background-color:" => "\@table-bg-hover-$author",
+    ".pause-$author { table.tablesorter thead tr th, table.tablesorter thoot tr th { background-color:" => "\@theme-color-lighter-$author",
+    ".pause-$author { table.tablesorter { border-color:" => "\@theme-color-lighter-$author",
+    ".pause-$author { .breadcrumb { background-color:" => "\@breadcrumb-bg-$author",
+    ".pause-$author { .breadcrumb { .active { color:" => "\@breadcrumb-active-color-$author",
+    ".pause-$author { .alert-info { color:" => "\@theme-color-dark-$author",
+    ".pause-$author { .alert-info { background-color:" => "\@theme-color-lightest-$author",
+    ".pause-$author { .alert-info { border-color:" => "\@theme-color-light-$author",
+    ".pause-$author { .navbar-default { background-color:" => "\@theme-color-$author",
+    ".pause-$author { .navbar-default { border-color:" => "\@theme-color-dark-$author",
+    ".pause-$author { .navbar-default { a:hover,a:active { color:" => "\@theme-color-darkest-$author",
+    ".pause-$author { .navbar-default .navbar-nav { li { a:hover,a:active { color:" => "\@theme-color-darkest-$author",
+  ]);
+}
+
+{
+  my $file = $LessDir->child("bootstrap.less");
+  my $less = $file->slurp;
+  for my $author (sort keys %ColorMapping) {
+    unless ($less =~ /theme_$author/) {
+      $less .= qq{\@import "theme_$author.less";\n};
+    }
+  }
+  $file->spew($less);
+}
+
+my $guard = pushd($LessDir->parent);
+system("npm install") and warn "grunt error: $?";
+system("grunt clean") and warn "grunt error: $?";
+system("grunt dist-css") and warn "grunt error: $?";
+system("grunt dist-js") and warn "grunt error: $?";
+system("grunt copy:fonts") and warn "grunt error: $?";
+
+sub tweak_less_file ($name, $filters) {
+  log(info => "tweaking $name");
+  my $file = $LessDir->child("$name.less");
+  my $less = $file->exists ? $file->slurp : '';
+  my $filter = CSS::LESS::Filter->new;
+  $filter->add(@$filters);
+  $less = $filter->process($less, {mode => 'append'});
+  $file->spew($less);
+}

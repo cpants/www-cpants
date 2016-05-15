@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+
+use Modern::Perl;
+use FindBin;
+use Path::Tiny;
+use Menlo::CLI::Compat;
+
+my $root = path("$FindBin::Bin/../..");
+my $cpanfile = "$root/cpanfile";
+
+my $menlo = Menlo::CLI::Compat->new(
+  '--verbose',
+  '--installdeps',
+  '--dev',
+  '--with-develop',
+  ($^O eq 'MSWin32' ? () : qw/--with-suggests --with-recommends/),
+  '--cpanfile='.$cpanfile,
+  '.'
+);
+
+$menlo->run;

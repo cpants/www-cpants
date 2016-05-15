@@ -1,0 +1,186 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $distribution = $data->{distribution};
+% my $issues = $data->{issues} // {};
+% my ($core_issues, $extra_issues, $experimental_issues) = @$issues{qw/core extra experimental/};
+% my $modules = $data->{modules} // [];
+% my $provides = $data->{provides} // [];
+% my $special_files = $data->{special_files} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+%= include 'dist/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+%= include 'dist/_tab';
+
+% if ($issues->{count}) {
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>Kwalitee Issues</h3>
+
+  % if (!$distribution->{latest}) {
+  <div class="alert alert-warning" role="alert">
+    This is not the latest release. The following issues may have already been fixed in the newer releases.
+  </div>
+  % }
+
+  % my $issue_block = begin
+    % my $my_issues = shift;
+    <dl>
+    % for my $issue (@$my_issues) {
+      <dt><a href="/kwalitee/<%= $issue->{name} %>"><%= $issue->{name} %></a></dt>
+      <dd>
+        <p class="small"><%= $issue->{remedy} %></p>
+        % if ($issue->{error}) {
+          <p class="small">
+          % my $reftype = ref $issue->{error};
+          % if (!$reftype) {
+            Error: <%= $issue->{error} %>
+          % } elsif ($reftype eq 'ARRAY') {
+            Error:
+            <ul>
+            % for (@{$issue->{error}}) {
+              <li><%= $_ %></li>
+            % }
+            </ul>
+          % } elsif ($reftype eq 'HASH') {
+            Error:
+            <ul>
+            % for (sort keys %{$issue->{error}}) {
+              <li><%= $_ %>: <%= $issue->{error}{$_} %></li>
+            % }
+            </ul>
+          % }
+          </p>
+        % }
+      </dd>
+    % }
+    </dl>
+  % end
+
+  % if (!@{$core_issues // []}) {
+    <p>No Core Issues.</p>
+  % } else {
+    <%= $issue_block->($core_issues) %>
+  % }
+
+  % if (@{$extra_issues // []}) {
+    <p class="small"><a href="#collapse_extra_issues" data-toggle="collapse" aria-expanded="false" aria-controls="collapse_extra_issues"><%= scalar @$extra_issues %> Extra Issue<%= @$extra_issues > 1 ? "s" : "" %></p>
+    <div id="collapse_extra_issues" class="collapse"><%= $issue_block->($extra_issues) %></div>
+  % }
+
+  % if (@{$experimental_issues // []}) {
+    <p class="small"><a href="#collapse_experimental_issues" data-toggle="collapse" aria-expanded="false" aria-controls="collapse_experimental_issues"><%= scalar @$experimental_issues %> Experimental Issue<%= @$experimental_issues > 1 ? "s" : "" %></a></p>
+    <div id="collapse_experimental_issues" class="collapse"><%= $issue_block->($experimental_issues) %></div>
+  % }
+  </div>
+  </section>
+% }
+
+% if (@$modules) {
+  <section>
+  <div class="col-xs-12 col-sm-10col-md-10 col-lg-10">
+  <h3>Modules</h3>
+  <table id="modules" class="display compact small">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Abstract</th>
+        <th>Version</th>
+        <th class="dt-right">View</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $module (@$modules) {
+      <tr>
+        <td><%= $module->{name} %></td>
+        <td><%= $module->{abstract} %></td>
+        <td><%= $module->{version} %></td>
+        <td class="dt-right"><a href="https://metacpan.org/pod/<%= $module->{name} %>">metacpan</a></td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+  </div>
+  </section>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#modules').dataTable({
+    });
+  });
+  % end
+  % end
+% }
+
+% if (@$provides) {
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>Provides</h3>
+  <table id="provides" class="display compact small">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>File</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $module (@$provides) {
+      <tr>
+        <td><%= $module->{name} %></td>
+        <td><%= $module->{file} %></td>
+        <td class="dt-right"><a href="https://metacpan.org/source/<%= $distribution->{author} %>/<%= $distribution->{name_version} %>/<%= $module->{file} %>#P<%= $module->{name} %>">metacpan</a></td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+  </div>
+  </section>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#provides').dataTable({
+    });
+  });
+  % end
+  % end
+% }
+
+% if (@$special_files) {
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>Other Files</h3>
+  <table id="special_files" class="display compact small">
+    <thead>
+      <tr>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $file (@$special_files) {
+      <tr>
+        <td><%= $file %></td>
+        <td class="dt-right"><a href="https://metacpan.org/source/<%= $distribution->{author} %>/<%= $distribution->{name_version} %>/<%= $file %>">metacpan</a></td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+  </div>
+  </section>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#special_files').dataTable({
+    });
+  });
+  % end
+  % end
+% }
+
+</div>

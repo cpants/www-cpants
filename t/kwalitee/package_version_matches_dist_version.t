@@ -1,5 +1,4 @@
-use strict;
-use warnings;
+use WWW::CPANTS;
 use WWW::CPANTS::Test;
 
 test_kwalitee('package_version_matches_dist_version',
@@ -22,6 +21,9 @@ test_kwalitee('package_version_matches_dist_version',
   ['DOMM/Module-ExtractUse-0.33.tar.gz', 1],
 
   ['MEWILCOX/apache.authznetldap.02.tar.gz', 1], # 1051
+
+  # four dots (may lose info if parsed as a number)
+  ['MISHIN/POD2-RU-5.18.0.1.33.tar.gz', 1],
 
   # provides without version(s)
   ['BURNERSK/Encoding-HandleUtf8-0.002.tar.gz', 0],

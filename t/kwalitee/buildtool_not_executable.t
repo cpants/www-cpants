@@ -1,5 +1,4 @@
-use strict;
-use warnings;
+use WWW::CPANTS;
 use WWW::CPANTS::Test;
 
 plan skip_all => "This test doesn't work well under Windows" if $^O eq 'MSWin32';

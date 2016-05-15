@@ -1,54 +1,40 @@
 package WWW::CPANTS::Test;
 
-use strict;
-use warnings;
+use WWW::CPANTS;
+use WWW::CPANTS::Util;
+use Exporter qw/import/;
 use Test::More;
-use Test::Differences;
-use WWW::CPANTS::AppRoot;
-use WWW::CPANTS::DB;
-use WWW::CPANTS::Log;
-use WWW::CPANTS::Extlib;
-use Exporter::Lite;
 use WorePAN;
-use Carp;
-use IO::Capture::Stderr;
-use Time::Piece;
-use JSON::XS;
-
-local $ENV{WWW_CPANTS_SLOW_QUERY} = 1;
-
-$Carp::Verbose = $ENV{TEST_VERBOSE};
-$Carp::CarpLevel = 1;
-
-$SIG{__DIE__} = sub { croak(@_) };
+use URI;
+use LWP::UserAgent;
+use LWP::Protocol::PSGI;
 
 our @EXPORT = (
   @Test::More::EXPORT,
-  @Test::Differences::EXPORT,
-  qw/setup_mirror no_scan_table epoch test_network
-  test_kwalitee test_context_stash/,
+  qw/
+    setup_mirror
+    requires_network
+    get_cpants_api_ok
+    register_local_api
+    test_kwalitee
+    test_network
+  /,
 );
 
-my $worepan;
-my $pid;
+my ($Pid, $WorePAN);
 
-sub setup_mirror {
-  my @files = @_;
+BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
-  my %opts;
-  if (ref $files[-1] eq ref {}) {
-    %opts = %{pop @files};
-  }
+sub setup_mirror (@files) {
+  my %opts = (ref $files[-1] eq 'HASH') ? %{pop @files} : ();
 
   unless (@files) {
-    @files = qw{
-      I/IS/ISHIGAKI/Path-Extended-0.19.tar.gz
-    };
+    @files = qw{ISHIGAKI/Path-Extended-0.19.tar.gz};
   }
 
-  my $mirror = dir('mirror')->mkdir;
-  my $local_mirror = appdir('tmp/test_mirror')->mkdir;
-  $worepan = WorePAN->new(
+  my $mirror = dir('mirror'); $mirror->mkpath;
+  my $local_mirror = app_dir('tmp/test_mirror'); $local_mirror->mkpath;
+  $WorePAN = WorePAN->new(
     root => $mirror->path,
     local_mirror => $local_mirror->path,
     files => \@files,
@@ -56,124 +42,69 @@ sub setup_mirror {
     no_indices => defined $opts{no_indices} ? $opts{no_indices} : 1,
     use_backpan => 1,
   );
-  $mirror->recurse(callback => sub {
-    my $e = shift;
-    return unless -f $e->path;
-    my $path = $e->relative($mirror);
-    my $local_copy = $local_mirror->file($path);
-    $e->copy_to($local_copy) unless $local_copy->exists;
-  });
-  $pid = $$;
-  $worepan;
-}
-
-sub no_scan_table (&;$) {
-  my ($test, $skip) = @_;
-  my ($package, $file, $line) = caller;
-
-  my $capture = IO::Capture::Stderr->new;
-  $capture->start;
-  eval { $test->() };
-  my $error = $@ ? $@ : '';
-  $capture->stop;
-  fail $error if $error;
-  my @captured = $capture->read;
-  my @scan_table = grep { /SCAN TABLE/ && !/USING (?:COVERING )?INDEX/ } @captured;
-  SKIP: {
-    skip $skip, 1 if $skip;
-    ok !@scan_table, "no scan table: line $line";
+  my $iter = $mirror->iterator({recurse => 1, follow_symlinks => 0});
+  while(my $e = $iter->()) {
+    next unless -f $e;
+    my $path = $e->relative($mirror)->path;
+    my $local_copy = $local_mirror->child($path);
+    if (!$local_copy->exists) {
+      $local_copy->parent->mkpath;
+      $e->copy($local_copy);
+    }
   }
-  note join '', @captured;
+  $Pid = $$;
+  $WorePAN;
 }
 
-sub epoch { Time::Piece->strptime(shift, '%Y-%m-%d')->epoch }
-
-sub test_network {
-  my $host = shift;
+sub requires_network ($host) {
   require Socket;
   eval { Socket::inet_aton($host) }
     or plan skip_all => "This test requires network to $host";
 }
 
-sub test_kwalitee {
-  my ($name, @tests) = @_;
+sub get_cpants_api_ok ($subdomain, $path, $query = {}) {
+  my $url = URI->new("http://$subdomain.cpanauthors.org");
+  $url->path($path);
+  $url->query_form($query);
+  note $url;
+  my $ua = LWP::UserAgent->new(agent => "WWW::CPANTS::Test");
+  my $res = $ua->get($url);
+  ok $res->is_success;
+  decode_json($res->decoded_content);
+}
 
-  require WWW::CPANTS::Analyze;
+sub register_local_api ($psgi_file) {
+  my $psgi = do $psgi_file;
+  LWP::Protocol::PSGI->register($psgi);
+}
+
+sub test_kwalitee ($name, @tests) {
   my $mirror = setup_mirror(map {$_->[0]} @tests);
 
+  require WWW::CPANTS::Bin::Task::Analyze;
+  my $task = WWW::CPANTS::Bin::Task::Analyze->new;
+
   for my $test (@tests) {
-    my $tarball = $mirror->file($test->[0]);
-    my $analyzer = WWW::CPANTS::Analyze->new;
-    my $context = $analyzer->analyze(dist => $tarball);
+    my $path = $test->[0];
+    $path =~ s!^([A-Z])([A-Z0-9])([A-Z0-9_-]+/.+)$!$1/$1$2/$1$2$3!;
+    my $stash = $task->analyze_file($mirror->file($path))->stash;
+    my $result = $stash->{kwalitee}{$name} // '';
+    is $result => $test->[1], $test->[0] . " $name: $result" or note explain $stash;
 
-    my $metric = $analyzer->metric($name);
-    my $result = $metric->{code}->($context->stash, $metric);
-    is $result => $test->[1], $test->[0] . " $name: $result";
-
-    if (!$result) {
-      my $details = $metric->{details}->($context->stash) || '';
-      ok $details, ref $details ? encode_json($details) : $details;
-    }
     if ($test->[2]) {
-      note explain $context->stash;
+      note explain $stash;
     }
   }
 }
 
-sub test_context_stash {
-  my ($tests, $code) = @_;
-
-  require WWW::CPANTS::Analyze;
-  my $mirror = setup_mirror(@$tests);
-
-  for my $test (@$tests) {
-    my $tarball = $mirror->file($test);
-    my $analyzer = WWW::CPANTS::Analyze->new;
-    my $context = $analyzer->analyze(dist => $tarball);
-    ok $context;
-    $code->(decode_json($context->dump_stash));
-  }
+sub test_network ($host) {
+  require Socket;
+  eval { Socket::inet_aton($host) }
+    or plan skip_all => "This test requires network to $host";
 }
 
 END {
-  if (Test::More->builder->is_passing) {
-    if ($pid && $pid == $$) {
-      $worepan->root->remove if $worepan;
-    }
-  }
-  WWW::CPANTS::Log->logger(0);
+  $WorePAN->root->remove if $WorePAN && $Pid && $Pid == $$;
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-WWW::CPANTS::Test
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-=head1 METHODS
-
-=head2 setup_mirror
-=head2 no_scan_table
-=head2 epoch
-=head2 test_network
-=head2 test_kwalitee
-=head2 test_context_stash
-
-=head1 AUTHOR
-
-Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2012 by Kenichi Ishigaki.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
-=cut

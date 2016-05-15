@@ -1,0 +1,11 @@
+% if (stash('cpants.notice_maintenance')) {
+<div id="maintenance" class="alert alert-info">
+  <h4>Under maintenance.</h4>
+  <p>Most probably CPANTS databases are being regenerated from scratch due to major changes in Kwalitee metrics or updates of relevant modules/perl. Usually this maintenance takes about a day or two, and some of the information may be old or missing tentatively. Sorry for the inconvenience.</p>
+</div>
+% } elsif (stash('cpants.notice_analyzing')) {
+<div id="analyzing" class="alert alert-info">
+  <h4>Analyzing.</h4>
+  <p>Scheduled analysis is going on. Some of the information may be inconsistent. Sorry for the inconvenience.</p>
+</div>
+% }

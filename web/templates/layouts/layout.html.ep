@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewpoint" content="width=device-width, initial-scale=1">
+<title>CPANTS</title>
+
+%= stylesheet '/bootstrap/css/bootstrap.min.css';
+
+% if (stash('cpants.requires_datatables')) {
+%= stylesheet '/datatables/css/jquery.dataTables.min.css';
+%= stylesheet '/datatables-responsive/css/dataTables.responsive.css';
+% }
+
+% if (stash('cpants.requires_jsonview')) {
+%= stylesheet '/jquery-jsonview/jquery.jsonview.css';
+% }
+
+%= stylesheet '/font-awesome/css/font-awesome.min.css';
+%= stylesheet '/cpants/css/cpants.css';
+
+<!--[if lt IE 9]>
+%= javascript '/html5shiv/html5shiv.min.js';
+%= javascript '/respond/respond.min.js';
+<![endif]-->
+
+</head>
+
+% my $body_class = stash('body_class');
+<body class="<%= $body_class ? $body_class : "" %>">
+
+<div id="navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <h1><a href="/" class="navbar-brand">CPANTS</a></h1>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/kwalitee">Kwalitee</a></li>
+        <li><a href="/ranking">Ranking</a></li>
+<!--        <li><a href="/stats">Statistics</a></li>-->
+<!--        <li><a href="/about">About CPANTS</a></li>-->
+      </ul>
+    </div>
+  </div>
+</div>
+
+% if (@WWW::CPANTS::DB::Handle::Profiler::Profiles) {
+<div id="slow queries" class="alert alert-warning">
+  <h4>SLOW QUERIES</h4>
+  <p>There's slow queries. See below.</p>
+</div>
+% }
+
+% if (stash('cpants.has_notice')) {
+%= include '_notice'
+% }
+
+<div class="container">
+  <div class="row">
+    <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+      <%== content %>
+
+    </div>
+  </div>
+  <div class="row">
+    <div id="footer" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <address>Maintained by Kenichi Ishigaki &lt;ishigaki@cpan.org&gt;. If you find anything, submit it on <a href="https://github.com/cpants/www-cpants/issues">GitHub</a>.</address>
+    </div>
+  </div>
+</div>
+
+%= javascript '/jquery/jquery.min.js';
+%= javascript '/bootstrap/js/bootstrap.min.js';
+
+% if (stash('cpants.requires_datatables')) {
+%# = javascript '/datatables/js/jquery.dataTables.min.js';
+%= javascript '/datatables/js/jquery.dataTables.js';
+%= javascript '/datatables-responsive/js/dataTables.responsive.js';
+%= javascript '/sprintf/sprintf.min.js';
+%= javascript '/strftime/strftime-min.js';
+%= javascript begin
+$(function() {
+  $.extend($.fn.dataTable.defaults, {
+      "processing": true,
+      "info": false,
+      "ordering": false,
+      "paging": false,
+      "pageLength": 25,
+      "lengthChange": false,
+      "searching": false,
+      "deferRender": true
+  });
+});
+% end
+% }
+
+% if (stash('cpants.requires_jsonview')) {
+%= javascript '/jquery-jsonview/jquery.jsonview.js';
+%= javascript begin
+$(function(){
+  var target = $('#json-collapsed');
+  var json = target.attr('data');
+  target.JSONView(json, {collapsed: true, recursive_collapser: true});
+});
+% end
+% }
+
+<%== content 'javascript' %>
+
+% if ($^O eq 'MSWin32') {
+<div class="container">
+% my @envs = grep {$ENV{"WWW_CPANTS_$_"}} qw/DEBUG PROFILE/;
+% if (@envs) {
+  <h3>ENV</h3>
+  <ul class="unstyled">
+  % for (@envs) {
+    <li><%= $_ %>: <%= $ENV{"WWW_CPANTS_$_"} // '' %></li>
+  % }
+  </ul>
+% }
+
+% if (@WWW::CPANTS::DB::Handle::Profiler::Profiles) {
+  <h3>SLOW QUERIES</h3>
+  <ul class="unstyled">
+%   for (@WWW::CPANTS::DB::Handle::Profiler::Profiles) {
+    <li><%= $_ %></li>
+%   }
+  </ul>
+% }
+
+<h3>CONFIG</h3>
+<ul class="unstyled">
+% for (sort keys %WWW::CPANTS::Util::Config::Config) {
+  % my $conf = $WWW::CPANTS::Util::Config::Config{$_};
+  <li><%= $_ %>: <%= ref $conf ? encode_pretty_json($conf) : $conf // '' %></li>
+% }
+</ul>
+
+</div>
+% }
+
+</body>
+</html>

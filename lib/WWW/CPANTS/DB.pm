@@ -1,77 +1,86 @@
 package WWW::CPANTS::DB;
 
-use strict;
-use warnings;
-use Exporter::Lite;
-use WWW::CPANTS::AppRoot;
-use Module::Find;
+use WWW::CPANTS;
+use WWW::CPANTS::Util;
 
-our @EXPORT = qw/db db_r/;
-
-my %loaded;
-
-sub db {
-  my $name = shift;
-  unless ($loaded{$name}) {
-    my $package = "WWW::CPANTS::DB::$name";
-    eval "require $package; 1" or die $@;
-    $loaded{$name} = $package;
-  }
-  $loaded{$name}->new(@_);
+sub new ($class, $config = {}) {
+  my $type = $config->{type} // 'SQLite';
+  my $base = $config->{base};
+  my $self = bless {
+    base => $base,
+    type => $type,
+    config => $config // {},
+    tables => {},
+  }, $class;
+  $self->{handle} = $self->connect;
+  $self;
 }
 
-sub db_r {
-  my $db = db(@_, readonly => 1);
-  unless (-s $db->dbfile) {
-    unlink $db->dbfile if -f $db->dbfile;
-    die $db->dbname." does not exist\n";
-  }
-  $db;
+sub connect ($self, $table = undef) {
+  return $self->{handle} if $self->{handle};
+
+  my $handle_class = $self->{handle_class} //= use_module((ref $self).'::Handle::'.$self->{type});
+  my $handle = $handle_class->new($self->{base}, $self->{config}, $table);
 }
 
-sub load_all {
-  for my $package (usesub 'WWW::CPANTS::DB') {
-    my ($name) = $package =~ /::(\w+)$/;
-    next if $name eq 'Base';
-    $loaded{$name} = $package;
+sub table ($self, $name) {
+  return $self->{tables}{$name} if $self->{tables}{$name};
+  my $class = ref $self;
+  my $table_class = use_module($class.'::Table::'.$name);
+  my $table = $table_class->new($self->connect($table_class->name));
+  $self->{tables}{$name} = $table;
+}
+
+sub table_names ($self) {
+  my @names;
+  my $class = ref $self;
+  my $base = $class.'::Table';
+  for my $module (sort {$a cmp $b} findallmod $base) {
+    (my $name = $module) =~ s/^${base}:://;
+    push @names, $name;
+  }
+  @names;
+}
+
+sub advisory_lock ($self, @names) {
+  my $dir = tmp_dir('lock');
+  $dir->mkpath unless -d $dir;
+  for my $name (@names) {
+    my $lockfile = $dir->child($name.".lock");
+    return if -f $lockfile;
+    my $lock_tmpfile = $dir->child($name.".lock.$$");
+    $lock_tmpfile->spew($$);
+    rename $lock_tmpfile => $lockfile or do {
+      unlink $lock_tmpfile;
+      return;
+    };
+    $self->{lock}{$name} = $lockfile;
+  }
+  return 1;
+}
+
+sub advisory_unlock ($self, @names) {
+  my $dir = tmp_dir('lock');
+  return unless -d $dir;
+  for my $name (@names) {
+    my $lockfile = $dir->child($name.".lock");
+    next unless -f $lockfile;
+    my $pid = $lockfile->slurp;
+    next unless $pid eq $$;
+    unlink $lockfile;
+    delete $self->{lock}{$name};
   }
 }
 
-sub loaded { sort keys %loaded }
-
-sub setup_all {
-  load_all();
-  $_->new->setup for values %loaded;
+sub DESTROY ($self) {
+  if (%{$self->{lock} // {}}) {
+    for my $lockfile (values %{$self->{lock}}) {
+      next unless -f $lockfile;
+      my $pid = $lockfile->slurp;
+      next unless $pid eq $$;
+      unlink $lockfile;
+    }
+  }
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-WWW::CPANTS::DB
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-=head1 METHODS
-
-=head2 db, db_r
-=head2 load_all
-=head2 loaded
-=head2 setup_all
-
-=head1 AUTHOR
-
-Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2012 by Kenichi Ishigaki.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
-=cut
