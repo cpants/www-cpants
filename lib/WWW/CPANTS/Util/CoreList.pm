@@ -8,7 +8,7 @@ our @EXPORT = qw/is_core core_since removed_core_since deprecated_core_since/;
 our $MinPerlVersion = 5.008001;
 
 sub is_core ($module, $perl_version = $MinPerlVersion) {
-  Module::CoreList::is_core($module, undef, $perl_version);
+  Module::CoreList::is_core($module, undef, $perl_version // $MinPerlVersion);
 }
 
 sub core_since ($module, $version = 0) {
