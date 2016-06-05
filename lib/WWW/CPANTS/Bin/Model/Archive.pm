@@ -246,16 +246,27 @@ sub is_extracted_nicely ($self) {
       $self->distdir($tmpdir, $entities[0]);
       if (-d $self->distdir) {
         my $distvname = $self->distvname;
-        $distvname =~ s/\-withoutworldwritables//;
-        $distvname =~ s/\-TRIAL[0-9]*//;
-        $self->set(extracts_nicely => ($distvname eq $entities[0] ? 1 : 0));
+        if ($distvname eq $entities[0]) {
+          $self->set(extracts_nicely => 1);
+        } else {
+          $distvname =~ s/\-withoutworldwritables//;
+          $distvname =~ s/\-TRIAL[0-9]*//;
+          if ($distvname eq $entities[0]) {
+            $self->set(extracts_nicely => 1);
+          } else {
+            $self->set(extracts_nicely => 1);
+            $self->set_error(extracts_nicely => "expected $distvname but $entities[0] is found");
+          }
+        }
       } else {
         $self->distdir($tmpdir);
         $self->set(extracts_nicely => 0);
+        $self->set_error(extracts_nicely => "$entities[0] is not a directory");
       }
     } else {
       $self->distdir($tmpdir);
       $self->set(extracts_nicely => 0);
+      $self->set_error(extracts_nicely => 'More than one top directories are found: '.join ';', @entities);
     }
   } else {
     my $message = "Can't open $tmpdir: $!";
