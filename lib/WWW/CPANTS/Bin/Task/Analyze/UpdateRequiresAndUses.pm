@@ -62,6 +62,11 @@ sub update ($self, $uid, $stash) {
 }
 
 sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses, $provides) {
+  if ($stash->{dynamic_config}) {
+    $stash->{kwalitee}{prereq_matches_use} = 1;
+    return;
+  }
+
   my $cpan = $self->cpan;
 
   my $required_perl = $requires->{runtime_requires}{perl};
@@ -95,6 +100,11 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses, $provid
 }
 
 sub test_requires_matches_use ($self, $uid, $stash, $requires, $uses, $provides) {
+  if ($stash->{dynamic_config}) {
+    $stash->{kwalitee}{prereq_matches_use} = 1;
+    return;
+  }
+
   my %included = map {$_ => 1} @{$stash->{included_modules} // []};
 
   my $required_perl = $requires->{runtime_requires}{perl};
