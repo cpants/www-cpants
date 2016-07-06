@@ -7,13 +7,14 @@ use parent 'WWW::CPANTS::Web::Data';
 
 sub load ($self, $path) {
   my ($author, $name_version) = split '/', $path;
-  my ($name, $version) = distname_info($name_version);
-  if ($author && $name && $version) {
+  my ($name, $version);
+  if ($author) {
+    ($name, $version) = distname_info($name_version);
     return unless is_pause_id($author);
     return unless is_alphanum($name);
     return unless is_alphanum($version);
-  } elsif ($name) {
-    return unless is_alphanum($name);
+  } elsif (is_alphanum($name_version)) {
+    $name = $name_version;
   } else {
     return;
   }
