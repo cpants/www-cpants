@@ -92,7 +92,11 @@ sub test_kwalitee ($name, @tests) {
     is $result => $test->[1], $test->[0] . " $name: $result" or note explain $stash;
 
     if ($test->[2]) {
-      note explain $stash;
+      if (ref $test->[2] eq ref sub {}) {
+        $test->[2]->($stash);
+      } else {
+        note explain $stash;
+      }
     }
   }
 }
