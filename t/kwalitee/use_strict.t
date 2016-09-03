@@ -22,6 +22,9 @@ test_kwalitee('use_strict',
 
   # .pod without package declaration
   ['ETHER/Moose-2.1209.tar.gz', 1],
+
+  # v6 module inside a Perl 5 distribution
+  ['NINE/Inline-Perl6-0.07.tar.gz', 1],
 );
 
 done_testing;
