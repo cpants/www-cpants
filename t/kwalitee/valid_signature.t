@@ -13,7 +13,14 @@ test_kwalitee('valid_signature',
   ['JMEHNLE/net-address-ipv4-local/Net-Address-IPv4-Local-0.12.tar.gz', 0], # 4848
   ['RPAGITSCH/Win32-Process-User-0.02.tar.gz', 0], # 5063
   ['HUGUEI/Finance-Currency-Convert-BChile-0.04.tar.gz', 0], # 5108
-  ['RKOBES/File-HomeDir-Win32-0.04.tar.gz', 0], # 5304
+  ['RKOBES/File-HomeDir-Win32-0.04.tar.gz', 0, sub {
+    my $stash = shift;
+    ok $stash->{error}{valid_signature};
+  }],
+  ['RIVY/Win32-CommandLine-0.938.tar.gz', 1, sub {
+    my $stash = shift;
+    ok !$stash->{error}{valid_signature};
+  }],
 );
 
 done_testing;
