@@ -23,7 +23,7 @@ sub load ($self, $params = {}) {
   for my $release (@releases) {
     $release->{$_} = html($release->{$_}) for keys %$release;
     push @rows, {
-      name => $release->{name},
+      name => $name,
       version => $release->{version},
       date => ymd($release->{released}),
       author => $release->{author},
