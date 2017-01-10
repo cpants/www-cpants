@@ -21,7 +21,7 @@ sub columns ($self) {(
 sub select_all_scores_for_author ($self, $pause_id) {
   my $sth = $self->{sth}{all_scores_for_author} //= $self->prepare(qq[
     SELECT kwalitee, core_kwalitee FROM kwalitee
-    WHERE pause_id = ? AND latest = 1
+    WHERE pause_id = ? AND latest = 1 AND cpan = 1
   ]);
   $self->select_all($sth, $pause_id);
 }
