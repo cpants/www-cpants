@@ -15,6 +15,12 @@ test_kwalitee('no_pod_errors',
 
   # broken pod for testing should not be counted
   ['RJBS/Pod-Elemental-0.103000.tar.gz', 1],
+
+  # has binary data
+  ['DCANTRELL/Number-Phone-3.3000.tar.gz', 1],
+
+  # no actual data
+  ['APLA/DBI-Easy-0.18.tar.gz', 1],
 );
 
 done_testing;

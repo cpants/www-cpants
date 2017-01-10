@@ -7,6 +7,7 @@ test_kwalitee('meta_yml_is_parsable',
 
   # Stream does not end with newline character
   ['SCILLEY/POE/Component/IRC/Plugin/IRCDHelp-0.02.tar.gz', 0], # 3243
+
   # Error reading from file: utf8 "\xB0" does not map to Unicode
   ['WINTRU/Mica-1.a.0.tar.gz', 0], # 1196
 

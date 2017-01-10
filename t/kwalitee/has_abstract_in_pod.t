@@ -20,7 +20,6 @@ test_kwalitee('has_abstract_in_pod',
 
   # invalid =encoding (utf-8;)
   ['INGY/IO-All-0.40.tar.gz', 0],
-  
 );
 
 done_testing;
