@@ -24,17 +24,29 @@
       <dd>
         % my $reftype = ref $error->{error};
         % if (!$reftype) {
-          <%= $error->{error} %>
+          % if ($error->{error} =~ /\n/s) {
+            <pre><%= $error->{error} %></pre>
+          % } else {
+            <%= $error->{error} %>
+          % }
         % } elsif ($reftype eq 'ARRAY') {
           <ul>
           % for (@{$error->{error}}) {
-            <li><%= $_ %></li>
+            % if (/\n/s) {
+              <li><pre><%= $_ %></pre></li>
+            % } else {
+              <li><%= $_ %></li>
+            % }
           % } 
           </ul>
         % } elsif ($reftype eq 'HASH') {
           <ul>
           % for (sort keys %{$error->{error}}) {
-            <li><%= $_ %>: <%= $error->{error}{$_} %></li>
+            % if ($error->{error}{$_} =~ /\n/s) {
+              <li><pre><%= $_ %>: <%= $error->{error}{$_} %></pre></li>
+            % } else {
+              <li><%= $_ %>: <%= $error->{error}{$_} %></li>
+            % }
           % } 
           </ul>
         % }
