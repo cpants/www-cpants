@@ -24,6 +24,7 @@ sub gravatar_url ($pause_id) {
     email => $pause_id.'@cpan.org',
     size => 130,
     default => 'identicon',
+    https => 1,
   );
 }
 
