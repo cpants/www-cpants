@@ -171,9 +171,9 @@ sub search_for ($self, $name) {
       FROM uploads WHERE author BETWEEN ? AND ? || '~' GROUP BY author
     UNION
     SELECT '' AS author, name
-      FROM uploads WHERE name BETWEEN ? AND ? || '~' GROUP BY name
+      FROM uploads WHERE UPPER(name) BETWEEN ? AND ? || '~' GROUP BY name
     ORDER BY author, name
-  /, $uc_name, $uc_name, $name, $name);
+  /, $uc_name, $uc_name, $uc_name, $uc_name);
 }
 
 sub select_all_recent_releases_by ($self, $pause_id, $days = 90, $limit = 25, $offset = 0) {
