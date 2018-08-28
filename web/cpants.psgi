@@ -14,7 +14,7 @@ my $app = WWW::CPANTS::Web->new;
 builder {
   if ($app->mode eq 'production') {
     my $counter_file = $app->home->rel_file('tmp/counter');
-    my $scoreboard = $app->home->rel_dir('tmp/scoreboard');
+    my $scoreboard = $app->home->rel_file('tmp/scoreboard');
     unless (-d $scoreboard) {
       require File::Path;
       File::Path::mkpath($scoreboard);
