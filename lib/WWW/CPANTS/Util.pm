@@ -110,7 +110,7 @@ sub is_pause_id ($value, $length = 9) {
   return unless defined $value;
   return unless length($value) <= $length;
   $value = uc $value;
-  return unless $value =~ /\A[A-Z][A-Z0-9][0-9A-Z\-]+\z/;
+  return unless $value =~ /\A[A-Z][A-Z0-9][0-9A-Z\-]*\z/;
   return $value;
 }
 
