@@ -1,7 +1,7 @@
 use WWW::CPANTS;
 use WWW::CPANTS::Test;
 
-test_kwalitee('package_version_matches_dist_version',
+test_kwalitee('main_module_version_matches_dist_version',
   ['JEROMEMCK/Net-ICQ-On-1.7.tar.gz', 0], # 1005
   ['ARCANEZ/WWW-Mailchimp-0.006_02.tar.gz', 0], # 1007
   ['IDIVISION/nginx.pm.tar.gz', 0], # 1059
@@ -20,7 +20,8 @@ test_kwalitee('package_version_matches_dist_version',
   ['JANDREW/Data-Walk-Extracted-0.024.004.tar.gz', 1],
   ['DOMM/Module-ExtractUse-0.33.tar.gz', 1],
 
-  ['MEWILCOX/apache.authznetldap.02.tar.gz', 1], # 1051
+  # no main module
+  ['MEWILCOX/apache.authznetldap.02.tar.gz', 0], # 1051
 
   # four dots (may lose info if parsed as a number)
   ['MISHIN/POD2-RU-5.18.0.1.33.tar.gz', 1],
