@@ -10,7 +10,7 @@ use URI::QueryParam;
 our @EXPORT = qw/http_get mirror metacpan_api/;
 
 my $UA = HTTP::Tiny->new();
-my $CPAN_API = 'http://api.metacpan.org/v0';
+my $CPAN_API = 'https://fastapi.metacpan.org/v1';
 
 sub http_get ($url) {
   my $res = $UA->get($url);
