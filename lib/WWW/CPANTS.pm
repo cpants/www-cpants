@@ -4,6 +4,7 @@ use Modern::Perl;
 use experimental 'signatures';
 use Carp;
 use Data::Dump;
+use Syntax::Keyword::Try;
 use JSON::PP (); # to avoid warnings when Cpanel::JSON::XS is loaded somewhere earlier
 
 our $VERSION = '4.00';
@@ -12,6 +13,7 @@ our $CONTEXT;
 sub import ($class, @args) {
   Modern::Perl->import('2015');
   experimental->import(qw/signatures/);
+  Syntax::Keyword::Try->import;
   Carp->export_to_level(1, @_);
   my $caller = caller;
   no strict 'refs';

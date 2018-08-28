@@ -38,11 +38,15 @@ sub run ($class, %args) {
   my $pidfile = $ctx->save_pidfile;
   my $timer = timer($ctx->name);
 
-  try_and_log_error {
+  try {
     for my $name ($ctx->task_names) {
       $ctx->task($name)->run_and_log(@{$ctx->{task_args} // []});
     }
-  };
+  }
+  catch {
+    my $error = $@;
+    log(error => $error);
+  }
 }
 
 1;

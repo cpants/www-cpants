@@ -121,12 +121,13 @@ sub analyze_file ($self, $file) {
         try {
           local $SIG{__WARN__} = sub { push @warnings, @_ };
           $module->analyse($archive);
-        } catch {
-          my $error = $_;
+        }
+        catch {
+          my $error = $@;
           die $error if $error eq "timeout\n";
           $archive->set_error($module => $error);
           log(error => "$dist: $error");
-        };
+        }
         $elapsed{$module} = time - $started;
         if (@warnings) {
           my $message = "$module: ".join '', @warnings;
@@ -135,8 +136,9 @@ sub analyze_file ($self, $file) {
         };
       }
       alarm 0;
-    } catch {
-      my $error = $_;
+    }
+    catch {
+      my $error = $@;
       log(warning => "$dist: $error");
       if ($error eq "timeout\n") {
         $archive->set_error(timeout => 1);
@@ -151,7 +153,7 @@ sub analyze_file ($self, $file) {
         log(error => "$dist: $error");
         $archive->set_error(cpants => $error);
       }
-    };
+    }
     delete $archive->stash->{$_} for qw/
       dirs_list files_list ignored_files_list
       files dirs test_files ignored_files_array

@@ -26,23 +26,29 @@ sub update ($self, $pause_id, $file) {
   my $name = $file->basename;
   log(info => "found $name for $pause_id");
   my $json_text = $file->slurp;
-  $json = try { encode_json(decode_json($json_text)) } # eliminate spaces
+  try {
+    # eliminate spaces
+    $json = encode_json(decode_json($json_text));
+  }
   catch {
-    my $json_error = $_;
+    my $json_error = $@;
     $json_error =~ s/ at \S+? line \d+.*$//s;
     log(debug => "error found at $pause_id/$name: $json_error");
     log(debug => $json_text);
     my $tweaked_json_text = $json_text;
     $tweaked_json_text =~ s|",\s*//\s*.+$|",|gm; # illegal comments
     $tweaked_json_text =~ s|"location"\s*:\s*{lat\s*:\s*([0-9.-]+),\s*lon\s*:\s*([0-9.-]+)},|"location": {"lat": "$1", "lon": "$2"},|; # coordinates
-    $json = try { encode_json(decode_relaxed_json($tweaked_json_text)) } # allow trailing commas
+    try {
+      # allow trailing commas
+      $json = encode_json(decode_relaxed_json($tweaked_json_text));
+    }
     catch {
-      $json_error = $_;
+      $json_error = $@;
       $json_error =~ s/ at \S+? line \d+.*$//s;
       log(info => "error found at $pause_id/$name (even after relaxed): $@");
       encode_json({error => $json_error});
-    };
-  };
+    }
+  }
   $self->{table}->update_json($pause_id, $json, $self->{mtime}{$pause_id}) if $json;
 }
 

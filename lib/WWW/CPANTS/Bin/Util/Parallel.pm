@@ -30,7 +30,8 @@ sub parallel ($workers, $code) {
     exit;
   };
 
-  try_and_log_error { $code->($runner) };
+  try   { $code->($runner) }
+  catch { my $error = $@; log(error => $@) }
 
   $runner->finish;
 }
@@ -42,7 +43,7 @@ use WWW::CPANTS::Util;
 
 sub new ($class, $max_workers) { bless {}, $class }
 sub run ($self, $code) {
-  try_and_log_error { $code->() };
+  try { $code->() } catch { my $error = $@; log(error => $error) }
 }
 sub pid ($self) {$$}
 sub killall ($self, $sig) { kill $sig, $$ }

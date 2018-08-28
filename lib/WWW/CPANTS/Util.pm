@@ -12,7 +12,6 @@ use Module::Find qw/findallmod useall/;
 use Module::Runtime qw/use_module/;
 use String::CamelCase qw/camelize decamelize/;
 use Const::Fast;
-use Try::Catch;
 use Digest::MD5 ();
 use Digest::FNV::XS ();
 use Scalar::Util qw/blessed/;
@@ -28,7 +27,6 @@ our @EXPORT = (
   @WWW::CPANTS::Util::Datetime::EXPORT,
   @WWW::CPANTS::Util::DistnameInfo::EXPORT,
   @Const::Fast::EXPORT,
-  @Try::Catch::EXPORT,
   qw/
     under_maintenance
     under_analysis
@@ -39,7 +37,6 @@ our @EXPORT = (
     path_uid
     findallmod useall
     blessed
-    try_and_log_error
     config
     distinfo
     file_mtime
@@ -64,11 +61,6 @@ sub package_path_name ($package) {
 
 sub md5 ($str) { Digest::MD5::md5_hex($str) }
 sub path_uid ($str) { Digest::FNV::XS::fnv1a_64($str) }
-
-sub try_and_log_error :prototype(&) ($code) {
-  try {$code->()}
-  catch { my $error = $_; log(error => $error); return };
-}
 
 sub config ($name) {
   my $ctx = WWW::CPANTS->context or return;

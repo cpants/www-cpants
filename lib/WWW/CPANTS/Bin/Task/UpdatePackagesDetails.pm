@@ -15,12 +15,16 @@ sub run ($self, @args) {
 
   log(info => "updating packages.details");
 
-  try_and_log_error {
+  try {
     my $txn = $table->txn;
     $table->truncate;
     $table->bulk_insert($cpan->list_packages_details);
     $txn->commit;
-  };
+  }
+  catch {
+    my $error = $@;
+    log(error => $@);
+  }
 
   log(info => "updated packages.details");
 }

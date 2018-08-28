@@ -70,13 +70,17 @@ sub _disconnect ($self) {
 sub __disconnect ($self) {}
 
 sub do ($self, $sql, @bind) {
-  try_and_log_error {
+  try {
     if (blessed $sql and $sql->isa('DBI::st')) {
       $sql->execute(@bind);
     } else {
       $self->dbh->do($self->append_caller_info($sql), undef, @bind);
     }
-  };
+  }
+  catch {
+    my $error = $@;
+    log(error => $error);
+  }
 }
 
 sub insert ($self, $sql, @bind) {
