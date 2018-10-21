@@ -58,6 +58,7 @@ requires 'Path::Tiny';
 requires 'Plack::Builder::Conditionals';
 requires 'Plack::Middleware::AxsLog';
 requires 'Plack::Middleware::ReverseProxy';
+requires 'Plack::Middleware::ServerStatus::Lite';
 requires 'Pod::Simple::Checker', '2.02';
 requires 'Role::Basic';
 requires 'Software::License', '0.103012';
