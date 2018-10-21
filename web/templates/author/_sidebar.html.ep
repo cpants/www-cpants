@@ -37,7 +37,6 @@
   <dd>
     <ul class="list-unstyled">
       <li><a href="http://metacpan.org/author/<%= $pause_id %>">metacpan</a></li>
-      <li><a href="http://search.cpan.org/~<%= $pause_id %>/">search.cpan.org</a></li>
       <li><a href="https://rt.cpan.org/Public/Dist/ByMaintainer.html?Name=<%= $pause_id %>">rt.cpan.org</a></li>
       <li><a href="http://www.cpantesters.org/author/<%= substr($pause_id, 0, 1) %>/<%= $pause_id %>.html">cpantesters</a></li>
 % if ($author->{homepage}) {

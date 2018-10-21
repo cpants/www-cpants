@@ -39,7 +39,6 @@
     <dd>
       <ul class="list-unstyled">
         <li><a href="<%= metacpan_url($distribution) %>">metacpan.org</a></li>
-        <li><a href="<%= search_cpan_url($distribution) %>">search.cpan.org</a></li>
         <li><a href="<%= rt_url($distribution) %>">rt.cpan.org</a></li>
       </ul>
     </dd>

@@ -18,7 +18,6 @@ sub register ($self, $app, $conf) {
   $app->helper(kwalitee_score => \&kwalitee_score);
   $app->helper(release_availability => \&release_availability);
   $app->helper(metacpan_url => \&metacpan_url);
-  $app->helper(search_cpan_url => \&search_cpan_url);
   $app->helper(rt_url => \&rt_url);
   $app->helper(gravatar_url => \&gravatar_url);
 }
@@ -57,10 +56,6 @@ sub gravatar_url ($c, $pause_id) {
 
 sub metacpan_url ($c, $dist) {
   WWW::CPANTS::Web::Util::URL::metacpan_url($dist);
-}
-
-sub search_cpan_url ($c, $dist) {
-  WWW::CPANTS::Web::Util::URL::search_cpan_url($dist);
 }
 
 sub rt_url ($c, $dist) {
