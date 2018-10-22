@@ -9,10 +9,20 @@ sub metacpan_url ($dist) {
   URI->new(sprintf 'https://metacpan.org/release/%s/%s', @$dist{qw/author name_version/});
 }
 
-sub rt_url ($dist) {
-  my $uri = URI->new('https://rt.cpan.org/Public/Dist/Display.html');
-  $uri->query_param(Name => $dist->{name});
-  $uri;
+sub bugtracker_url ($dist) {
+  if (my $url = $dist->{bugtracker_url}) {
+    URI->new($url);
+  } else {
+    my $uri = URI->new('https://rt.cpan.org/Public/Dist/Display.html');
+    $uri->query_param(Name => $dist->{name});
+    $uri;
+  }
+}
+
+sub repository_url ($dist) {
+  my $url = $dist->{repository_url} or return;
+  $url =~ s!^git://github!https://github!;
+  URI->new($url);
 }
 
 sub gravatar_url ($pause_id) {

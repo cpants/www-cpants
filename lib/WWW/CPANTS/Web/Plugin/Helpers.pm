@@ -18,7 +18,8 @@ sub register ($self, $app, $conf) {
   $app->helper(kwalitee_score => \&kwalitee_score);
   $app->helper(release_availability => \&release_availability);
   $app->helper(metacpan_url => \&metacpan_url);
-  $app->helper(rt_url => \&rt_url);
+  $app->helper(repository_url => \&repository_url);
+  $app->helper(bugtracker_url => \&bugtracker_url);
   $app->helper(gravatar_url => \&gravatar_url);
 }
 
@@ -58,8 +59,12 @@ sub metacpan_url ($c, $dist) {
   WWW::CPANTS::Web::Util::URL::metacpan_url($dist);
 }
 
-sub rt_url ($c, $dist) {
-  WWW::CPANTS::Web::Util::URL::rt_url($dist);
+sub repository_url ($c, $dist) {
+  WWW::CPANTS::Web::Util::URL::repository_url($dist);
+}
+
+sub bugtracker_url ($c, $dist) {
+  WWW::CPANTS::Web::Util::URL::bugtracker_url($dist);
 }
 
 1;

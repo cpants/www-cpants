@@ -13,6 +13,14 @@ sub columns ($self) {(
   [bugtracker_url => 'varchar(255)'],
 )}
 
+sub select_by_uid ($self, $uid) {
+  my $sth = $self->{sth}{select_by_uid} //= $self->prepare(qq[
+    SELECT * FROM resources
+    WHERE uid = ?
+  ]);
+  $self->select($sth, $uid);
+}
+
 sub delete_by_uids ($self, $uids) {
   my $quoted_uids = $self->quote_and_concat($uids);
   $self->delete(qq[

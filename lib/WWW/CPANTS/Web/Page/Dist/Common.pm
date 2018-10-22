@@ -48,6 +48,13 @@ sub load ($self, $path) {
   $dist->{core_kwalitee} = kwalitee_score($kwalitee->{core_kwalitee});
   $dist->{kwalitee} = kwalitee_score($kwalitee->{kwalitee});
 
+  my $resources = $db->table('Resources')->select_by_uid($uid);
+  if ($resources) {
+    $dist->{repository_url} = $resources->{repository_url};
+    $dist->{bugtracker_url} = $resources->{bugtracker_url};
+    $dist->{resources} = decode_json($resources->{resources} // {});
+  }
+
   $dist;
 }
 

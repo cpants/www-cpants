@@ -39,7 +39,12 @@
     <dd>
       <ul class="list-unstyled">
         <li><a href="<%= metacpan_url($distribution) %>">metacpan.org</a></li>
-        <li><a href="<%= rt_url($distribution) %>">rt.cpan.org</a></li>
+        % if (my $repo_url = repository_url($distribution)) {
+        <li><a href="<%= $repo_url %>">repository (<%= $repo_url->host %>)</a></li>
+        % }
+        % if (my $bugtracker_url = bugtracker_url($distribution)) {
+        <li><a href="<%= $bugtracker_url %>">bugtracker (<%= $bugtracker_url->host %>)</a></li>
+        % }
       </ul>
     </dd>
 
