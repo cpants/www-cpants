@@ -8,6 +8,7 @@
 /etc/config.pl
 /web/bower/
 blib/
+extlib/
 tmp/
 Makefile
 !Makefile.PL
