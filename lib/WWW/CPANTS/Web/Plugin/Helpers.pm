@@ -18,7 +18,7 @@ sub register ($self, $app, $conf) {
   $app->helper(kwalitee_score => \&kwalitee_score);
   $app->helper(release_availability => \&release_availability);
   $app->helper(metacpan_url => \&metacpan_url);
-  $app->helper(rt_url => \&rt_url);
+  $app->helper(tracker_url => \&tracker_url);
   $app->helper(gravatar_url => \&gravatar_url);
 }
 
@@ -58,8 +58,15 @@ sub metacpan_url ($c, $dist) {
   WWW::CPANTS::Web::Util::URL::metacpan_url($dist);
 }
 
-sub rt_url ($c, $dist) {
-  WWW::CPANTS::Web::Util::URL::rt_url($dist);
+sub tracker_url ($c, $dist) {
+  my $db   = WWW::CPANTS->context->db;
+  my $data = $db->table('Analysis')->select_json_by_uid($dist->{uid}) // '{}';
+  my $json = WWW::CPANTS::Util::JSON::decode_json( $data );
+
+  my $url = $json->{meta_yml}->{resources}->{bugtracker} //
+    WWW::CPANTS::Web::Util::URL::rt_url($dist);
+
+  return $url;
 }
 
 1;
