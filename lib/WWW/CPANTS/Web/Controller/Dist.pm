@@ -21,7 +21,7 @@ sub index ($c) {
     return $c->render(json => $data->{data});
   }
   if ($format eq 'png') {
-    my $path = WWW::CPANTS::Web::Util::Badge->new(100)->path;
+    my $path = WWW::CPANTS::Web::Util::Badge->new($data->{data}{distribution}{core_kwalitee})->path;
     return $c->reply->static($path);
   }
   $c->stash(cpants => $data);
