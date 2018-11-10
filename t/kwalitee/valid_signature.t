@@ -19,7 +19,7 @@ test_kwalitee('valid_signature',
   }],
   ['RIVY/Win32-CommandLine-0.938.tar.gz', 1, sub {
     my $stash = shift;
-    ok !$stash->{error}{valid_signature};
+    like $stash->{error}{valid_signature} =~ /Old SIGNATURE detected/;
   }],
 );
 
