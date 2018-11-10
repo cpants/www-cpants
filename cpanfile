@@ -9,6 +9,7 @@ requires 'Class::Accessor', '0.19';
 requires 'Class::Load::XS';
 requires 'Const::Fast';
 requires 'Cookie::Baker::XS';
+requires 'Badge::Simple';
 requires 'Data::Binary';
 requires 'DBD::SQLite';
 requires 'DBI';

@@ -17,6 +17,10 @@ sub index ($c) {
     my $path = WWW::CPANTS::Web::Util::Badge->new($data->{data}{author}{average_core_kwalitee})->path;
     return $c->reply->static($path);
   }
+  if ($format eq 'svg') {
+    my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{data}{author}{average_core_kwalitee})->path;
+    return $c->reply->static($path);
+  }
 
   $c->stash(cpants => $data);
   $c->stash(body_class => "pause-".(lc $id));

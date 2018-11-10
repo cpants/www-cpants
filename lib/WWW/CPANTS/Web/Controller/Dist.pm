@@ -10,7 +10,7 @@ sub index ($c) {
   my $name = $c->param('name');
 
   my $format = '';
-  if ($name =~ s/\.(json|png)$//) {
+  if ($name =~ s/\.(json|png|svg)$//) {
     $format = $1;
     $c->param(name => $name);
     $c->stash(format => $format);
@@ -22,6 +22,10 @@ sub index ($c) {
   }
   if ($format eq 'png') {
     my $path = WWW::CPANTS::Web::Util::Badge->new($data->{data}{distribution}{core_kwalitee})->path;
+    return $c->reply->static($path);
+  }
+  if ($format eq 'svg') {
+    my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{data}{distribution}{core_kwalitee})->path;
     return $c->reply->static($path);
   }
   $c->stash(cpants => $data);
