@@ -16,10 +16,12 @@ sub index ($c) {
   }
   if ($format eq 'png') {
     my $path = WWW::CPANTS::Web::Util::Badge->new($data->{author}{average_core_kwalitee})->path;
+    $c->res->headers->cache_control('max-age=1, no-cache');
     return $c->reply->static($path);
   }
   if ($format eq 'svg') {
     my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{author}{average_core_kwalitee})->path;
+    $c->res->headers->cache_control('max-age=1, no-cache');
     return $c->reply->static($path);
   }
 
