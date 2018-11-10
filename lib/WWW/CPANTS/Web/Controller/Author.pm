@@ -15,11 +15,11 @@ sub index ($c) {
     return $c->render(json => $data->{data});
   }
   if ($format eq 'png') {
-    my $path = WWW::CPANTS::Web::Util::Badge->new($data->{data}{author}{average_core_kwalitee})->path;
+    my $path = WWW::CPANTS::Web::Util::Badge->new($data->{author}{average_core_kwalitee})->path;
     return $c->reply->static($path);
   }
   if ($format eq 'svg') {
-    my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{data}{author}{average_core_kwalitee})->path;
+    my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{author}{average_core_kwalitee})->path;
     return $c->reply->static($path);
   }
 
