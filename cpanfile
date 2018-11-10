@@ -76,6 +76,8 @@ requires 'WWW::Form::UrlEncoded::XS';
 requires 'XML::Atom::SimpleFeed';
 requires 'XML::LibXML';
 requires 'version', '0.73';
+requires 'JSON::XS';
+#requires 'Module::CPANTS::SiteKwalitee'; # https://github.com/cpants/Module-CPANTS-SiteKwalitee
 suggests 'Plack::Middleware::ServerStatus::Lite';
 suggests 'Starman';
 
