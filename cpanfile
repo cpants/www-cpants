@@ -43,7 +43,7 @@ requires 'Module::ExtractUse', '0.33';
 requires 'Module::Find';
 requires 'Module::Pluggable', '2.96';
 requires 'Module::Runtime';
-requires 'Module::Signature', '0.70';
+requires 'Module::Signature', '0.83';
 requires 'Module::Version';
 requires 'Mojo::Template';
 requires 'Mojolicious';
