@@ -3,6 +3,7 @@ package WWW::CPANTS::Web::Controller::Author;
 use WWW::CPANTS;
 use WWW::CPANTS::Web::Util;
 use WWW::CPANTS::Web::Util::Badge;
+use WWW::CPANTS::Web::Util::BadgeSVG;
 use parent 'Mojolicious::Controller';
 
 sub index ($c) {
