@@ -52,7 +52,7 @@ sub load ($self, $path) {
   if ($resources) {
     $dist->{repository_url} = $resources->{repository_url};
     $dist->{bugtracker_url} = $resources->{bugtracker_url};
-    $dist->{resources} = decode_json($resources->{resources} // {});
+    $dist->{resources} = decode_json($resources->{resources} // '{}');
   }
 
   $dist;
