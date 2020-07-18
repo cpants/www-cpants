@@ -5,13 +5,13 @@ use WWW::CPANTS::Web::Util;
 use parent 'WWW::CPANTS::Web::Data';
 
 sub data ($self, @args) {
-  my $releases = api4('Table::Recent')->load({});
+    my $releases = api4('Table::Recent')->load({});
 
-  return {
-    data => {
-      releases => $releases->{data},
-    },
-  };
+    return {
+        data => {
+            releases => $releases->{data},
+        },
+    };
 }
 
 1;

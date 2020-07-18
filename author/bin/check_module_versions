@@ -8,23 +8,23 @@ use WWW::CPANTS::Bin::Util::UserAgent;
 use Module::Version qw/get_version/;
 
 my @RequiresLatest = qw/
-  CPAN::DistnameInfo
-  CPAN::Meta
-  CPAN::Meta::Requirements
-  Module::CoreList
-  Module::ExtractUse
-  Module::Signature
-  Parse::PMFile
-  Parse::LocalDistribution
-  Software::License
-  version
-/;
+    CPAN::DistnameInfo
+    CPAN::Meta
+    CPAN::Meta::Requirements
+    Module::CoreList
+    Module::ExtractUse
+    Module::Signature
+    Parse::PMFile
+    Parse::LocalDistribution
+    Software::License
+    version
+    /;
 
 for my $package (@RequiresLatest) {
-  my $installed = get_version($package)."";
-  my $res = metacpan_api("module/$package", {fields => 'version'});
-  if ($res->{version} ne $installed) {
-    say "$package: $res->{version} (installed: $installed)";
-    log(info => "$package: $res->{version} (installed: $installed)");
-  }
+    my $installed = get_version($package) . "";
+    my $res       = metacpan_api("module/$package", { fields => 'version' });
+    if ($res->{version} ne $installed) {
+        say "$package: $res->{version} (installed: $installed)";
+        log(info => "$package: $res->{version} (installed: $installed)");
+    }
 }

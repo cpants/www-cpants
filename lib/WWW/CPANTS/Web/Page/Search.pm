@@ -5,7 +5,7 @@ use WWW::CPANTS::Web::Util;
 use parent 'WWW::CPANTS::Web::Data';
 
 sub data ($self, $name = '') {
-  api4("Search")->load({name => $name});
+    api4("Search")->load({ name => $name });
 }
 
 sub save { return }

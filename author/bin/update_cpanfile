@@ -8,46 +8,46 @@ use Path::Extended::Tiny;
 use Hash::Diff qw/diff/;
 use Data::Dump qw/dump/;
 
-my $root = dir("$FindBin::Bin/../..");
+my $root     = dir("$FindBin::Bin/../..");
 my $cpanfile = "$root/cpanfile";
-my $prev = -f $cpanfile ? Module::CPANfile->load($cpanfile)->prereqs : undef;
+my $prev     = -f $cpanfile ? Module::CPANfile->load($cpanfile)->prereqs : undef;
 
 my $app = Perl::PrereqScanner::NotQuiteLite::App->new(
     perl_version => '5.20',
-    suggests => 1,
-    base_dir => $root,
-    develop => 1,
+    suggests     => 1,
+    base_dir     => $root,
+    develop      => 1,
 );
 my $prereqs = $app->run;
 
 my $new_prereqs = $prev ? $prereqs->with_merged_prereqs($prev) : $prereqs;
 
 for my $ext_cpanfile (glob "$root/extlib/*/cpanfile") {
-  $new_prereqs = $new_prereqs->with_merged_prereqs(Module::CPANfile->load($ext_cpanfile)->prereqs);
+    $new_prereqs = $new_prereqs->with_merged_prereqs(Module::CPANfile->load($ext_cpanfile)->prereqs);
 }
 
 my $hash = $new_prereqs->as_string_hash;
 
 for my $phase (keys %$hash) {
-  for my $type (keys %{$hash->{$phase}}) {
-    for my $package (keys %{$hash->{$phase}{$type}}) {
-      delete $hash->{$phase}{$type}{$package} if $package =~ /^(?:
+    for my $type (keys %{ $hash->{$phase} }) {
+        for my $package (keys %{ $hash->{$phase}{$type} }) {
+            delete $hash->{$phase}{$type}{$package} if $package =~ /^(?:
         WWW::CPANTS:: | Module::CPANTS::
       )/x;
+        }
     }
-  }
 }
 
 # fix portability issues
 for (qw/Starman Plack::Middleware::ServerStatus::Lite/) {
-  if (exists $hash->{runtime}{requires}{$_}) {
-    $hash->{runtime}{suggests}{$_} = delete $hash->{runtime}{requires}{$_};
-  }
+    if (exists $hash->{runtime}{requires}{$_}) {
+        $hash->{runtime}{suggests}{$_} = delete $hash->{runtime}{requires}{$_};
+    }
 }
 
 if ($prev) {
-  my $diff = diff($prev->as_string_hash, $hash);
-  say dump $diff if %$diff;
+    my $diff = diff($prev->as_string_hash, $hash);
+    say dump $diff if %$diff;
 }
 
 Module::CPANfile->from_prereqs($hash)->save($cpanfile);

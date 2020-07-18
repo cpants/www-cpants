@@ -5,7 +5,7 @@ use Exporter qw/import/;
 use DBI qw/:sql_types/;
 
 our @EXPORT = (
-  @{$DBI::EXPORT_TAGS{sql_types}},
+    @{ $DBI::EXPORT_TAGS{sql_types} },
 );
 
 1;

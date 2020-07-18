@@ -6,5 +6,5 @@ use lib "$FindBin::Bin/../lib";
 use WWW::CPANTS::Bin::Runner;
 
 WWW::CPANTS::Bin::Runner->run(
-  tasks => [qw/Maint::Setup/],
+    tasks => [qw/Maint::Setup/],
 );

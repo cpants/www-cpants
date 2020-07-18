@@ -6,16 +6,17 @@ use lib "$FindBin::Bin/../lib";
 use WWW::CPANTS::Bin::Runner;
 
 WWW::CPANTS::Bin::Runner->run(
-  tasks => [qw/
-    Maint::Setup
-    Maint::CheckRevision
-    UpdatePackagesDetails
-    UpdateWhois
-    Traverse
-    Enqueue
-    AnalyzeAll
-    UpdateReverseDependency
-    UpdateRanking
-    UpdateWebPages
-  /]
-);
+    tasks => [
+        qw/
+            Maint::Setup
+            Maint::CheckRevision
+            UpdatePackagesDetails
+            UpdateWhois
+            Traverse
+            Enqueue
+            AnalyzeAll
+            UpdateReverseDependency
+            UpdateRanking
+            UpdateWebPages
+            /
+    ]);
