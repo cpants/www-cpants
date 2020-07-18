@@ -1,9 +1,6 @@
 package WWW::CPANTS::DB::Table::Provides;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use WWW::CPANTS::Util::SQL;
-use parent 'WWW::CPANTS::DB::Table';
+use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
     [uid           => '_upload_id_', primary => 1],
@@ -15,21 +12,21 @@ sub columns ($self) { (
 ) }
 
 sub select_by_uid ($self, $uid) {
-    my $sth = $self->{sth}{select_by_uid} //= $self->prepare(qq[
+    my $sql = <<~';';
     SELECT * FROM provides WHERE uid = ?
-  ]);
-    $self->select($sth, $uid);
+    ;
+    $self->select($sql, $uid);
 }
 
 sub delete_by_uids ($self, $uids) {
-    my $quoted_uids = $self->quote_and_concat($uids);
-    $self->delete(qq[
-    DELETE FROM provides WHERE uid IN ($quoted_uids)
-  ]);
+    my $sql = <<~';';
+    DELETE FROM provides WHERE uid IN (:uids)
+    ;
+    $self->delete($sql, [uids => $uids]);
 }
 
 sub update_provides ($self, $uid, $pause_id, $modules, $provides, $special_files, $unauthorized) {
-    my $sth = $self->{sth}{update} //= $self->prepare(qq[
+    my $sql = <<~';';
     UPDATE provides
     SET
       pause_id = ?,
@@ -38,8 +35,8 @@ sub update_provides ($self, $uid, $pause_id, $modules, $provides, $special_files
       special_files = ?,
       unauthorized = ?
     WHERE uid = ?
-  ]);
-    $sth->execute($pause_id, $modules, $provides, $special_files, $unauthorized, $uid);
+    ;
+    $self->update($sql, $pause_id, $modules, $provides, $special_files, $unauthorized, $uid);
 }
 
 1;

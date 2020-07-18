@@ -1,26 +1,26 @@
 package WWW::CPANTS::Bin::Task::Analyze::UpdateKwalitee;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use parent 'WWW::CPANTS::Bin::Task';
+use Role::Tiny::With;
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
+use WWW::CPANTS::Util::Datetime qw/year/;
 
-sub run ($self, @args) {
-    # FIXME
-}
+our @READ  = qw/Analysis/;
+our @WRITE = qw/Kwalitee/;
 
-sub setup ($self, $db = undef) {
-    $self->{db}    = $db //= $self->db;
-    $self->{table} = $db->table('Kwalitee');
-    $self;
-}
+with qw/WWW::CPANTS::Role::Task::FixAnalysis/;
 
 sub update ($self, $uid, $stash) {
     return unless exists $stash->{kwalitee};
 
-    my $pause_id = $stash->{author};
-    my $kwalitee = $stash->{kwalitee};
+    return if $self->dry_run;
 
-    $self->{table}->update_kwalitee($uid, $pause_id, year($stash->{released_epoch}), $kwalitee);
+    $self->ctx->kwalitee->set_scores($stash);
+
+    my $pause_id     = $stash->{author};
+    my $distribution = $stash->{dist};
+    my $kwalitee     = $stash->{kwalitee};
+
+    $self->db->table('Kwalitee')->update_kwalitee($uid, $pause_id, $distribution, year($stash->{released_epoch}), $kwalitee);
 }
 
 1;

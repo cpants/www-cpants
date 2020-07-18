@@ -1,0 +1,72 @@
+% my $stash = stash('cpants');
+% my $author = $stash->{author} // {};
+% my $name = $author->{name} // $author->{ascii_name} // '';
+% my $has_data = exists $stash->{data} ? 1 : 0;
+% my $pause_id = $author->{pause_id};
+
+<div class="sidebar col-xs-12 col-sm-2 col-sm-push-10 col-md-2 col-md-push-10 col-lg-2 col-lg-push-10">
+
+<img src="<%= gravatar_url($pause_id) %>" class="hidden-xs">
+
+% if ($name ne '') {
+  <h2 class="visible-xs-block"><%= $name %> (<%= $pause_id %>)</h2>
+% } else {
+  <h2 class="visible-xs-block"><%= $pause_id %></h2>
+% }
+
+<dl class="small hidden-xs">
+  <dt>PAUSE ID</dt>
+    <dd><%= $pause_id %></dd>
+% if ($has_data) {
+    <dt>Name</dt>
+      <dd><%= $name %></dd>
+  % if ($author->{email} && $author->{email} ne 'CENSORED') {
+    <dt>Email</dt>
+      <dd><%= $author->{email} %></dd>
+  % }
+  % if ($author->{introduced}) {
+    <dt>Join</dt>
+      <dd><%= strftime('%Y-%m-%d', $author->{introduced}) %></dd>
+  % }
+  % if ($author->{last_release_on}) {
+    <dt>Last Release</dt>
+      <dd><%= $author->{last_release_on} %></dd>
+  % }
+  % if ($author->{last_new_release_on} and $author->{last_release_on} ne $author->{last_new_release_on}) {
+    <dt>Last New Release</dt>
+      <dd><%= $author->{last_new_release_on} %></dd>
+  % }
+% }
+</dl>
+% if ($has_data) {
+  <dl class="small">
+  % if ($author->{cpan_dists}) {
+    <dt>CPAN Distributions</dt>
+      <dd><%= $author->{cpan_dists} %></dd>
+  % }
+  % if ($author->{average_core_kwalitee}) {
+    <dt>Core Kwalitee</dt>
+      <dd><%= $author->{average_core_kwalitee} %><br>
+      <img src="<%= url_for({format => 'svg'}) %>">
+      </dd>
+  % }
+  % if ($author->{rank}) {
+    <dt>CPANTS Ranking</dt>
+      <dd><%= $author->{rank} %></dd>
+  % }
+  </dl>
+  <dl class="small hidden-xs">
+    <dt>LINKS</dt>
+    <dd>
+      <ul class="list-unstyled">
+        <li><a href="http://metacpan.org/author/<%= $pause_id %>">metacpan</a></li>
+        <li><a href="https://rt.cpan.org/Public/Dist/ByMaintainer.html?Name=<%= $pause_id %>">rt.cpan.org</a></li>
+        <li><a href="http://www.cpantesters.org/author/<%= substr($pause_id, 0, 1) %>/<%= $pause_id %>.html">cpantesters</a></li>
+  % if ($author->{homepage}) {
+        <li><a href="<%= $author->{homepage} %>">homepage</a></li> 
+  % }
+      </ul>
+    </dd>
+  </dl>
+% }
+</div>

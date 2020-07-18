@@ -1,13 +1,26 @@
 package WWW::CPANTS::Web::Controller::Home;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
-use parent 'Mojolicious::Controller';
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
+use experimental qw/switch/;
 
 sub index ($c) {
-    my $data = page('Home')->load;    # or return $c->reply->not_found;
-    $c->stash(cpants => $data);
-    $c->render('home');
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $res = $c->get_api('Recent') or return;
+
+            given ($format) {
+                when ('') {
+                    return {
+                        render => 'home',
+                        stash  => {
+                            releases => $res->{data},
+                        },
+                    };
+                }
+            }
+            return;
+        },
+    );
 }
 
 1;

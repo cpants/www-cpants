@@ -1,3 +1,0 @@
-#!/usr/bin/env perl
-
-system("$^X $_") for glob "author/bin/update_*";

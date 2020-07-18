@@ -1,35 +1,63 @@
 package WWW::CPANTS::Web::Util::Badge;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
+use Mojo::Base -strict, -signatures;
+use WWW::CPANTS::Util::Path;
+use Badge::Simple;
 use Imager;
 use Imager::Font;
 use Imager::Filter::RoundedCorner;
+use Exporter qw/import/;
+use experimental qw/switch/;
 
-sub new ($class, $score) {
-    $score = sprintf '%.2f', $score if $score =~ /^[0-9.]+$/;
-    my $file = app_dir('web/public/img/badge/')->child("$score.png");
+our @EXPORT = qw/badge/;
+
+our %FontConfig = (
+      ($^O eq 'MSWin32') ? (face => 'Meiryo UI')
+    : ($^O eq 'darwin')  ? (file => '/Library/Fonts/Verdana.tff')
+    :                      (file => '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf'));
+
+sub badge ($score, $format) {
+    return unless $score && $score =~ /\A[0-9.]+\z/;
+    $score = sprintf '%.2f', $score;
+
+    my $pub_dir = cpants_path('public');
+    my $file    = $pub_dir->child("img/badge/$score.$format");
+
     if (!-f $file) {
         $file->parent->mkpath;
-        $class->_generate($score)->write(file => $file);
+        given ($format) {
+            when ('png') {
+                _generate_png_badge($score, $file);
+            }
+            when ('svg') {
+                _generate_svg_badge($score, $file);
+            }
+        }
     }
-    bless { file => $file }, $class;
+    return $file->relative($pub_dir);
 }
 
-sub path ($self) {
-    $self->{file}->relative(app_dir('web/public'));
+sub _generate_svg_badge ($score, $file) {
+    my $color =
+          $score >= 100 ? 'brightgreen'
+        : $score >= 99  ? 'green'
+        : $score >= 90  ? 'yellowgreen'
+        : $score >= 80  ? 'yellow'
+        :                 'red';
+    Badge::Simple::badge(left => 'kwalitee', right => $score, color => $color)->toFile("$file");
+
 }
 
-sub _generate ($class, $score) {
+sub _generate_png_badge ($score, $file) {
     my $colors =
           $score >= 100 ? ["#090", "white"]
         : $score >= 90  ? ["#9f0", "black"]
         : $score >= 80  ? ["#ff0", "black"]
         :                 ["#900", "white"];
 
-    my $font    = Imager::Font->new(%{ config('font') // {} }, size => 11) or croak "Can't load font";
-    my $heading = $class->_size($font, "kwalitee");
-    my $value   = $class->_size($font, "999.99");
+    my $font    = Imager::Font->new(%FontConfig, size => 11) or Carp::croak "Can't load font";
+    my $heading = _size($font, "kwalitee");
+    my $value   = _size($font, "999.99");
 
     my $image = Imager->new(
         xsize => $heading->{xmax} + $value->{xmax},
@@ -65,10 +93,10 @@ sub _generate ($class, $score) {
         bg     => '#fff',
     );
 
-    $image;
+    $image->write(file => $file);
 }
 
-sub _size ($class, $font, $string) {
+sub _size ($font, $string) {
     my $bbox   = $font->bounding_box(string => $string);
     my $font_h = $bbox->font_height;
     my $text_h = $bbox->text_height;

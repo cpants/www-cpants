@@ -1,39 +1,84 @@
 package WWW::CPANTS::Web::Controller::Author;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 use WWW::CPANTS::Web::Util::Badge;
-use WWW::CPANTS::Web::Util::BadgeSVG;
-use parent 'Mojolicious::Controller';
+use experimental qw/switch/;
+use Syntax::Keyword::Try;
+use XML::Atom::SimpleFeed;
 
 sub index ($c) {
-    my $id   = uc $c->param('id');
-    my $data = page('Author')->load($id) or return $c->reply->not_found;
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $author = $c->get_api('Author', $params) or return;
 
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    if ($format eq 'png') {
-        my $path = WWW::CPANTS::Web::Util::Badge->new($data->{author}{average_core_kwalitee})->path;
-        $c->res->headers->cache_control('max-age=1, no-cache');
-        return $c->reply->static($path);
-    }
-    if ($format eq 'svg') {
-        my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{author}{average_core_kwalitee})->path;
-        $c->res->headers->cache_control('max-age=1, no-cache');
-        return $c->reply->static($path);
-    }
+            my $data;
+            if ($author->{deleted} or $author->{banned}) {
+                $data = { author => $author };
+            } else {
+                my $recent_releases = $c->get_api('Author::RecentReleases', $params);
 
-    $c->stash(cpants     => $data);
-    $c->stash(body_class => "pause-" . (lc $id));
-    $c->render('author');
+                my $cpan_distributions = $c->get_api('Author::CPANDistributions', $params);
+
+                $data = {
+                    total_recent_releases    => $recent_releases->{recordsTotal},
+                    total_cpan_distributions => $cpan_distributions->{recordsTotal},
+                    author                   => $author,
+                    data                     => {
+                        recent_releases    => $recent_releases->{data},
+                        cpan_distributions => $cpan_distributions->{data},
+                    },
+                };
+            }
+
+            given ($format) {
+                when ('json') {
+                    return { json => $data->{data} };
+                }
+                when (/\A(?:png|svg)\z/) {
+                    my $path;
+                    try {
+                        $path = badge($data->{author}{average_core_kwalitee}, $format);
+                    } catch {
+                        my $error = $@;
+                        $c->app->log(error => $error);
+                    }
+                    return { static => $path };
+                }
+                when ('') {
+                    $data->{body_class} = "pause-" . (lc $params->{pause_id});
+                    return { render => 'author', stash => $data };
+                }
+            }
+            return;
+        },
+    );
 }
 
 sub feed ($c) {
-    my $id   = uc $c->param('id');
-    my $data = page('Author::Feed')->load($id) or return $c->reply->not_found;
-    $c->render(format => 'atom', text => $data);
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $data = $c->get_api('Author::Feed', $params) or return;
+
+            given ($format) {
+                when ('') {
+                    my $pause_id = $params->{pause_id};
+                    my $base     = $c->app->ctx->base_url;
+                    my $link     = "$base/author/$pause_id/feed";
+                    my $feed     = XML::Atom::SimpleFeed->new(
+                        -encoding => 'utf-8',
+                        id        => $link,
+                        link      => $link,
+                        $data->{feed}->%*,
+                    );
+                    for my $entry ($data->{entries}->@*) {
+                        $feed->add_entry(%$entry);
+                    }
+                    return { render => { format => 'atom', text => $feed->as_string } };
+                }
+            }
+            return;
+        },
+    );
 }
 
 1;

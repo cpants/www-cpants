@@ -1,6 +1,6 @@
 package WWW::CPANTS::Util::CoreList;
 
-use WWW::CPANTS;
+use Mojo::Base -strict, -signatures;
 use Exporter qw/import/;
 use Module::CoreList;
 
@@ -8,7 +8,10 @@ our @EXPORT         = qw/is_core core_since removed_core_since deprecated_core_s
 our $MinPerlVersion = 5.008001;
 
 sub is_core ($module, $perl_version = $MinPerlVersion) {
-    Module::CoreList::is_core($module, undef, $perl_version // $MinPerlVersion);
+    if (!$perl_version or $perl_version < $MinPerlVersion) {
+        $perl_version = $MinPerlVersion;
+    }
+    Module::CoreList::is_core($module, undef, $perl_version);
 }
 
 sub core_since ($module, $version = 0) {

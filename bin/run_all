@@ -1,22 +1,19 @@
 #!/usr/bin/env perl
 
-use Modern::Perl;
+use Mojo::Base -strict, -signatures;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use WWW::CPANTS::Bin::Runner;
 
-WWW::CPANTS::Bin::Runner->run(
-    tasks => [
-        qw/
-            Maint::Setup
-            Maint::CheckRevision
-            UpdatePackagesDetails
-            UpdateWhois
-            Traverse
-            Enqueue
-            AnalyzeAll
-            UpdateReverseDependency
-            UpdateRanking
-            UpdateWebPages
-            /
-    ]);
+WWW::CPANTS::Bin::Runner->new->run_tasks(qw(
+    Maint::Setup
+    Maint::CheckRevision
+    UpdateCPANIndices
+    Traverse
+    Enqueue
+    AnalyzeAll
+    PostProcess
+    Acme::UpdateModules
+    Acme::UpdateStats
+    Maint::Cleanup
+));

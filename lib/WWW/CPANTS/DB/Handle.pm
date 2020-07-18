@@ -1,60 +1,40 @@
 package WWW::CPANTS::DB::Handle;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use WWW::CPANTS::Util::SQL;
+use Role::Tiny::With;
+use Mojo::Base -base, -signatures;
 use DBI;
 use DBIx::TransactionManager;
+use Scalar::Util qw/blessed/;
+use Syntax::Keyword::Try;
+use SQL::Maker;
 
-sub new ($class, $base, $config = {}, $table = undef) {
-    my $self = bless { pid => $$, config => $config, base => $base }, $class;
-    $self->connect($table) or return;
-    $self->init;
-    $self;
+with qw/WWW::CPANTS::Role::Logger/;
+
+has '_dbh';
+has 'config';
+has 'trace';
+has 'pid'         => sub ($self) { $$ };
+has 'txn_manager' => \&_build_txn_manager;
+has 'sql_maker'   => \&_build_sql_maker;
+
+sub _build_sql_maker ($self) {
+    my ($driver_name) = (ref $self || $self) =~ /Handle::(\w+)$/;
+    SQL::Maker->load_plugin('InsertMulti');
+    SQL::Maker->new(driver => $driver_name);
 }
 
-sub init ($self) { }
-
-sub dbh ($self) { $self->{dbh} //= $self->connect }
-
-sub schema ($self, $table) {
-    join "\n", @{ $self->_schema($table) };
+sub _build_txn_manager ($self) {
+    my $dbh = $self->dbh or return;
+    DBIx::TransactionManager->new($dbh);
 }
 
-sub setup ($self, $table) {
-    $self->do($_) for @{ $self->_schema($table) };
-
-    $self->after_setup;
-    return 1;
-}
-
-sub after_setup ($self) { }
-
-sub _schema { }
-
-sub connect ($self, $table = undef) {
-    return $self->{dbh} if $self->{dbh} && $self->{dbh}->ping;
-    if (!$self->{connect_args}) {
-        my $dsn = $self->dsn($table) or return;
-
-        my $conf = ($self->{config} // {})->{ $self->driver_name } // {};
-        my %attr = (
-            AutoCommit         => 1,
-            RaiseError         => 1,
-            PrintError         => 0,
-            ShowErrorStatement => 1,
-            %{ $self->default_attr // {} },
-            %{ $conf->{attr} // {} },
-        );
-        $self->{connect_args} = [$dsn, @$conf{qw/user pass/}, \%attr];
-    }
-
-    $self->_disconnect if $self->{dbh};
-    $self->{dbh} = DBI->connect(@{ $self->{connect_args} }) or croak DBI->errstr;
+sub dbh ($self) {
+    return $self->_dbh if $self->pid eq $$;
+    Carp::cluck("forked handle is used");
 }
 
 sub disconnect ($self) {
-    return unless $self->{pid} eq $$ && $self->{dbh};
+    return unless $self->pid eq $$ and $self->_dbh;
     $self->_disconnect;
 }
 
@@ -62,96 +42,102 @@ sub _disconnect ($self) {
     $_ && $_->finish for values %{ $self->{sth} // {} };
     delete $self->{sth};
     delete $self->{txn_manager};
-    $self->__disconnect;
-    $self->{dbh}->disconnect;
+    $self->{dbh}->disconnect if $self->{dbh};
     delete $self->{dbh};
+    return;
 }
 
-sub __disconnect ($self) { }
+sub create_table ($self, $table) {
+    $self->do($_) for @{ $self->ddl_statements($table) };
+}
 
-sub do ($self, $sql, @bind) {
+sub do ($self, $sql, @bind_values) {
     try {
-        if (blessed $sql and $sql->isa('DBI::st')) {
-            $sql->execute(@bind);
-        } else {
-            $self->dbh->do($self->append_caller_info($sql), undef, @bind);
-        }
+        ($sql, @bind_values) = $self->_tweak_sql($sql, @bind_values);
+        my $sth = $self->_prepare($sql);
+        $sth->execute(@bind_values);
     } catch {
-        my $error = $@;
-        log(error => $error);
+        my $error = "$sql: $@";
+        $self->log(error => $self->_append_caller($error));
     }
 }
 
-sub insert ($self, $sql, @bind) {
-    $self->do($sql, @bind);
+sub insert ($self, $sql, @bind_values) {
+    $self->do($sql, @bind_values);
 }
 
-sub update ($self, $sql, @bind) {
-    $self->do($sql, @bind);
+sub update ($self, $sql, @bind_values) {
+    $self->do($sql, @bind_values);
 }
 
-sub delete ($self, $sql, @bind) {
-    $self->do($sql, @bind);
+sub delete ($self, $sql, @bind_values) {
+    $self->do($sql, @bind_values);
 }
 
-sub iterate ($self, $sql, @bind) {
-    my $sth = $self->dbh->prepare($self->append_caller_info($sql));
-    $sth->execute(@bind);
-    WWW::CPANTS::DB::Handle::Iterator->new($sth);
+sub iterate ($self, $sql, @bind_values) {
+    ($sql, @bind_values) = $self->_tweak_sql($sql, @bind_values);
+    my $sth = $self->_prepare($sql);
+    $sth->execute(@bind_values);
+    WWW::CPANTS::DB::Handle::Iterator->new(sth => $sth);
 }
 
-sub select ($self, $sql, @bind) {
-    my $row = $self->dbh->selectrow_hashref($self->append_caller_info($sql), undef, @bind);
-    return $row;
+sub _select ($self, $sql, @bind_values) {
+    ($sql, @bind_values) = $self->_tweak_sql($sql, @bind_values);
+    my $sth = $self->_prepare($sql);
+    $sth->execute(@bind_values);
+    $sth;
 }
 
-sub select_all ($self, $sql, @bind) {
-    my $rows = $self->dbh->selectall_arrayref($self->append_caller_info($sql), { Slice => +{} }, @bind);
-    return $rows;
+sub select ($self, $sql, @bind_values) {
+    $self->_select($sql, @bind_values)->fetchrow_hashref;
 }
 
-sub select_col ($self, $sql, @bind) {
-    my ($col) = $self->dbh->selectrow_array($self->append_caller_info($sql), undef, @bind);
+sub select_all ($self, $sql, @bind_values) {
+    $self->_select($sql, @bind_values)->fetchall_arrayref({});
+}
+
+sub select_col ($self, $sql, @bind_values) {
+    my ($col) = $self->_select($sql, @bind_values)->fetchrow_array;
     return $col;
 }
 
-sub select_all_col ($self, $sql, @bind) {
-    my $cols = $self->dbh->selectcol_arrayref($self->append_caller_info($sql), undef, @bind);
-    return $cols;
+sub select_all_col ($self, $sql, @bind_values) {
+    my $rows = $self->_select($sql, @bind_values)->fetchall_arrayref([0]) || [];
+    return [map { $_->[0] } @$rows];
 }
 
 sub exists ($self, $table, $cond) {
-    my $table_name = $table->name;
-    my @columns    = sort keys %{ $cond // {} };
-    my $where      = @columns ? join ' AND ', map { "$_ = ?" } @columns : "";
-    my @bind       = map { $where->{$_} } @columns;
-    my $sql        = "SELECT 1 FROM $table_name $where LIMIT 1";
-    $self->select_col($sql, @bind);
+    my $table_name  = $table->name;
+    my @columns     = sort keys %{ $cond //= {} };
+    my $where       = @columns ? "WHERE " . join(' AND ', map { "$_ = ?" } @columns) : "";
+    my @bind_values = map { $cond->{$_} } @columns;
+    my $sql         = "SELECT 1 FROM $table_name $where LIMIT 1";
+    $self->select_col($sql, @bind_values);
 }
 
 sub count ($self, $table, $cond) {
-    my $table_name = $table->name;
-    my @columns    = sort keys %{ $cond // {} };
-    my $where      = @columns ? join ' AND ', map { "$_ = ?" } @columns : "";
-    my @bind       = map { $where->{$_} } @columns;
-    my $sql        = "SELECT COUNT(*) FROM $table_name $where";
-    $self->select_col($sql, @bind);
+    my $table_name  = $table->name;
+    my @columns     = sort keys %{ $cond // {} };
+    my $where       = @columns ? "WHERE " . join(' AND ', map { "$_ = ?" } @columns) : "";
+    my @bind_values = map { $cond->{$_} } @columns;
+    my $sql         = "SELECT COUNT(*) FROM $table_name $where";
+    $self->select_col($sql, @bind_values);
 }
 
-sub append_caller_info ($self, $sql) {
-    return $sql if ref $sql;
-    my $i = 1;
-    while (my @caller = caller($i++)) {
-        my $package = $caller[0];
-        next unless $package =~ /^WWW::CPANTS::(?:Bin::Task|Web::Page|Web::API)/;
-        # log(debug => "[QUERY] $sql\t[$package $caller[2]]");
-        return "$sql /* in $package line $caller[2] */";
-    }
-    return $sql;
+sub prepare ($self, $sql, $opts = undef) {
+    ($sql) = $self->_tweak_sql($sql, defined $opts ? $opts : ());
+    $self->_prepare($sql);
 }
 
-sub prepare ($self, $sql) {
-    $self->dbh->prepare($self->append_caller_info($sql));
+sub _prepare ($self, $sql) {
+    return $sql if blessed $sql and $sql->isa('DBI::st');
+    $self->dbh->prepare($sql);
+}
+
+sub prepare_cached ($self, $sql, $opts = undef) {
+    ($sql) = $self->_tweak_sql($sql, defined $opts ? $opts : ());
+    return $sql if blessed $sql and $sql->isa('DBI::st');
+    $self->dbh->prepare_cached($sql);
 }
 
 sub select_max_id ($self, $table) {
@@ -159,43 +145,95 @@ sub select_max_id ($self, $table) {
     $self->select_col([$table, [\'MAX(id)']]);
 }
 
-sub txn ($self) {
-    (
-        $self->{txn_manager} //= do {
-            my $dbh = $self->dbh;
-            DBIx::TransactionManager->new($dbh);
-        }
-    )->txn_scope;
+sub txn ($self, $caller = [caller]) {
+    my $txn_manager = $self->txn_manager or return;
+    $txn_manager->txn_scope(caller => $caller);
 }
 
-sub attach ($self, $table) { }
+sub _append_caller ($self, $sql) {
+    return $sql if ref $sql;
+    chomp $sql;
+    my $i = 1;
+    while (my @caller = caller($i++)) {
+        my $package = $caller[0];
+        next unless $package =~ /^WWW::CPANTS::Bin::Task/;
+        # $self->log(debug => "[QUERY] $sql\t[$package $caller[2]]");
+        return "$sql /* in $package line $caller[2] */";
+    }
+    return $sql;
+}
 
-sub quote_and_concat ($self, $params) {
+sub _tweak_sql ($self, $sql, @bind_values) {
+    if (@bind_values) {
+        if (ref $bind_values[-1] eq ref {}) {
+            my $arg = pop @bind_values;
+            if ($arg->{limit}) {
+                my $limit_offset = $self->_limit_offset(delete $arg->{limit}, delete $arg->{offset});
+                $sql .= " $limit_offset" unless blessed $sql;
+            }
+        }
+        if (ref $bind_values[-1] eq ref []) {
+            my $arg = pop @bind_values;
+            my ($key, $values) = @$arg;
+            $values = [undef] unless @{ $values // [] };
+            if (@$values < 500) {
+                my $placeholders = substr('?,' x @$values, 0, -1);
+                if (!blessed $sql) {
+                    $sql =~ s/:$key/$placeholders/ or Carp::confess("no :$key in $sql");
+                }
+                push @bind_values, @$values;
+            } else {
+                my $concat = $self->_quote_and_concat($values);
+                if (!blessed $sql) {
+                    $sql =~ s/:$key/$concat/ or Carp::confess("no :$key in $sql");
+                } else {
+                    Carp::confess("Can't replace values");
+                }
+            }
+        }
+    }
+
+    Carp::confess "\$ found in sql: $sql" if !blessed $sql && $sql =~ /\$/;
+
+    $sql = $self->_append_caller($sql);
+    if ($self->trace) {
+        $self->log(debug => "[SQL] $sql");
+        $self->log(debug => "[BIND] " . $self->_quote_and_concat(\@bind_values)) if $self->trace > 1 and @bind_values;
+    }
+    return ($sql, @bind_values);
+}
+
+sub _quote_and_concat ($self, $params) {
     my $dbh = $self->dbh;
     join ', ', map { $dbh->quote($_) } @$params;
 }
 
-sub limit_offset ($self, $limit = undef, $offset = undef) {
+sub _limit_offset ($self, $limit = undef, $offset = undef) {
     return '' unless defined $limit;
-    if (!defined is_int($limit)) {
-        log(warn => $self->append_caller_info("limit $limit is not number"));
+    if (!defined $limit or $limit =~ /[^0-9]/) {
+        $self->log(warn => $self->_append_caller("limit $limit is not number"));
         return '';
     }
     return "LIMIT $limit" unless defined $offset;
-    if (!defined is_int($offset)) {
-        log(warn => $self->append_caller_info("offset $offset is not number"));
+    if ($offset =~ /[^0-9]/) {
+        $self->log(warn => $self->_append_caller("offset $offset is not number"));
         return '';
     }
     return "LIMIT $limit OFFSET $offset";
+}
+
+sub build_update_sql ($self, $table, $columns, $primary_key) {
+    return "UPDATE " . $table->name . " SET " . join(",", map { "$_ = ?" } @$columns) . " WHERE $primary_key = ?";
 }
 
 sub DESTROY ($self) { $self->disconnect }
 
 package WWW::CPANTS::DB::Handle::Iterator;
 
-use WWW::CPANTS;
+use Mojo::Base -base, -signatures;
 
-sub new ($class, $sth) { bless { sth => $sth }, $class }
-sub next ($self) { $self->{sth}->fetchrow_hashref }
+has 'sth';
+
+sub next ($self) { $self->sth->fetchrow_hashref }
 
 1;

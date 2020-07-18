@@ -1,0 +1,11 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+
+<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+
+<ul class="list-flat-disc small">
+<li><a href="/stats">CPANTS</a></li>
+<li><a href="/stats/module_install">Module::Install</a></li>
+</ul>
+
+</div>

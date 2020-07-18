@@ -1,0 +1,13 @@
+% layout 'layout';
+
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h2>CPANTS Statistics</h2>
+  </div>
+  </section>
+
+</div>
+
+%= include 'stats/_sidebar';

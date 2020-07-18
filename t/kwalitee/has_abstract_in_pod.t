@@ -1,4 +1,4 @@
-use WWW::CPANTS;
+use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 
 test_kwalitee(
@@ -21,6 +21,8 @@ test_kwalitee(
 
     # invalid =encoding (utf-8;)
     ['INGY/IO-All-0.40.tar.gz', 0],
-);
+
+    # script name with a dash instead of package name
+    ['SKIRMESS/App-ReportPrereqs-0.001.tar.gz', 1]);
 
 done_testing;

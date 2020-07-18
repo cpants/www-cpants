@@ -1,9 +1,6 @@
 package WWW::CPANTS::DB::Table::Resources;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use WWW::CPANTS::Util::SQL;
-use parent 'WWW::CPANTS::DB::Table';
+use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
     [uid            => '_upload_id_', primary => 1],
@@ -14,27 +11,26 @@ sub columns ($self) { (
 ) }
 
 sub select_by_uid ($self, $uid) {
-    my $sth = $self->{sth}{select_by_uid} //= $self->prepare(qq[
-    SELECT * FROM resources
-    WHERE uid = ?
-  ]);
-    $self->select($sth, $uid);
+    my $sql = <<~';';
+    SELECT * FROM resources WHERE uid = ?
+    ;
+    $self->select($sql, $uid);
 }
 
 sub delete_by_uids ($self, $uids) {
-    my $quoted_uids = $self->quote_and_concat($uids);
-    $self->delete(qq[
-    DELETE FROM resources WHERE uid IN ($quoted_uids)
-  ]);
+    my $sql = <<~';';
+    DELETE FROM resources WHERE uid IN (:uids)
+    ;
+    $self->delete($sql, [uids => $uids]);
 }
 
 sub update_resources ($self, $uid, $pause_id, $resources, $repository, $bugtracker) {
-    my $sth = $self->{sth}{update} //= $self->prepare(qq[
+    my $sql = <<~';';
     UPDATE resources
     SET pause_id = ?, resources = ?, repository_url = ?, bugtracker_url = ?
     WHERE uid = ?
-  ]);
-    $sth->execute($pause_id, $resources, $repository, $bugtracker, $uid);
+    ;
+    $self->update($sql, $pause_id, $resources, $repository, $bugtracker, $uid);
 }
 
 1;

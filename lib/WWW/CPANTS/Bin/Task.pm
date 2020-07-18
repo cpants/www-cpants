@@ -1,65 +1,128 @@
 package WWW::CPANTS::Bin::Task;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use WWW::CPANTS::DB;
+use Role::Tiny::With;
+use Mojo::Base -base, -signatures;
+use WWW::CPANTS::Util::JSON qw/slurp_json save_json/;
+use WWW::CPANTS::Util::Loader qw/use_module/;
+use WWW::CPANTS::Util::Datetime qw/strftime/;
+use WWW::CPANTS::Model::TableGuard;
+use WWW::CPANTS::Model::Timer;
+use List::Util 1.45 qw/uniq/;
 
-sub option_specs { }
+with qw(
+    WWW::CPANTS::Role::Logger
+    WWW::CPANTS::Role::Options
+);
 
-sub new ($class, $ctx = {}) {
-    bless { ctx => $ctx }, $class;
-}
+has 'ctx';
+has 'name'  => \&_build_name;
+has 'stash' => \&_build_stash;
+has 'guard' => \&_build_guard;
+has 'timer' => \&_build_timer;
 
-sub name ($self) {
-    my ($name) = (ref $self // $self) =~ /^WWW::CPANTS::Bin::Task::(.+)$/;
+sub _build_name ($self) {
+    my $class = ref $self || $self;
+    my ($name) = $class =~ /^WWW::CPANTS::Bin::Task::(.+)$/;
     $name;
 }
 
-sub run_and_log ($self, @args) {
+sub _build_stash ($self) {
     my $name = $self->name;
-    $self->{timer} = timer($name);
-    $self->run(@args);
-    delete $self->{timer};
-    save_json("task/" . package_path_name($name), { last_executed => time });
+    slurp_json("Task::$name") // {};
 }
 
-sub show_progress ($self, $done, $total) {
-    return unless $self->development_mode;
-
-    $self->{timer}->show_progress($done, $total);
+sub _build_guard ($self) {
+    my $guard = WWW::CPANTS::Model::TableGuard->new;
+    $guard->check($self->tables_to_write) or return;
+    $guard;
 }
 
-sub development_mode ($self) {
-    $self->{development_mode} //= do {
-        my $ctx = WWW::CPANTS->context or return 0;
-        $ctx->_mode_is('development');
-    };
+sub _build_timer ($self) {
+    WWW::CPANTS::Model::Timer->new(name => $self->name);
 }
 
-sub args ($self) { $self->{ctx}{args} }
+sub db ($self)      { $self->ctx->db }
+sub new_db ($self)  { $self->ctx->new_db }
+sub cpan ($self)    { $self->ctx->cpan }
+sub backpan ($self) { $self->ctx->backpan }
+sub force ($self)   { $self->ctx->force }
+sub dry_run ($self) { $self->ctx->dry_run }
 
-sub stash ($self) { $self->{ctx}{stash} }
-
-sub option ($self, $name) {
-    $self->{ctx}{opts}{$name};
+sub trace ($self, $value = undef) {
+    if (defined $value) {
+        $self->ctx->db->trace($value);
+        return $self;
+    }
+    $self->ctx->db->trace;
 }
 
-sub db ($self) { $self->{ctx}->db }
-
-sub new_db ($self) { $self->{ctx}->new_db }
-
-sub model ($self, $name, @args) {
-    ($self->{model_class}{$name} //= use_module("WWW::CPANTS::Bin::Model::" . $name))->new(@args);
+sub tables_to_read ($self) {
+    my $class = ref $self || $self;
+    no strict 'refs';
+    my @tables = @{"$class\::READ"};
+    if ($self->can('subtasks')) {
+        push @tables, map { $_->tables_to_read } $self->subtasks->@*;
+    }
+    uniq @tables;
 }
 
-sub task ($self, $name) { $self->{ctx}->task($name) }
-
-sub cpan ($self) {
-    $self->{ctx}{cpan} //= $self->model('CPAN');
+sub tables_to_write ($self) {
+    my $class = ref $self || $self;
+    no strict 'refs';
+    my @tables = @{"$class\::WRITE"};
+    if ($self->can('subtasks')) {
+        push @tables, map { $_->tables_to_write } $self->subtasks->@*;
+    }
+    uniq @tables;
 }
 
-sub backpan ($self) {
-    $self->{ctx}{backpan} //= $self->model('BackPAN');
+sub check_tables ($self) {
+    my $db = $self->db;
+    my %seen;
+    for my $name ($self->tables_to_read, $self->tables_to_write) {
+        next if $seen{$name}++;
+        my $table = $db->table($name);
+        $table->is_setup or $table->setup;
+    }
+    $self->guard or return;
+    return 1;
+}
+
+sub setup_tables ($self) {
+    return unless WWW::CPANTS->is_testing;
+    my %seen;
+    for my $name ($self->tables_to_read, $self->tables_to_write) {
+        next if $seen{$name}++;
+        $self->db->table($name)->setup;
+    }
+}
+
+sub subtask ($self, $name) {
+    $self->ctx->load_task($name);
+}
+
+sub save_stash ($self) {
+    return unless ref $self;
+    my $name = $self->name;
+    $self->stash->{last_executed} = time;
+    save_json("Task::$name", $self->stash);
+}
+
+sub last_executed ($self) {
+    my $last_executed = $self->stash->{last_executed} or return '';
+    strftime('%Y-%m-%d %H:%M:%S', $last_executed);
+}
+
+sub status_line ($self) {
+    my $status = $self->name;
+    if (my $last_executed = $self->last_executed) {
+        $status .= " [Last executed at $last_executed]";
+    }
+    $status;
+}
+
+sub DESTROY ($self) {
+    $self->save_stash;
 }
 
 1;

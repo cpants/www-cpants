@@ -1,18 +1,27 @@
 package WWW::CPANTS::Web::Controller::Recent;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
-use parent 'Mojolicious::Controller';
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
+use experimental qw/switch/;
 
 sub index ($c) {
-    my $page   = $c->param('page') // 1;
-    my $data   = page('Recent')->load($page) or return $c->reply->not_found;
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render('recent');
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $res = $c->get_api('Recent', $params) or return;
+
+            given ($format) {
+                when ('json') {
+                    return { json => $res };
+                }
+                when ('') {
+                    return {
+                        render => 'recent',
+                        stash  => $res,
+                    };
+                }
+            }
+            return;
+        },
+    );
 }
 
 1;

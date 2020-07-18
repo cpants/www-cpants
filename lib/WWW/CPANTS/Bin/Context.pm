@@ -1,100 +1,71 @@
 package WWW::CPANTS::Bin::Context;
 
+use Role::Tiny::With;
+use Mojo::Base -base, -signatures;
 use WWW::CPANTS;
-use parent 'WWW::CPANTS::Context';
-use WWW::CPANTS::Bin::Util;
-use WWW::CPANTS::Bin::Util::PidFile;
-use Getopt::Long ();
+use WWW::CPANTS::DB;
+use WWW::CPANTS::Util::Loader;
+use WWW::CPANTS::Model::CPAN;
+use WWW::CPANTS::Model::Kwalitee;
+use Path::Tiny ();
 
-my %LoadedTasks;
+with qw(
+    WWW::CPANTS::Role::Logger
+    WWW::CPANTS::Role::Options
+);
 
-sub get_options ($self, $default_specs) {
-    local @ARGV = @ARGV;
+our @OPTIONS = (
+    'dry_run|dry-run',
+    'all',
+    'force',
+    'trace:1',
+    'verbose|v',
+);
 
-    if (!$self->task_names) {
-        my %map;
-        for my $module (findallmod 'WWW::CPANTS::Bin::Task') {
-            (my $name = $module) =~ s/^WWW::CPANTS::Bin::Task:://;
-            $map{$name} = $module;
-        }
-        my (@task_names, @rest);
-        for my $id (0 .. @ARGV - 1) {
-            my $arg = $ARGV[$id];
-            if ($map{$arg}) {
-                push @task_names, $arg;
-                splice @ARGV, $id, 1;
-                last;
-            }
-        }
-        if (!@task_names) {
-            say "available tasks:";
-            for my $name (sort keys %map) {
-                my $last_executed = (slurp_json("task/" . package_path_name($name)) // {})->{last_executed};
-                say " - $name" . ($last_executed ? " [Last executed at: " . strftime('%Y-%m-%d %H:%M:%S', $last_executed) . "]" : "");
-            }
-            return;
-        }
-        $self->{args}{tasks} = \@task_names;
-    }
+has 'db'       => \&_build_db;
+has 'cpan'     => \&_build_cpan;
+has 'backpan'  => \&_build_backpan;
+has 'quiet'    => \&_build_quiet;
+has 'kwalitee' => \&_build_kwalitee;
 
-    my (@specs, %seen_specs);
-    for my $name ($self->task_names) {
-        my $module = $self->_load_task($name);
-        for my $spec ($module->option_specs) {
-            (my $spec_name = $spec->[0]) =~ s/\|.+$//;
-            next if $seen_specs{$spec_name}++;
-            push @specs, $spec;
-        }
-    }
-    push @specs, [], @$default_specs;
+sub _build_db ($self) {
+    WWW::CPANTS::DB->new(trace => $self->trace);
+}
 
-    my $parser = Getopt::Long::Parser->new(
-        config => [qw/bundling no_ignore_case pass_through/],
+sub _build_cpan ($self) {
+    WWW::CPANTS::Model::CPAN->new(
+        path => WWW::CPANTS->instance->cpan_path,
     );
-    $parser->getoptions(\my %opts => map { $_->[0] } grep { $_->[0] } @specs);
-    my @args_for_tasks = @ARGV;
-    $self->{task_args} = \@args_for_tasks;
-
-    if ($opts{help}) {
-        say 'options:';
-        for my $spec (@specs) {
-            my ($name, $description) = @$spec;
-            if (!$name) {
-                say ""; next;
-            }
-            next if substr($name, 0, 1) eq '_';    # internal only
-            $name =~ s/[=\|].+$//;
-            say "  $name: $description";
-        }
-        return;
-    }
-
-    $opts{debug} = 1 if $ENV{WWW_CPANTS_DEBUG};
-
-    $self->{opts} = \%opts;
 }
 
-sub task_names ($self) { @{ $self->{args}{tasks} // [] } }
-
-sub task ($self, $name) { $self->_load_task($name)->new($self) }
-
-sub _load_task ($self, $name) {
-    $LoadedTasks{$name} //= do {
-        my $module = "WWW::CPANTS::Bin::Task::" . $name;
-        use_module($module) or croak $@;
-        $module;
-    };
+sub _build_backpan ($self) {
+    WWW::CPANTS::Model::CPAN->new(
+        path => WWW::CPANTS->instance->backpan_path,
+    );
 }
 
-sub save_pidfile ($self) {
-    WWW::CPANTS::Bin::Util::PidFile->new($self->name, $self->{opts}{force});
+sub _build_kwalitee ($self) {
+    WWW::CPANTS::Model::Kwalitee->new;
 }
 
-sub cpants_revision ($self) {
-    $self->{cpants_revision} //= do {
-        my $revision = slurp_json('etc/revision.json') or return 0;
-        $revision->{_id};
-    };
+sub _build_quiet ($self) {
+    return if $self->verbose;
+    WWW::CPANTS->instance->quiet;
+}
+
+sub new_db ($self) {
+    $self->db(_build_db($self));
+    $self->db;
+}
+
+sub load_task ($self, $name) {
+    my $task_class = use_module("WWW::CPANTS::Bin::Task::$name");
+    $task_class->new(name => $name, ctx => $self);
+}
+
+sub task_names ($self) {
+    my @names = sort keys submodules("WWW::CPANTS::Bin::Task")->%*;
+    \@names;
 }
 
 1;

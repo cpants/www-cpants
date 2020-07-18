@@ -1,12 +1,10 @@
 package WWW::CPANTS::DB::Table::Errors;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use WWW::CPANTS::Util::SQL;
-use parent 'WWW::CPANTS::DB::Table';
+use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
+use WWW::CPANTS::Util::JSON qw/decode_if_json/;
 
 sub columns ($self) { (
-    [id       => '_sereal_'],
+    [id       => '_serial_'],
     [uid      => '_upload_id_'],
     [category => 'varchar(50)'],
     [error    => 'text'],
@@ -17,48 +15,58 @@ sub indices ($self) { (
 ) }
 
 sub select_errors_by_uid ($self, $uid) {
-    my $sth = $self->{sth}{select_by_uid} //= $self->prepare(qq[
+    my $sql = <<~';';
     SELECT id, category, error FROM errors
     WHERE uid = ?
-  ]);
-    $self->select_all($sth, $uid);
+    ;
+    $self->select_all($sql, $uid);
 }
 
-sub update_errors ($self, $uid, $errors = {}) {
+sub select_category_errors_by_uids ($self, $category, $uids) {
+    my $sql = <<~';';
+    SELECT uid, error FROM errors
+    WHERE category = ? AND uid IN (:uids)
+    ;
+    $self->select_all($sql, $category, [uids => $uids]);
 }
 
 sub select_all_errors_of ($self, $uid) {
-    my $rows = $self->select_all(
-        qq[
+    my $sql = <<~';';
     SELECT category, error FROM errors
     WHERE uid = ?
-  ], $uid
-    );
+    ;
+    my $rows = $self->select_all($sql, $uid);
     $_->{error} = decode_if_json($_->{error}) for @$rows;
     $rows;
 }
 
 sub select_all_errors_on ($self, $category) {
-    $self->select_all(
-        qq[
+    my $sql = <<~';';
     SELECT id, uid, error FROM errors
     WHERE category = ?
-  ], $category
-    );
+    ;
+    $self->select_all($sql, $category);
 }
 
 sub update_error_by_id ($self, $id, $error) {
-    my $sth = $self->{sth}{update_error_by_id} //= $self->prepare(qq[
+    my $sql = <<~';';
     UPDATE errors SET error = ? WHERE id = ?
-  ]);
-    $sth->execute($error, $id);
+    ;
+    $self->update($sql, $error, $id);
 }
 
 sub delete_errors_by_id ($self, $ids) {
-    my $quoted_ids = $self->quote_and_concat($ids);
-    $self->delete(qq[
-    DELETE FROM errors WHERE id IN ($quoted_ids)
-  ]);
+    my $sql = <<~';';
+    DELETE FROM errors WHERE id IN (:ids)
+    ;
+    $self->delete($sql, [ids => $ids]);
+}
+
+sub delete_errors_by_uid ($self, $uid) {
+    my $sql = <<~';';
+    DELETE FROM errors WHERE uid = ?
+    ;
+    $self->delete($sql, $uid);
 }
 
 1;

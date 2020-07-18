@@ -1,0 +1,48 @@
+% my $indicators = app->ctx->api_ctx->kwalitee->indicators;
+% my $tab = stash('tab') // '';
+
+<div class="sidebar hidden-xs col-sm-2 col-md-2 col-lg-2">
+
+<div class="dropdown">
+  <a href="#" class="dropdown-toggle" id="sidebar_core_metrics" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Core Metrics
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu small" aria-labelledby="sidebar_core_metrics">
+  % for my $indicator (@$indicators) {
+    %  next if $indicator->{is_extra} or $indicator->{is_experimental};
+    %  (my $name = $indicator->{name}) =~ s/_/ /g;
+    <li class="small"><a href="/kwalitee/<%= $indicator->{name} %><%= $tab ? "/$tab" : "" %>"><%= $name %></a></li>
+  % }
+  </ul>
+</div>
+
+<div class="dropdown">
+  <a href="#" class="dropdown-toggle" id="sidebar_extra_metrics" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Extra Metrics
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu small" aria-labelledby="sidebar_extra_metrics">
+    % for my $indicator (@$indicators) {
+    %  next unless $indicator->{is_extra};
+    %  (my $name = $indicator->{name}) =~ s/_/ /g;
+    <li class="small"><a href="/kwalitee/<%= $indicator->{name} %><%= $tab ? "/$tab" : "" %>"><%= $name %></a></li>
+  % }
+  </ul>
+</div>
+
+<div class="dropdown">
+  <a href="#" class="dropdown-toggle" id="sidebar_experimental_metrics" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Experimental
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu small" aria-labelledby="sidebar_experimental_metrics">
+    % for my $indicator (@$indicators) {
+    %  next unless $indicator->{is_experimental};
+    %  (my $name = $indicator->{name}) =~ s/_/ /g;
+    <li class="small"><a href="/kwalitee/<%= $indicator->{name} %><%= $tab ? "/$tab" : "" %>"><%= $name %></a></li>
+  % }
+  </ul>
+</div>
+
+</div>

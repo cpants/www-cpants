@@ -1,37 +1,44 @@
 package WWW::CPANTS::Web::Util::URL;
 
-use WWW::CPANTS;
-use URI;
-use URI::QueryParam;
-use Gravatar::URL ();
+use Mojo::Base -strict, -signatures;
+use Mojo::URL;
+use Gravatar::URL  ();
+use HTML::Entities ();
+use Regexp::Common qw/URI/;
 
 sub metacpan_url ($dist) {
-    URI->new(sprintf 'https://metacpan.org/release/%s/%s', @$dist{qw/author name_version/});
+    Mojo::URL->new(sprintf 'https://metacpan.org/release/%s/%s', @$dist{qw/author name_version/});
 }
 
 sub bugtracker_url ($dist) {
     if (my $url = $dist->{bugtracker_url}) {
-        URI->new($url);
+        Mojo::URL->new($url);
     } else {
-        my $uri = URI->new('https://rt.cpan.org/Public/Dist/Display.html');
-        $uri->query_param(Name => $dist->{name});
-        $uri;
+        $url = Mojo::URL->new('https://rt.cpan.org/Public/Dist/Display.html');
+        $url->query(Name => $dist->{name});
+        $url;
     }
 }
 
 sub repository_url ($dist) {
     my $url = $dist->{repository_url} or return;
     $url =~ s!^git://github!https://github!;
-    URI->new($url);
+    Mojo::URL->new($url);
 }
 
 sub gravatar_url ($pause_id) {
     Gravatar::URL::gravatar_url(
-        email   => $pause_id . '@cpan.org',
+        email   => ($pause_id // '__dummy__') . '@cpan.org',
         size    => 130,
         default => 'identicon',
         https   => 1,
     );
+}
+
+sub linkify ($text) {
+    return '' unless defined $text;
+    $text = HTML::Entities::encode_entities($text);
+    $text =~ s!($RE{URI}{HTTP}{-scheme => 'https?'})!<a href="$1">$1</a>!gr;
 }
 
 1;

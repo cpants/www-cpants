@@ -1,4 +1,4 @@
-use WWW::CPANTS;
+use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 
 test_kwalitee(

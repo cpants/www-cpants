@@ -1,18 +1,15 @@
 package WWW::CPANTS::Web::Controller::Root;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use parent 'Mojolicious::Controller';
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 
 sub check_maintenance ($c) {
-    if (under_maintenance()) {
+    my $status = $c->get_api('Status') // {};
+
+    if ($status->{maintenance}) {
         $c->stash("cpants.has_notice"         => 1);
         $c->stash("cpants.notice_maintenance" => 1);
     }
-    if (under_analysis()) {
-        $c->stash("cpants.has_notice"       => 1);
-        $c->stash("cpants.notice_analyzing" => 1);
-    }
+    $c->stash('last_analyzed', $status->{last_analyzed});
     return 1;
 }
 

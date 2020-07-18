@@ -1,83 +1,85 @@
 package WWW::CPANTS::DB::Table::Distributions;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use WWW::CPANTS::Util::SQL;
-use parent 'WWW::CPANTS::DB::Table';
+use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
+use WWW::CPANTS::Util::JSON qw/encode_json/;
 
 sub columns ($self) { (
-    [id                => '_sereal_'],
+    [id                => '_serial_'],
     [name              => '_dist_name_', unique => 1],
     [uids              => '_json_'],
     [latest_uid        => '_upload_id_'],
     [latest_stable_uid => '_upload_id_'],
     [latest_dev_uid    => '_upload_id_'],
     [first_uid         => '_upload_id_'],
-    [first_released_at => '_epoch_'],
-    [last_released_at  => '_epoch_'],
-    [last_released_by  => '_pause_id_'],
+    [first_release_at  => '_epoch_'],
+    [last_release_at   => '_epoch_'],
+    [last_release_by   => '_pause_id_'],
     [rt                => '_json_'],
     [github            => '_json_'],
     [used_by           => '_json_'],
+    [advisories        => '_json_'],
 ) }
 
 sub iterate_name_and_uids ($self) {
-    $self->iterate(qq[
-    SELECT id, name, uids, latest_stable_uid, latest_dev_uid, last_released_at
+    my $sql = <<~';';
+    SELECT id, name, uids, latest_stable_uid, latest_dev_uid, last_release_at
     FROM distributions
-  ]);
+    ;
+    $self->iterate($sql);
 }
 
 sub select_by_name ($self, $name) {
-    my $sth = $self->{sth}{select_by_name} //= $self->prepare(qq[
-    SELECT * FROM distributions
-    WHERE name = ?
-  ]);
-    $self->select($sth, $name);
+    my $sql = <<~';';
+    SELECT * FROM distributions WHERE name = ?
+    ;
+    $self->select($sql, $name);
 }
 
 sub select_all_latest_uids_by_name ($self, $names) {
-    my $quoted_names = $self->quote_and_concat($names);
-    $self->select_all(qq[
+    my $sql = <<~';';
     SELECT latest_stable_uid, latest_dev_uid FROM distributions
-    WHERE name IN ($quoted_names)
-    ORDER BY last_released_at DESC
-  ]);
+    WHERE name IN (:names)
+    ORDER BY last_release_at DESC
+    ;
+    $self->select_all($sql, [names => $names]);
 }
 
 sub update_uids ($self, $info) {
-    my @fields = qw/
+    my @fields = qw(
         name uids latest_uid latest_stable_uid latest_dev_uid
-        first_uid first_released_at last_released_at last_released_by
-        /;
+        first_uid first_release_at last_release_at last_release_by
+    );
     if ($info->{id}) {
-        my $sth = $self->{sth}{update_uid} //= do {
-            my $placeholders = join ', ', map { "$_ = ?" } @fields;
-            $self->prepare(qq[
-        UPDATE distributions
-        SET $placeholders
-        WHERE id = ?
-      ]);
-        };
-        $sth->execute(@$info{ @fields, 'id' });
+        my $placeholders = join ',', map { "$_ = ?" } @fields;
+        my $sql          = <<~";";
+      UPDATE distributions
+      SET $placeholders
+      WHERE id = ?
+      ;
+        $self->update($sql, @$info{ @fields, 'id' });
     } else {
-        my $sth = $self->{sth}{insert_uid} //= do {
-            my $concat_fields = join ', ', @fields;
-            my $placeholders  = substr('?,' x @fields, 0, -1);
-            $self->prepare(qq[
-        INSERT INTO distributions ($concat_fields)
-        VALUES ($placeholders)
-      ]);
-        };
-        $sth->execute(@$info{@fields});
+        my $concat_fields = join ',', @fields;
+        my $placeholders  = substr('?,' x @fields, 0, -1);
+        my $sql           = <<~";";
+      INSERT INTO distributions ($concat_fields)
+      VALUES ($placeholders)
+      ;
+        $self->insert($sql, @$info{@fields});
     }
 }
 
 sub update_used_by ($self, $name, $map) {
-    my $sth = $self->{sth}{update_used_by} //= $self->prepare(qq[
+    my $sql = <<~';';
     UPDATE distributions SET used_by = ? WHERE name = ?
-  ]);
-    $sth->execute(encode_json($map), $name);
+    ;
+    $self->update($sql, encode_json($map), $name);
+}
+
+sub update_advisories ($self, $name, $advisories) {
+    my $sql = <<~';';
+    UPDATE distributions SET advisories = ? WHERE name = ?
+    ;
+    $self->update($sql, encode_json($advisories), $name);
 }
 
 1;

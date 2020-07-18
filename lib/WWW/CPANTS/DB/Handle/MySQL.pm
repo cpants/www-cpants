@@ -1,37 +1,80 @@
 package WWW::CPANTS::DB::Handle::MySQL;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-use parent 'WWW::CPANTS::DB::Handle';
+use Mojo::Base 'WWW::CPANTS::DB::Handle', -signatures;
+use Syntax::Keyword::Try;
 
-sub dsn ($self, $table) {
-    my $name = "cpants";
-    $name .= '_' . $self->{base} if $self->{base};
-    "dbi:mysql:$name";
+my %VirtualTypes = (
+    _serial_         => ['bigint', primary => 1, incremental => 1],
+    _upload_id_      => ['varchar(32)'],
+    _pause_id_       => ['varchar(9)'],
+    _cpan_path_      => ['varchar(400)', case_sensitive => 1],
+    _dist_name_      => ['varchar(255)', case_sensitive => 1],
+    _module_name_    => ['varchar(255)', case_sensitive => 1],
+    _version_string_ => ['varchar(20)'],
+    _acme_id_        => ['varchar(40)'],
+    _epoch_          => ['bigint'],
+    _year__          => ['smallint', unsigned => 1],
+    _int_            => ['bigint'],
+    _revision_       => ['integer'],
+    _bool_           => ['tinyint'],
+    _date_           => ['date'],
+    _json_           => ['mediumtext'],
+);
+
+sub virtual_types ($self) { \%VirtualTypes }
+
+sub connect ($self, $table = undef) {
+    return $self if $self->dbh;
+
+    my $config = $self->config // {};
+
+    my $database = $config->{database} // $config->{dbname} // 'cpants';
+    my $user     = $config->{user};
+    my $pass     = $config->{password};
+    my $dsn      = $config->{dsn} // "dbi:mysql:$database";
+
+    my %attr = (
+        AutoCommit          => 1,
+        RaiseError          => 1,
+        PrintError          => 0,
+        ShowErrorStatement  => 1,
+        AutoInactiveDestroy => 1,
+        %{ $config->{attr} // {} },
+    );
+
+    my $dbh = DBI->connect($dsn, $user, $pass, \%attr)
+        or Carp::croak DBI->errstr;
+    $self->log(debug => "connected to $dsn [$$]");
+
+    $self->_dbh($dbh);
+    $self;
 }
 
-sub driver_name ($self)  { 'MySQL' }
-sub default_attr ($self) { }
-sub dbfile ($self)       { }
+sub is_accessible_to ($self, $table) {
+    return unless $self->dbh;
 
-sub init ($self)        { }
-sub after_setup ($self) { }
-sub pragma ($self, $name, $value) { }
-sub __disconnect ($self) { }
+    my $sql = <<~';';
+    SHOW TABLES LIKE ?
+    ;
+    my $rows = $self->select($sql, $table->name) or return;
+    return keys %$rows == 1;
+}
 
-sub _schema ($self, $table) {
+sub ddl_statements ($self, $table) {
     my $table_name = $table->name;
 
     my @sqls;
     my @column_definitions;
     for my $column ($table->columns) {
         my ($name, $type, %params) = @$column;
-        if (exists $table->virtual_types->{$type}) {
-            my ($real_type, %extra) = @{ $table->virtual_types->{$type} };
+        if (exists $VirtualTypes{$type}) {
+            my ($real_type, %extra) = @{ $VirtualTypes{$type} };
             $type   = $real_type;
             %params = (%params, %extra) if %extra;
         }
         my $def = "$name $type";
+        $def .= " character set " . $params{character_set} if $params{character_set};
+        $def .= " collate " . $params{collate}             if $params{collate};
         if ($params{primary}) {
             $def .= " primary key";
             $def .= " auto_increment" if $params{incremental};
@@ -39,10 +82,11 @@ sub _schema ($self, $table) {
         $def .= " not null"                 if $params{not_null};
         $def .= " unique"                   if $params{unique};
         $def .= " default $params{default}" if defined $params{default};
-        $def .= " collate utf8_bin"         if defined $params{case_sensitive};
         push @column_definitions, $def;
     }
-    push @sqls, "CREATE TABLE IF NOT EXISTS $table_name (" . join(", ", @column_definitions) . ") ENGINE=InnoDB CHARACTER SET=utf8";
+    my $table_def = "CREATE TABLE IF NOT EXISTS $table_name (" . join(", ", @column_definitions) . ")";
+    $table_def .= " ENGINE InnoDB CHARACTER SET utf8 COLLATE utf8_bin";
+    push @sqls, $table_def;
 
     for my $index ($table->indices) {
         my ($unique, $where, @columns);
@@ -50,21 +94,21 @@ sub _schema ($self, $table) {
             $unique  = $where = "";
             @columns = @$index;
         } elsif (ref $index eq 'HASH') {
-            $unique = "UNIQUE " if $index->{unique};
+            $unique  = "UNIQUE" if $index->{unique};
             $where   = $index->{where} ? " WHERE $index->{where}" : "";
             @columns = @{ $index->{columns} // [] };
         }
         die "no columns to index: $table_name" unless @columns;
         my $name = join '_', 'idx', @columns;
         $name =~ s/[^a-z0-9_]+/_/g;
-        push @sqls, "ALTER TABLE $table_name ADD $unique INDEX $name (" . join(", ", @columns) . ")";
+        push @sqls, "CREATE $unique INDEX IF NOT EXISTS $name ON $table_name (" . join(", ", @columns) . ")$where";
     }
     \@sqls;
 }
 
 sub migrate ($self, $table) {
-    # FIXME
-    log(warn => "MySQL table migration is not implemented yet");
+    Carp::carp "Not implemented yet";
+    return;
 }
 
 sub truncate ($self, $table) {
@@ -72,97 +116,67 @@ sub truncate ($self, $table) {
     $self->delete(qq[DELETE FROM $table_name]);
 }
 
-sub update_and_get_updated_rowid ($self, $sql, @bind) {
+sub update_and_get_updated_rowid ($self, $updater, $selector, @bind_values) {
     my $dbh = $self->dbh;
-    $self->update($sql, @bind);
-    $dbh->{mysql_insertid};
+    $selector .= ' FOR UPDATE';
+    my $id = $self->select_col($selector);
+    $self->update($updater, @bind_values, [id => [$id]]);
+    $id;
 }
 
-sub attach ($self, $table) { }
+sub bulk_insert ($self, $table, $rows, $opts = {}) {
+    return unless $rows and @$rows;
 
-sub bulk_insert ($self, $table, $rows = [], $opts = {}) {
-    my $bulk = WWW::CPANTS::DB::Handle::MySQL::BulkProcessor->new($table, $opts);
-    return $bulk unless defined $rows;
-    $bulk->insert($rows);
-    $bulk->finalize;
-}
+    my $first_row = $rows->[0];
 
-package WWW::CPANTS::DB::Handle::MySQL::BulkProcessor;
-
-use WWW::CPANTS;
-use WWW::CPANTS::Util;
-
-sub new ($class, $table, $opts = {}) {
-    $opts->{threshold} //= 1000;
-    bless { table => $table, opts => $opts }, $class;
-}
-
-sub finalize ($self) {
-    $self->_insert;
-    delete $self->{_insert};
-}
-
-sub prepare_insert ($self, $row) {
-    my $table = $self->{table};
-    my (@columns, @names, %defaults);
+    my @columns;
+    my @default_columns;
+    my %default;
     for my $column (@{ $table->meta->{columns} }) {
-        next unless exists $row->{ $column->{name} };
-        push @columns, $column;
-        push @names,   $column->{name};
+        my $name = $column->{name};
+        next unless exists $first_row->{$name};
+        push @columns, $name;
         if (exists $column->{default}) {
-            $defaults{ $column->{name} } = $column->{default};
+            $default{$name} = $column->{default};
+            push @default_columns, $name;
         }
     }
+    Carp::croak "no columns to insert" unless @columns;
 
-    return unless @columns;
+    $opts //= {};
+    $opts->{omit_values} = 1;
 
-    my $concat_names = join ', ', @names;
-    my $placeholders = substr '?,' x @names, 0, -1;
-    my $sql          = "INSERT ";
-    $sql .= "IGNORE " if $self->{opts}{ignore};
-    $sql .= "INTO " . $table->name . " ($concat_names) VALUES ($placeholders)";
-
-    my %opts;
-    $opts{columns} = \@columns;
-    $opts{names}   = \@names;
-    if (%defaults) {
-        $opts{defaults}     = \%defaults;
-        $opts{default_keys} = [keys %defaults];
+    my $sql = 'INSERT ';
+    $sql .= 'INTO ' . $table->name . ' (' . join(',', @columns) . ')' . ' VALUES (' . substr('?,' x @columns, 0, -1) . ')';
+    if ($opts->{ignore}) {
+        my $primary = $table->meta->{primary} or Carp::confess "no primary";
+        $sql .= " ON DUPLICATE KEY UPDATE $primary = $primary";
     }
-    $opts{sth} = $table->prepare($sql);
-    $opts{row} = [];
-    \%opts;
-}
 
-sub insert ($self, $rows) {
-    return unless @$rows;
-
-    my $_insert = $self->{_insert} //= $self->prepare_insert($rows->[0]) or return;
-    my $_rows   = $_insert->{rows} //= [];
-    my $names   = $self->{_insert}{names};
-    my $defaults     = $self->{_insert}{defaults};
-    my $default_keys = $self->{_insert}{default_keys};
-    my $threshold    = $self->{opts}{threshold};
-    for my $row (@$rows) {
-        if ($default_keys) {
-            $row->{$_} //= $defaults->{$_} for @$default_keys;
+    my $dbh = $self->dbh;
+    my $txn = $self->txn;
+    my $sth = $dbh->prepare($sql);
+    try {
+        for my $row (@$rows) {
+            my %new;
+            @new{@columns} = @$row{@columns};
+            if (@default_columns) {
+                for my $column (@default_columns) {
+                    $new{$column} //= $default{$column};
+                }
+            }
+            $sth->execute(@new{@columns});
         }
-        my @values = @$row{@$names};
-        push @$_rows, \@values;
-        $self->_insert if @$_rows > $threshold;
+        $txn->commit;
+    } catch {
+        my $error = $@;
+        $self->log(error => $error);
+        $txn->rollback;
     }
 }
 
-sub _insert ($self) {
-    my $_insert = $self->{_insert} or return;
-    my $rows    = $_insert->{rows} // [];
-    return unless @$rows;
-    my $handle = $self->{table}->handle;
-    my $txn    = $handle->txn;
-    my $sth    = $_insert->{sth};
-    $sth->execute(@$_) for @$rows;
-    @$rows = ();
-    $txn->commit;
+sub concat_expr ($self, @values) {
+    return 'CONCAT(' . join(',', @values) . ')';
 }
 
 1;

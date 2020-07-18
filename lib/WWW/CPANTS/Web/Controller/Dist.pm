@@ -1,56 +1,45 @@
 package WWW::CPANTS::Web::Controller::Dist;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 use WWW::CPANTS::Web::Util::Badge;
-use WWW::CPANTS::Web::Util::BadgeSVG;
-use parent 'Mojolicious::Controller';
+use experimental qw/switch/;
+use Syntax::Keyword::Try;
 
 sub index ($c) {
-    my $author = $c->param('author') // '';
-    my $name   = $c->param('name');
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $tab       = $params->{tab} // 'Overview';
+            my $tab_class = $c->tab_class("Dist", $tab);
+            my $data      = $c->get_api($tab_class, $params) or return;
 
-    my $format = '';
-    if ($name =~ s/\.(json|png|svg)$//) {
-        $format = $1;
-        $c->param(name => $name);
-        $c->stash(format => $format);
-    }
-    my $data = page('Dist')->load("$author/$name") or return $c->reply->not_found;
+            $data->{distribution} = $c->get_api("Dist::Common", $params) or return;
 
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    if ($format eq 'png') {
-        my $path = WWW::CPANTS::Web::Util::Badge->new($data->{data}{distribution}{core_kwalitee})->path;
-        $c->res->headers->cache_control('max-age=1, no-cache');
-        return $c->reply->static($path);
-    }
-    if ($format eq 'svg') {
-        my $path = WWW::CPANTS::Web::Util::BadgeSVG->new($data->{data}{distribution}{core_kwalitee})->path;
-        $c->res->headers->cache_control('max-age=1, no-cache');
-        return $c->reply->static($path);
-    }
-    $c->stash(cpants => $data);
-    $c->render('dist');
-}
-
-sub tab ($c) {
-    my $author   = $c->param('author') // '';
-    my $name     = $c->param('name');
-    my $tab      = $c->param('tab');
-    my $tabclass = camelize($tab);
-    $c->reply->not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
-
-    my $page = $c->param('page');
-    my $data = page("Dist\::$tabclass")->load("$author/$name", $page) or return $c->reply->not_found;
-
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render("dist/$tab");
+            given ($format) {
+                when ('json') {
+                    return { json => $data->{data} };
+                }
+                when (/\A(?:png|svg)\z/) {
+                    if ($tab eq 'Overview') {
+                        my $path;
+                        try {
+                            $path = badge($data->{distribution}{core_kwalitee}, $format);
+                        } catch {
+                            my $error = $@;
+                            $c->app->log(error => $error);
+                        }
+                        return { static => $path };
+                    }
+                }
+                when ('') {
+                    return {
+                        render => $c->template_name($tab_class),
+                        stash  => $data,
+                    };
+                }
+            }
+            return;
+        },
+    );
 }
 
 1;

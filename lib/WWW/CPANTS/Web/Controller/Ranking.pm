@@ -1,27 +1,33 @@
 package WWW::CPANTS::Web::Controller::Ranking;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
-use parent 'Mojolicious::Controller';
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
+use experimental qw/switch/;
+use String::CamelCase qw/decamelize/;
 
 sub index ($c) {
-    my $data = page('Ranking::FiveOrMore')->load or return $c->reply->not_found;
-    $c->stash(cpants => $data);
-    $c->render('ranking/five_or_more');
-}
+    $c->render_with(
+        sub ($c, $params, $format) {
 
-sub tab ($c) {
-    my $page     = $c->param('page') || 1;
-    my $tab      = $c->param('tab');
-    my $tabclass = camelize($tab);
-    return $c->reply->not_found unless $tabclass =~ /^[A-Za-z0-9]+$/;
-    my $data   = page("Ranking\::$tabclass")->load($page) or return $c->reply->not_found;
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render("ranking/$tab");
+            my $tab    = $params->{tab} // 'FiveOrMore';
+            my $league = $params->{league} = decamelize($tab);
+            my $data   = $c->get_api('Ranking', $params) or return;
+
+            given ($format) {
+                when ('json') {
+                    return { json => $data };
+                }
+                when ('') {
+                    return {
+                        render => "ranking/$league",
+                        stash  => {
+                            league  => $league,
+                            ranking => $data,
+                        },
+                    };
+                }
+            }
+        },
+    );
 }
 
 1;

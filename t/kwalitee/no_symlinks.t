@@ -1,4 +1,4 @@
-use WWW::CPANTS;
+use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 
 plan skip_all => "This test doesn't work well under Windows" if $^O eq 'MSWin32';

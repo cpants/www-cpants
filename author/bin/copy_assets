@@ -1,0 +1,73 @@
+#!/usr/bin/env perl
+
+use Role::Tiny::With;
+use Mojo::Base -strict, -signatures;
+use FindBin;
+use lib "$FindBin::Bin/../../lib";
+use File::Copy::Recursive;
+use Text::Sass::XS ':const';
+use WWW::CPANTS;
+use WWW::CPANTS::Util::Path;
+
+with qw/WWW::CPANTS::Role::Logger/;
+
+my %Map = (
+    bootstrap               => ["dist/*"],
+    datatables              => ["media/*"],
+    "datatables-responsive" => ["css", "js"],
+    "font-awesome"          => ["css", "fonts"],
+    highcharts              => ["highcharts.js", "adapters", "modules", "themes"],
+    html5shiv               => ["dist/*"],
+    jquery                  => ["dist/*"],
+    "jquery-jsonview"       => ["dist/*"],
+    "respond.js"            => ["dest/*"],
+    "sprintf-js"            => ["dist/*"],
+    strftime                => ["strftime-min.js"],
+    "swagger-ui-dist"       => ["swagger-ui-bundle.js", "swagger-ui-standalone-preset.js", "swagger-ui.css"],
+);
+
+my %Alias = (
+    "swagger-ui-dist" => "swagger-ui",
+);
+
+my $assets_dir = cpants_app_path('node_modules');
+my $public_dir = cpants_app_path('public');
+for my $name (sort keys %Map) {
+    my $package_dir = $assets_dir->child($name);
+    if (!-d $package_dir) {
+        __PACKAGE__->log(info => "Skipped $name");
+        next;
+    }
+    (my $dest_name = $Alias{$name} // $name) =~ s/\./-/g;
+    my $dest_dir = $public_dir->child(lc $dest_name);
+    $dest_dir->remove_tree if -d $dest_dir;
+    $dest_dir->mkpath;
+    for my $item (@{ $Map{$name} }) {
+        File::Copy::Recursive::rcopy_glob($package_dir->child($item)->path => $dest_dir);
+        __PACKAGE__->log(info => "Copied $name/$item");
+    }
+    my $iter = $dest_dir->iterator({ recurse => 1 });
+    my @to_remove;
+    while (my $file = $iter->()) {
+        if ($file =~ /\.scss$/) {
+            my $scss = Text::Sass::XS->new(
+                include_paths   => [$file->parent],
+                output_style    => SASS_STYLE_COMPRESSED,
+                source_comments => SASS_SOURCE_COMMENTS_NONE,
+            );
+            my $css = $scss->compile_file($file);
+            (my $css_file = $file) =~ s/scss$/css/;
+            Path::Tiny::path($css_file)->spew($css);
+            __PACKAGE__->log(info => "Converted " . $file->relative($public_dir));
+            push @to_remove, $file;    ## remove later as it may be imported from other scss files
+        }
+        if ($file =~ /\.(html?|ts)$/) {
+            __PACKAGE__->log(info => "Removed " . $file->relative($public_dir));
+            unlink $file;
+        }
+    }
+    for my $file (@to_remove) {
+        unlink $file;
+        __PACKAGE__->log(info => "Removed " . $file->relative($public_dir));
+    }
+}

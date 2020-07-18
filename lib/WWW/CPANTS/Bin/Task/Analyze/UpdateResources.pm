@@ -1,37 +1,41 @@
 package WWW::CPANTS::Bin::Task::Analyze::UpdateResources;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use parent 'WWW::CPANTS::Bin::Task';
+use Role::Tiny::With;
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
+use WWW::CPANTS::Util::JSON;
 
-sub run ($self, @args) {
-    # FIXME
-}
+our @WRITE = qw/Resources/;
 
-sub setup ($self, $db = undef) {
-    $self->{db}    = $db //= $self->db;
-    $self->{table} = $db->table('Resources');
-    $self;
-}
+with qw/WWW::CPANTS::Role::Task::FixAnalysis/;
 
 sub update ($self, $uid, $stash) {
     return unless exists $stash->{meta_yml};
     return unless ref $stash->{meta_yml} eq 'HASH';
     return unless exists $stash->{meta_yml}{resources};
+    return if $self->dry_run;
 
     my $pause_id  = $stash->{author};
     my $resources = $stash->{meta_yml}{resources};
+    $resources = {} unless ref $resources eq 'HASH';
 
-    my $repository =
-          ($resources->{repository} && ref $resources->{repository} eq 'HASH') ? $resources->{repository}{web} // $resources->{repository}{url}
-        : (!ref $resources->{repository}) ? $resources->{repository}
-        :                                   '';
-    my $bugtracker =
-          ($resources->{bugtracker} && ref $resources->{bugtracker} eq 'HASH') ? $resources->{bugtracker}{web}
-        : (!ref $resources->{bugtracker}) ? $resources->{bugtracker}
-        :                                   '';
+    my $repository = '';
+    if ($resources->{repository}) {
+        if (ref $resources->{repository} eq 'HASH') {
+            $repository = $resources->{repository}{web} // $resources->{repository}{url};
+        } elsif (!ref $resources->{repository}) {
+            $repository = $resources->{repository};
+        }
+    }
+    my $bugtracker = '';
+    if ($resources->{bugtracker}) {
+        if (ref $resources->{bugtracker} eq 'HASH') {
+            $bugtracker = $resources->{bugtracker}{web};
+        } elsif (!ref $resources->{bugtracker}) {
+            $bugtracker = $resources->{bugtracker};
+        }
+    }
 
-    $self->{table}->update_resources($uid, $pause_id, encode_json($resources), $repository, $bugtracker);
+    $self->db->table('Resources')->update_resources($uid, $pause_id, encode_json($resources), $repository, $bugtracker);
 }
 
 1;

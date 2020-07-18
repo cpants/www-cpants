@@ -1,0 +1,95 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $by_year = $data->{by_year};
+% my $by_version = $data->{by_version};
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+<h2>Statistics On Module::Install</h2>
+
+% if (@$by_year) {
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>By Year</h3>
+
+  <table id="by_year" class="display compact small">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>Latest</th>
+        <th>CPAN</th>
+        <th>BackPAN</th>
+        <th>Versions</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for my $row (@$by_year) {
+      <tr>
+        <td><%= $row->{year} %></td>
+        <td><%= $row->{latest} %></td>
+        <td><%= $row->{cpan} %></td>
+        <td><%= $row->{backpan} %></td>
+        <td><%= join ', ', @{$row->{versions} // []} %></td>
+      </tr>
+      % }
+    </tbody>
+  </table>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#by_year').dataTable({
+    });
+  });
+  % end
+  % end
+
+  </div>
+  </section>
+% }
+
+% if (@$by_version) {
+  <section>
+  <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+  <h3>By Version</h3>
+
+  <table id="by_version" class="display compact small">
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Latest</th>
+        <th>CPAN</th>
+        <th>BackPAN</th>
+        <th>Authors</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for my $row (@$by_version) {
+      <tr>
+        <td><%= $row->{version} %></td>
+        <td><%= $row->{latest} %></td>
+        <td><%= $row->{cpan} %></td>
+        <td><%= $row->{backpan} %></td>
+        <td><%== join ', ', map {qq{<a href="/author/$_">$_</a>}} sort @{$row->{authors} // []} %></td>
+      </tr>
+      % }
+    </tbody>
+  </table>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#by_version').dataTable({
+    });
+  });
+  % end
+  % end
+
+  </div>
+  </section>
+% }
+
+</div>
+
+%= include 'stats/_sidebar';

@@ -1,0 +1,203 @@
+% my $stash = stash('cpants');
+% my $author = $stash->{author};
+% my $pause_id = $author->{pause_id};
+% my $has_data = exists $stash->{data} ? 1 : 0;
+% my $data = $stash->{data} // {};
+% my $recent_releases = $data->{recent_releases} // [];
+% my $cpan_distributions = $data->{cpan_distributions} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+%= include 'author/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+% # links from author.json? or other info from metacpan? or other leaderboards? badge?
+
+% if ($has_data) {
+  % if (@$recent_releases) {
+    <section>
+    <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+    <h2>Recent Releases by <%= $pause_id %></h2>
+    <table id="recent_releases" class="display compact small">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Released</th>
+          <th>Kwalitee</th>
+          <th>Core Fails</th>
+        </tr>
+      </thead>
+      <tbody>
+      % for my $release (@$recent_releases) {
+        <tr>
+          <td><%= $release->{name} %></td>
+          <td><%= $release->{version} %></td>
+          <td><%= $release->{date} %></td>
+          <td><%= $release->{score} %></td>
+          <td><%= join ',', @{$release->{fails}} %></td>
+        </tr>
+      % }
+      </tbody>
+    </table>
+    </div>
+    </section>
+
+    % content_for 'javascript' => begin
+    %= javascript begin
+    $(function(){
+      $('#recent_releases').dataTable({
+        "ajax": "<%= api_url("v5/author/$pause_id/recent_releases", { days => 90 }) %>",
+        "serverSide": true,
+        "deferLoading": <%= $stash->{total_recent_releases} %>,
+        "columns": [
+          {"data": "name",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? '<a href="/release/<%= $pause_id %>/'+data+'-'+row.version+'">'+data+'</a>'
+              : data;
+          }},
+          {"data": "version"},
+          {"data": "date",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? strftime('%F', new Date(data))
+              : data;
+          }},
+          {"data": "score",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? data ? sprintf('%.02f', data) : '-'
+              : data;
+          }},
+          {"data": "fails",
+           "render": function(data,type,row){
+            if (type === 'display') {
+              var items = data;
+              if (typeof data === 'string') {
+                if (data.length) {
+                  items = data.split(',');
+                } else {
+                  items = [];
+                }
+              }
+              if (items.length) {
+                return '<a href="/kwalitee/'+items[0]+'">'+items[0]+'</a>' + ((items.length > 1) ? ' and others' : '');
+              } else {
+                return 'none';
+              }
+            } else {
+              return data;
+            }
+          }}
+        ],
+        "info": true,
+        "paging": true
+      });
+    });
+    % end
+    % end
+  % }
+
+  % if (@$recent_releases and @$cpan_distributions) {
+  <hr>
+  % }
+
+  % if (@$cpan_distributions) {
+    <section>
+    <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+    <h2>CPAN Distributions by <%= $pause_id %></h2>
+    <table id="cpan_distributions" class="display compact small">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th class="hidden">Latest</th>
+          <th>Released</th>
+          <th>Kwalitee</eth>
+          <th>Core Fails</th>
+        </tr>
+      </thead>
+      <tbody>
+      % for my $distribution (@$cpan_distributions) {
+        <tr>
+          <td><%= $distribution->{name} %></td>
+          <td><%= $distribution->{version} %></td>
+          <td class="hidden"><%= $distribution->{latest} ? 'latest' : '' %></td>
+          <td><%= $distribution->{date} %></td>
+          <td><%= $distribution->{score} %></td>
+          <td><%= join ',', @{$distribution->{fails}} %></td>
+        </tr>
+      % }
+      </tbody>
+    </table>
+    </div>
+    </section>
+
+    % content_for 'javascript' => begin
+    %= javascript begin
+    $(function(){
+      $('#cpan_distributions').dataTable({
+        "ajax": "<%= api_url("v5/author/$pause_id/cpan_distributions") %>",
+        "serverSide": true,
+        "deferLoading": <%= $stash->{total_cpan_distributions} %>,
+        "pageLength": 50,
+        "columns": [
+          {"data": "name",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? '<a href="/release/<%= $pause_id %>/'+data+'-'+row.version+'">'+data+'</a>'
+              : data;
+          }},
+          {"data": "version",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? (row.latest ? data : data+' (not <a href="/dist/'+row.name+'">latest</a>)')
+              : data;
+          }},
+          {"data": "latest",
+           "visible": false
+          },
+          {"data": "date",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? strftime('%F', new Date(data))
+              : data;
+          }},
+          {"data": "score",
+           "render": function(data,type,row){
+            return type === 'display'
+              ? data ? sprintf('%.02f', data) : '-'
+              : data;
+          }},
+          {"data": "fails",
+           "render": function(data,type,row){
+            if (type === 'display') {
+              var items = data;
+              if (typeof data === 'string') {
+                if (data.length) {
+                  items = data.split(',');
+                } else {
+                  items = [];
+                }
+              }
+              if (items.length) {
+                return '<a href="/kwalitee/'+items[0]+'">'+items[0]+'</a>' + ((items.length > 1) ? ' and others' : '');
+              } else {
+                return 'none';
+              }
+            } else {
+              return data;
+            }
+          }}
+        ],
+        "info": true,
+        "paging": true
+      });
+    });
+    % end
+    % end
+  % }
+% }
+
+</div>

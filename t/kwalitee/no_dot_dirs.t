@@ -1,4 +1,4 @@
-use WWW::CPANTS;
+use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 
 test_kwalitee(
@@ -19,7 +19,6 @@ test_kwalitee(
 
     # others
     ['BRENDAN/Test-Mimic-0.009007.tar.gz',  0],                               # 11809
-    ['PJF/Exobrain-Twitter-1.00.tar.gz',    0],                               # 16734
     ['MUENALAN/Workflow-Aline-0.03.tar.gz', 0],                               # 24529
     ['NACHBAUR/Test-Story-0.07.tar.gz',     0],                               # 41977
     ['RKIES/ec-1.6.tar.gz',                 0],                               # 77537

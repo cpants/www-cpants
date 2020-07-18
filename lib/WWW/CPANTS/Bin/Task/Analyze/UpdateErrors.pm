@@ -1,48 +1,59 @@
 package WWW::CPANTS::Bin::Task::Analyze::UpdateErrors;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use parent 'WWW::CPANTS::Bin::Task';
+use Role::Tiny::With;
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
+use WWW::CPANTS::Util::JSON;
+use WWW::CPANTS::Util::HideInternal;
+use Encode;
 
-sub run ($self, @args) {
-    # FIXME
-}
+our @READ  = qw/Analysis Errors/;
+our @WRITE = qw/Errors/;
 
-sub setup ($self, $db = undef) {
-    $self->{db}    = $db //= $self->db;
-    $self->{table} = $db->table('Errors');
-    $self;
-}
+with qw/WWW::CPANTS::Role::Task::FixAnalysis/;
 
 sub update ($self, $uid, $stash) {
-    return unless exists $stash->{error};
+    my $table = $self->db->table('Errors');
 
-    my $errors = $stash->{error};
-    return unless %$errors;
+    return if $self->dry_run;
 
-    my $table = $self->{table};
+    # make a shallow copy
+    my %errors = %{ $stash->{error} // {} };
+    if (!%errors) {
+        $table->delete_errors_by_uid($uid);
+        return;
+    }
 
-    my (@updated, @deleted, @new, %seen);
+    my (@updated, @deleted, @new);
     for my $row (@{ $table->select_errors_by_uid($uid) // [] }) {
-        $seen{ $row->{category} } = 1;
-        my $e = $errors->{ $row->{category} };
-        if (!defined $e) {
+        my $category = $row->{category};
+        my $error    = delete $errors{$category};
+        if (!defined $error) {
             push @deleted, $row->{id};
             next;
         }
-        if ((ref $e && diff_json($e, $row->{error})) or $e ne $row->{error}) {
-            push @updated, [$e, $row->{id}];
+
+        if (ref $error) {
+            $error = hide_internal(encode_json($error));
+            if (my $diff = json_diff($error, $row->{error})) {
+                push @updated, [$row->{id}, $error];
+            }
+        } else {
+            $error = encode_utf8(hide_internal($error));
+            if ($error ne $row->{error}) {
+                push @updated, [$row->{id}, $error];
+            }
         }
     }
-    for my $category (keys %$errors) {
-        next if $seen{$category};
-        my $e = $errors->{$category};
+
+    for my $category (keys %errors) {
+        my $error = $errors{$category};
         push @new, {
             uid      => $uid,
             category => $category,
-            error    => hide_internal(ref $e ? encode_json($e) : $e),
+            error    => hide_internal(ref $error ? encode_json($error) : $error),
         };
     }
+
     if (@new) {
         $table->bulk_insert(\@new);
     }
@@ -52,6 +63,7 @@ sub update ($self, $uid, $stash) {
     if (@deleted) {
         $table->delete_errors_by_id(\@deleted);
     }
+    return @new + @updated + @deleted;
 }
 
 1;

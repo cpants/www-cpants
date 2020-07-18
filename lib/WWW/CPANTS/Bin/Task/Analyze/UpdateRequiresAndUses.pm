@@ -1,18 +1,15 @@
 package WWW::CPANTS::Bin::Task::Analyze::UpdateRequiresAndUses;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use parent 'WWW::CPANTS::Bin::Task';
+use Role::Tiny::With;
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
+use WWW::CPANTS::Util::JSON;
+use WWW::CPANTS::Util::CoreList;
+use WWW::CPANTS::Util::Distname;
+use WWW::CPANTS::Util::Version;
 
-sub run ($self, @args) {
-    # FIXME
-}
+our @WRITE = qw/RequiresAndUses/;
 
-sub setup ($self, $db = undef) {
-    $self->{db}    = $db //= $self->db;
-    $self->{table} = $db->table('RequiresAndUses');
-    $self;
-}
+with qw/WWW::CPANTS::Role::Task::FixAnalysis/;
 
 sub update ($self, $uid, $stash) {
     return unless exists $stash->{prereq};
@@ -26,116 +23,199 @@ sub update ($self, $uid, $stash) {
         $requires{ $p->{type} }{ $p->{requires} } = $p->{version};
     }
 
-    my %use_map;
-    for my $type (keys %$uses) {
-        next if $type =~ /eval|require|no/;
-        if ($type =~ /code/) {
-            $use_map{runtime}{$_} = 1 for keys %{ $uses->{$type} };
-        } elsif ($type =~ /test/) {
-            $use_map{test}{$_} = 1 for keys %{ $uses->{$type} };
-        } elsif ($type =~ /config/) {
-            $use_map{configure}{$_} = 1 for keys %{ $uses->{$type} };
-        }
-    }
-    my %use_list_map;
-    for my $phase (keys %use_map) {
-        $use_list_map{$phase} = [sort keys %{ $use_map{$phase} }];
-    }
+    $self->runtime_requires_matches_use($uid, $stash, \%requires, $uses);
+    $self->test_requires_matches_use($uid, $stash, \%requires, $uses);
+    $self->configure_requires_matches_use($uid, $stash, \%requires, $uses);
 
-    my %provides;
-    for my $file (keys %$versions) {
-        my $module_versions = $versions->{$file};
-        for my $module (keys %$module_versions) {
-            $provides{$module} = 1;
-        }
-    }
+    return if $self->dry_run;
 
-    $self->runtime_requires_matches_use($uid, $stash, \%requires, \%use_list_map, \%provides);
-    $self->test_requires_matches_use($uid, $stash, \%requires, \%use_list_map, \%provides);
-
-    $self->{table}->update_requires_and_uses(
+    $self->db->table('RequiresAndUses')->update_requires_and_uses(
         $uid,
         $pause_id,
         encode_json(\%requires),
-        encode_json(\%use_list_map),
+        encode_json($uses),
     );
 }
 
-sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses, $provides) {
-    if ($stash->{dynamic_config}) {
-        $stash->{kwalitee}{prereq_matches_use} = 1;
-        return;
+sub required_perl ($self, $stash, $uses) {
+    my @versions;
+    for my $phase (qw/runtime test configure/) {
+        next unless $uses->{$phase} && ref $uses->{$phase} eq 'HASH' && ref $uses->{$phase}{requires} eq 'HASH';
+        push @versions, $uses->{$phase}{requires}{perl} if exists $uses->{$phase}{requires}{perl};
     }
 
-    my $cpan = $self->cpan;
-
-    my $required_perl = $requires->{runtime_requires}{perl};
-    my ($used_perl) = grep /^v?5\./, @{ $uses->{runtime} // [] };
-    $required_perl = eval { no warnings; version->parse($used_perl)->numify } if $used_perl;
-
-    my %wanted;
-    for my $module (@{ $uses->{runtime} // [] }) {
-        next if $module =~ /^v?5\./;
-        next if is_core($module, $required_perl);
-        next if $provides->{$module};
-        my $path = $cpan->indexed_path_for($module) or next;
-        push @{ $wanted{$path} //= [] }, $module;
-    }
-
-    for my $phase (qw/runtime/) {
-        for my $type (qw/requires recommends suggests/) {
-            for my $module (keys %{ $requires->{ $phase . "_" . $type } // {} }) {
-                my $path = $cpan->indexed_path_for($module) or next;
-                delete $wanted{$path};
-            }
+    if (my $meta = $stash->{meta_yml}) {
+        for my $phase (qw/requires build_requires configure_requires/) {
+            next unless $meta->{$phase} && ref $meta->{$phase} eq 'HASH';
+            push @versions, $meta->{$phase}{perl} if exists $meta->{$phase}{perl};
         }
     }
 
+    my ($version) =
+        sort { $b <=> $a }
+        map  { numify_version($_) }
+        grep { $_ } @versions;        ## ignore 0
+
+    $stash->{required_perl} = $version;
+}
+
+sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
+    my $cpan = $self->ctx->cpan;
+
+    my $required_perl = $self->required_perl($stash, $uses);
+
+    my (%wanted, %seen, %unindexed);
+    my $declared_runtime_requires = $requires->{runtime_requires} // {};
+    for my $module (keys %$declared_runtime_requires) {
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen{$path} = 1;
+    }
+    my $actual_runtime_requires = $uses->{runtime}{requires} // {};
+    for my $module (keys %$actual_runtime_requires) {
+        next if $module eq 'perl';
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module);
+        if (!$path) {
+            $unindexed{$module} = 1;
+            next;
+        }
+        if (exists $declared_runtime_requires->{$module}) {
+            my $version = $actual_runtime_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_runtime_requires->{$module})) {
+                $seen{$path} = 1;
+                next;
+            }
+        }
+        next if $seen{$path};
+        push @{ $wanted{$path} //= [] }, $module;
+    }
+    for my $path (keys %wanted) {
+        my $distinfo = valid_distinfo($path);
+        if ($seen{$path} or !$distinfo or $distinfo->{name} eq $stash->{dist}) {
+            delete $wanted{$path};
+        }
+    }
+
+    $stash->{unindexed_runtime_requires} = [sort keys %unindexed] if %unindexed;
+
     if (%wanted) {
         $stash->{error}{prereq_matches_use}    = [sort map { @{ $wanted{$_} } } keys %wanted];
-        $stash->{kwalitee}{prereq_matches_use} = 0;
+        $stash->{kwalitee}{prereq_matches_use} = ($stash->{dynamic_config}) ? 1 : 0;
     } else {
         $stash->{kwalitee}{prereq_matches_use} = 1;
     }
 }
 
-sub test_requires_matches_use ($self, $uid, $stash, $requires, $uses, $provides) {
-    if ($stash->{dynamic_config}) {
-        $stash->{kwalitee}{prereq_matches_use} = 1;
-        return;
-    }
+sub test_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
+    my $cpan = $self->ctx->cpan;
 
     my %included = map { $_ => 1 } @{ $stash->{included_modules} // [] };
 
-    my $required_perl = $requires->{runtime_requires}{perl};
-    my ($used_perl) = grep /^v?5\./, @{ $uses->{runtime} // [] }, @{ $uses->{test} // [] };
-    $required_perl = eval { no warnings; version->parse($used_perl)->numify } if $used_perl;
+    my $required_perl = $self->required_perl($stash, $uses);
 
-    my $cpan = $self->cpan;
-    my %wanted;
-    for my $module (@{ $uses->{test} // [] }) {
-        next if $module =~ /^v?5\./;
+    my (%wanted, %seen, %unindexed);
+    my $declared_runtime_requires = $requires->{runtime_requires} // {};
+    for my $module (keys %$declared_runtime_requires) {
         next if is_core($module, $required_perl);
-        next if $provides->{$module};
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen{$path} = 1;
+    }
+    my $declared_build_requires = $requires->{build_requires} // {};
+    for my $module (keys %$declared_build_requires) {
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen{$path} = 1;
+    }
+    my $actual_test_requires = $uses->{test}{requires} // {};
+    for my $module (keys %$actual_test_requires) {
+        next if $module eq 'perl';
+        next if is_core($module, $required_perl);
         next if $included{$module};
-        my $path = $cpan->indexed_path_for($module) or next;
+        my $path = $cpan->packages->indexed_path_for($module);
+        if (!$path) {
+            $unindexed{$module} = 1;
+            next;
+        }
+        if (exists $declared_runtime_requires->{$module}) {
+            my $version = $actual_test_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_runtime_requires->{$module})) {
+                $seen{$path} = 1;
+                next;
+            }
+        }
+        if (exists $declared_build_requires->{$module}) {
+            my $version = $actual_test_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_build_requires->{$module})) {
+                $seen{$path} = 1;
+                next;
+            }
+        }
+        next if $seen{$path};
         push @{ $wanted{$path} //= [] }, $module;
     }
-
-    for my $phase (qw/runtime build test/) {
-        for my $type (qw/requires recommends suggests/) {
-            for my $module (keys %{ $requires->{ $phase . "_" . $type } // {} }) {
-                my $path = $cpan->indexed_path_for($module) or next;
-                delete $wanted{$path};
-            }
+    for my $path (keys %wanted) {
+        my $distinfo = valid_distinfo($path);
+        if ($seen{$path} or !$distinfo or $distinfo->{name} eq $stash->{dist}) {
+            delete $wanted{$path};
         }
     }
 
+    $stash->{unindexed_test_requires} = [sort keys %unindexed] if %unindexed;
+
     if (%wanted) {
-        $stash->{error}{build_prereq_matches_use}    = [sort map { @{ $wanted{$_} } } keys %wanted];
-        $stash->{kwalitee}{build_prereq_matches_use} = 0;
+        $stash->{error}{test_prereq_matches_use}    = [sort map { @{ $wanted{$_} } } keys %wanted];
+        $stash->{kwalitee}{test_prereq_matches_use} = ($stash->{dynamic_config}) ? 1 : 0;
     } else {
-        $stash->{kwalitee}{build_prereq_matches_use} = 1;
+        $stash->{kwalitee}{test_prereq_matches_use} = 1;
+    }
+}
+
+sub configure_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
+    my $cpan = $self->ctx->cpan;
+
+    my $required_perl = $self->required_perl($stash, $uses);
+
+    my (%wanted, %seen, %unindexed);
+    my $declared_configure_requires = $requires->{configure_requires} // {};
+    for my $module (keys %$declared_configure_requires) {
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen{$path} = 1;
+    }
+    my $actual_configure_requires = $uses->{configure}{requires} // {};
+    for my $module (keys %$actual_configure_requires) {
+        next if $module eq 'perl';
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module);
+        if (!$path) {
+            $unindexed{$module} = 1;
+            next;
+        }
+        if (exists $declared_configure_requires->{$module}) {
+            my $version = $actual_configure_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_configure_requires->{$module})) {
+                $seen{$path} = 1;
+                next;
+            }
+        }
+        next if $seen{$path};
+        push @{ $wanted{$path} //= [] }, $module;
+    }
+    for my $path (keys %wanted) {
+        my $distinfo = valid_distinfo($path);
+        if ($seen{$path} or !$distinfo or $distinfo->{name} eq $stash->{dist}) {
+            delete $wanted{$path};
+        }
+    }
+
+    $stash->{unindexed_configure_requires} = [sort keys %unindexed] if %unindexed;
+
+    if (%wanted) {
+        $stash->{error}{configure_prereq_matches_use}    = [sort map { @{ $wanted{$_} } } keys %wanted];
+        $stash->{kwalitee}{configure_prereq_matches_use} = ($stash->{dynamic_config}) ? 1 : 0;
+    } else {
+        $stash->{kwalitee}{configure_prereq_matches_use} = 1;
     }
 }
 

@@ -1,0 +1,90 @@
+% my $stash = stash('cpants');
+% my $releases = $stash->{releases} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+
+<div>
+  <p>CPANTS is a testing service for CPAN distributions. One of its goals is to provide some sort of quality measure called <a href="/kwalitee">Kwalitee</a>. Though it looks and sounds like quality, higher Kwalitee score doesn't always mean a distribution is more useful for you. All it can assure is it's less likely for you to encounter problems on installation, the format of manuals, licensing, or maybe portability, as most of the CPANTS metrics are based on the past toolchain/QA issues you may or may not remember. <!--(<a href="/about">More on CPANTS...</a>)--></p>
+
+  <p>If you are a CPAN author, search and visit your Kwalitee report page, and fix at least core fails (if any) for better CPAN experiences.</p>
+
+  <form method="POST" action="/search" id="search_form" autocomplete="off" class="form-inline" role="form">
+    <label class="sr-only" for="search_id_or_dist">PAUSE ID or Distribution</label>
+    <input type="text" name="name" id="search_id_or_dist" value="" class="form-control" placeholder="PAUSE ID or Distribution"> <input type="submit" class="btn btn-primary" name="submit" value="Search" />
+  </form>
+</div>
+
+<hr>
+
+% if (@$releases) {
+  <section>
+  <h2>Recent Analyses</h2>
+
+  <table id="recent" class="display compact small">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Version</th>
+        <th>Released by</th>
+        <th>Released on</th>
+        <th>Kwalitee</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $release (@$releases) {
+      <tr>
+        <td><%= $release->{name} %></td>
+        <td><%= $release->{version} %></td>
+        <td><%= $release->{pause_id} %></td>
+        <td><%= $release->{date} %></td>
+        <td><%= $release->{score} %></td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+  </section>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#recent').dataTable({
+      "ajax": "<%= api_url("v5/recent", { days => 357 }) %>",
+      "serverSide": true,
+      "deferLoading": <%= scalar @$releases %>,
+      "columns": [
+        {"data": "name",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/release/'+row.pause_id+'/'+data+'-'+row.version+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "version"},
+        {"data": "pause_id",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/author/'+data+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "date",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? strftime('%F', new Date(data))
+            : data;
+        }},
+        {"data": "score",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? data ? sprintf('%.02f', data) : '-'
+            : data;
+        }}
+      ]
+    });
+  });
+  % end
+  % end
+% } else {
+  <p>No new releases.</p>
+% }
+
+</div>

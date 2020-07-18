@@ -10,7 +10,7 @@ HOW TO USE
 2. Install dependencies by "cpanm --installdeps ." or "carton install"
 3. Run "prove -lwr t/" to make sure if it works.
 4. Run "perl bin/run_all --workers 3".
-5. Run "plackup (or starman, etc) web/cpants.psgi".
+5. Run "plackup (or starman, etc) app.psgi".
 6. Register bin/run_all to your crontab.
 
 I advise you not to "install" this into your Perl lib directories.

@@ -1,16 +1,17 @@
 package WWW::CPANTS::Bin::Task::Maint::Setup;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use parent 'WWW::CPANTS::Bin::Task';
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
 
 sub run ($self, @args) {
     my $db = $self->db;
     for my $name ($db->table_names) {
         my $table = $db->table($name);
-        # TODO: skip if it's already set up
+        if ($table->is_setup) {
+            $self->log(debug => "$name is ready");
+            next;
+        }
 
-        log(info => "setup $name");
+        $self->log(info => "setup $name");
         $table->setup;
         $table->migrate;
     }

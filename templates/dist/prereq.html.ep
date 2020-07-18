@@ -1,0 +1,93 @@
+% my $stash = stash('cpants');
+% my $data = $stash->{data};
+% my $distribution = $stash->{distribution};
+% my $runtime_requires = $data->{runtime_requires} // [];
+% my $build_requires = $data->{build_requires} // [];
+% my $configure_requires = $data->{configure_requires} // [];
+% stash('cpants.requires_datatables' => 1);
+
+% layout 'layout';
+
+%= include 'dist/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+%= include 'dist/_tab';
+
+% my $table_block = begin
+  % my ($list, $id) = @_;
+  <section>
+  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+  <h3><%= ucfirst $id %> Requires</h3>
+  <table id="<%= $id %>_requires" class="display compact small">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Required Version</th>
+        <th>Latest Indexed Distribution</th>
+        <th>Latest Indexed Version</th>
+        <th>Core Since</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $requires (@$list) {
+      <tr>
+        <td><%= $requires->{name} %></td>
+        <td><%= $requires->{version} %></td>
+        <td>
+        % if ($requires->{latest_dist}) {
+          <a href="/release/<%= $requires->{latest_maintainer} %>/<%= $requires->{latest_dist} %>"><%= $requires->{latest_dist} %></a>
+        % } else {
+          -
+        % }
+        </td>
+        <td>
+        % if ($requires->{latest_dist}) {
+          <%= $requires->{latest_version} %>
+        % } else {
+          -
+        % }
+        </td>
+        <td>
+        % if ($requires->{core_since}) {
+          <%= sprintf '%0.6f', $requires->{core_since} %>
+          % if ($requires->{deprecated_core_since}) {
+            <br>deprecated <%= sprintf '%0.6f', $requires->{deprecated_core_since} %>
+          % }
+          % if ($requires->{removed_core_since}) {
+            <br>removed <%= sprintf '%0.6f', $requires->{removed_core_since} %>
+          % }
+        % } else {
+          -
+        % }
+        </td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+  </div>
+  </section>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#<%= $id %>_requires').dataTable({
+    });
+  });
+  % end
+  % end
+% end
+
+% if (@$runtime_requires) {
+  <%= $table_block->($runtime_requires, 'runtime') %>
+% }
+
+% if (@$build_requires) {
+  <%= $table_block->($build_requires, 'build') %>
+% }
+
+% if (@$configure_requires) {
+  <%= $table_block->($configure_requires, 'configure') %>
+% }
+
+</div>

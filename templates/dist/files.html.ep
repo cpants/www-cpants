@@ -1,0 +1,34 @@
+% my $stash = stash('cpants');
+% my $files = $stash->{data}{files};
+% my $distribution = $stash->{distribution};
+% layout 'layout';
+
+%= include 'dist/_sidebar';
+
+<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+
+%= include 'dist/_tab';
+
+  <section>
+  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+  <h3>Files</h3>
+    <ul class="list-unstyled">
+%   for my $file (sort keys %$files) {
+      <li>
+        <a href="https://metacpan.org/source/<%= $distribution->{author} %>/<%= $distribution->{name_version} %>/<%= $file %>"><%= $file %></a>
+%       if ($files->{$file}{unreadable}) {
+(unreadable)
+%       }
+%       if ($files->{$file}{symlink}) {
+(symlink)
+%       }
+%       if ($files->{$file}{maniskip}) {
+(manifest skip)
+%       }
+      </li>
+%   }
+    </ul>
+  </div>
+  </section>
+
+</div>

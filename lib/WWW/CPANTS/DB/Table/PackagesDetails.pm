@@ -1,8 +1,6 @@
 package WWW::CPANTS::DB::Table::PackagesDetails;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Util::SQL;
-use parent 'WWW::CPANTS::DB::Table';
+use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
     [uid     => '_upload_id_'],
@@ -17,19 +15,19 @@ sub indices ($self) { (
 ) }
 
 sub select_all_by_modules ($self, $modules) {
-    my $quoted_modules = $self->quote_and_concat($modules);
-    $self->select_all(qq[
+    my $sql = <<~';';
     SELECT * FROM packages_details
-    WHERE module IN ($quoted_modules)
-  ]);
+    WHERE module IN (:modules)
+    ;
+    $self->select_all($sql, [modules => $modules]);
 }
 
 sub select_unique_dists_by_modules ($self, $modules) {
-    my $quoted_modules = $self->quote_and_concat($modules);
-    $self->select_all(qq[
+    my $sql = <<~';';
     SELECT DISTINCT(id), path FROM packages_details
-    WHERE id IS NOT NULL AND module IN ($quoted_modules)
-  ]);
+    WHERE id IS NOT NULL AND module IN (:modules)
+    ;
+    $self->select_all($sql, [modules => $modules]);
 }
 
 1;

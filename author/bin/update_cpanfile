@@ -1,53 +1,66 @@
 #!/usr/bin/env perl
 
-use Modern::Perl;
+use Mojo::Base -strict, -signatures;
 use FindBin;
 use Perl::PrereqScanner::NotQuiteLite::App;
-use Module::CPANfile;
-use Path::Extended::Tiny;
-use Hash::Diff qw/diff/;
+use Perl::PrereqScanner::NotQuiteLite::Util::CPANfile;
+use Path::Tiny;
+use Text::Diff qw/diff/;
 use Data::Dump qw/dump/;
 
-my $root     = dir("$FindBin::Bin/../..");
-my $cpanfile = "$root/cpanfile";
-my $prev     = -f $cpanfile ? Module::CPANfile->load($cpanfile)->prereqs : undef;
+my $root = path("$FindBin::Bin/../..");
+my $file = "$root/cpanfile";
+my $prev = -f $file ? Perl::PrereqScanner::NotQuiteLite::Util::CPANfile->load($file) : undef;
 
 my $app = Perl::PrereqScanner::NotQuiteLite::App->new(
-    perl_version => '5.20',
-    suggests     => 1,
+    perl_version => '5.28',
+    recommends   => 1,
+    suggests     => 0,
     base_dir     => $root,
     develop      => 1,
+    exclude_core => 1,
+    use_index    => 'Mirror',
+    features     => {
+        extlib => {
+            description => 'extlib',
+            paths       => [glob "$root/extlib/*"],
+        },
+    },
+    cpanfile => 1,
 );
-my $prereqs = $app->run;
-
-my $new_prereqs = $prev ? $prereqs->with_merged_prereqs($prev) : $prereqs;
-
-for my $ext_cpanfile (glob "$root/extlib/*/cpanfile") {
-    $new_prereqs = $new_prereqs->with_merged_prereqs(Module::CPANfile->load($ext_cpanfile)->prereqs);
-}
-
-my $hash = $new_prereqs->as_string_hash;
-
-for my $phase (keys %$hash) {
-    for my $type (keys %{ $hash->{$phase} }) {
-        for my $package (keys %{ $hash->{$phase}{$type} }) {
-            delete $hash->{$phase}{$type}{$package} if $package =~ /^(?:
-        WWW::CPANTS:: | Module::CPANTS::
-      )/x;
-        }
-    }
-}
-
-# fix portability issues
-for (qw/Starman Plack::Middleware::ServerStatus::Lite/) {
-    if (exists $hash->{runtime}{requires}{$_}) {
-        $hash->{runtime}{suggests}{$_} = delete $hash->{runtime}{requires}{$_};
-    }
-}
+my $cpanfile = $app->run;
 
 if ($prev) {
-    my $diff = diff($prev->as_string_hash, $hash);
-    say dump $diff if %$diff;
+    $cpanfile->_merge_prereqs($prev->prereqs);
+    for my $feature ($prev->features) {
+        $cpanfile->_merge_prereqs($feature->prereqs, $feature->identifier);
+    }
 }
 
-Module::CPANfile->from_prereqs($hash)->save($cpanfile);
+$cpanfile->__replace_prereqs(_tweak($cpanfile->prereqs));
+for my $feature ($cpanfile->features) {
+    $cpanfile->__replace_prereqs(_tweak($feature->prereqs), $feature->identifier);
+}
+delete $cpanfile->{_prereqs}{cpanmeta};
+
+if ($prev) {
+    my $diff = diff(\$prev->to_string, \$cpanfile->to_string);
+    say $diff if $diff;
+}
+
+$cpanfile->save($file);
+
+sub _tweak {
+    my $prereqs = shift;
+    my $hash    = $prereqs->as_string_hash;
+    for my $phase (sort keys %$hash) {
+        for my $type (sort keys %{ $hash->{$phase} }) {
+            for my $package (sort keys %{ $hash->{$phase}{$type} }) {
+                if ($package =~ /^(?: WWW::CPANTS:: | Module::CPANTS:: )/x) {
+                    delete $hash->{$phase}{$type}{$package};
+                }
+            }
+        }
+    }
+    $hash;
+}

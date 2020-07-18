@@ -1,35 +1,40 @@
 package WWW::CPANTS::Bin::Task::AnalyzeAll;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Bin::Util;
-use WWW::CPANTS::Bin::Util::Parallel;
-use parent 'WWW::CPANTS::Bin::Task';
+use Mojo::Base 'WWW::CPANTS::Bin::Task', -signatures;
+use WWW::CPANTS::Util::Parallel;
 
-my $MaxPerProcess  = 100;
-my $MaxProcessTime = 13 * 60;
+our @READ    = qw/Queue/;
+our @WRITE   = qw/Queue/;
+our @OPTIONS = (
+    'workers=i',
+    'timeout=i',
+    'slows=i',
+);
 
-sub option_specs { (
-    ['workers=i',                'number of max workers'],
-    ['show_diff|show-diff|diff', 'show diff'],
-) }
+has 'task_id';
+has 'max_per_process'  => 100;
+has 'max_process_time' => 13 * 60;
+
+sub subtasks ($self) {
+    [$self->subtask('Analyze')];
+}
 
 sub run ($self, @args) {
-    my $db = $self->db;
-    $db->advisory_lock(qw/Analysis Queue Errors/) or return;
-    my $queue = $db->table('Queue');
+    my $queue = $self->db->table('Queue');
 
     my $count;
     my $start = time;
-    if ($self->development_mode) {
+    if (!$self->ctx->quiet) {
         $count = $queue->count;
-        log(info => "$count is queued");
+        $self->log(info => "$count is queued");
+        $self->timer->total($count);
     }
-    my $should_end = $self->{job_id} ? $start + $MaxProcessTime : 0;
+    my $should_end = $self->task_id ? $start + $self->max_process_time : 0;
 
-    my $cpan = $self->cpan;
-    $cpan->fetch_permissions unless $cpan->has_permissions;
+    # preload indices
+    $self->ctx->cpan->preload_indices;
 
-    my $max_workers = $self->option('workers') // 3;
+    my $max_workers = $self->workers // 3;
     parallel(
         $max_workers,
         sub ($runner) {
@@ -38,17 +43,17 @@ sub run ($self, @args) {
                     $0 =~ s/\(master\)/\(worker\)/;
                     my $inner_db    = $self->new_db;
                     my $inner_queue = $inner_db->table('Queue');
-                    my $task        = $self->task('Analyze')->setup($inner_db);
+                    my $subtask     = $self->subtask('Analyze');
                     my $ct          = 0;
                     while (my $target = $inner_queue->next) {
                         my ($uid, $path) = @$target{qw/uid path/};
-                        $task->analyze($uid, $path) or next;
-                        $inner_queue->dequeue($uid);
-                        if (++$ct >= $MaxPerProcess) {
-                            if ($self->development_mode) {
+                        $subtask->analyze($uid, $path) or next;
+                        $inner_queue->dequeue($uid) or $self->log(warn => "Failed to dequeue $uid");
+                        if (++$ct >= $self->max_per_process) {
+                            if (!$self->ctx->quiet) {
                                 my $left = $inner_queue->count;
                                 my $done = $count - $left;
-                                $self->show_progress($done, $count);
+                                $self->timer->show_progress($done);
                             }
                             last;
                         }
@@ -56,7 +61,8 @@ sub run ($self, @args) {
                 });
                 last if $should_end and $should_end > time;
             }
-        });
+        },
+    );
 }
 
 1;

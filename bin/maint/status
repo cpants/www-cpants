@@ -1,0 +1,8 @@
+#!/usr/bin/env perl
+
+use Mojo::Base -strict, -signatures;
+use FindBin;
+use lib "$FindBin::Bin/../../lib";
+use WWW::CPANTS::Bin::Runner;
+
+WWW::CPANTS::Bin::Runner->new->run_tasks('Maint::ShowStatus');

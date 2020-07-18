@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 
-use Modern::Perl;
+use Mojo::Base -strict, -signatures;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use WWW::CPANTS::Bin::Runner;
 
-WWW::CPANTS::Bin::Runner->run;
+WWW::CPANTS::Bin::Runner->new->run_tasks;

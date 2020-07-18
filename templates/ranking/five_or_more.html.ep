@@ -1,0 +1,78 @@
+% my $stash = stash('cpants');
+% my $ranking = $stash->{ranking}{data} // [];
+% layout 'layout', 'cpants.requires_datatables' => 1;
+
+<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+  <section>
+  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+
+  <h3>CPANTS Game Ranking</h3>
+
+  <p>for authors with five or more CPAN distributions.</p>
+
+% if (@$ranking) {
+  <table id="ranking" class="display compact small">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>PAUSE ID</th>
+        <th>Average Kwalitee</th>
+        <th>Distributions</th>
+        <th>Latest Release</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for my $author (@$ranking) {
+      <tr>
+        <td><%= $author->{rank} %></td>
+        <td><%= $author->{pause_id} %></td>
+        <td><%= $author->{average_core_kwalitee} %></td>
+        <td><%= $author->{cpan_dists} %></td>
+        <td><%= $author->{last_release_on} %></td>
+      </tr>
+    % }
+    </tbody>
+  </table>
+
+  % content_for javascript => begin
+  %= javascript begin
+  $(function(){
+    $('#ranking').dataTable({
+      "ajax": "<%= api_url("v5/ranking/five_or_more") %>",
+      "serverSide": true,
+      "deferLoading": <%= $stash->{ranking}{recordsTotal} // 0 %>,
+      "info": true,
+      "paging": true,
+      "pageLength": 50,
+      "order": [[0, "asc"], [4, "desc"], [3, "desc"]],
+      "columns": [
+        {"data": "rank"},
+        {"data": "pause_id",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? '<a href="/author/'+data+'">'+data+'</a>'
+            : data;
+        }},
+        {"data": "average_core_kwalitee",
+         "render": function(data,type,row){
+          return type === 'display'
+            ? sprintf('%.02f', data)
+            : data;
+        }},
+        {"data": "cpan_dists"},
+        {"data": "last_release_on"}
+      ]
+    });
+  });
+  % end
+  % end
+% } else {
+  <p>Ranking is not ready yet.</p>
+% }
+  </div>
+  </section>
+
+</div>
+
+%= include 'ranking/_sidebar';

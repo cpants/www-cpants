@@ -1,42 +1,49 @@
 package WWW::CPANTS::Web::Controller::Kwalitee;
 
-use WWW::CPANTS;
-use WWW::CPANTS::Web::Util;
-use parent 'Mojolicious::Controller';
+use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
+use experimental qw/switch/;
 
 sub index ($c) {
-    my $data   = page('Kwalitee')->load or return $c->reply->not_found;
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render('kwalitee');
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $res = $c->get_api('Kwalitee') or return;
+
+            given ($format) {
+                when ('json') {
+                    return { json => $res };
+                }
+                when ('') {
+                    return {
+                        render => 'kwalitee',
+                        stash  => $res,
+                    };
+                }
+            }
+            return;
+        },
+    );
 }
 
 sub indicator ($c) {
-    my $name   = $c->param('name');
-    my $data   = page('Kwalitee::Indicator')->load($name) or return $c->reply->not_found;
-    my $format = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render('kwalitee/indicator');
-}
+    $c->render_with(
+        sub ($c, $params, $format) {
+            my $tab       = $params->{tab} // 'Indicator';
+            my $tab_class = $c->tab_class("Kwalitee", $tab);
+            my $res       = $c->get_api($tab_class, $params) or return;
 
-sub tab ($c) {
-    my $name     = $c->param('name');
-    my $tab      = $c->param('tab');
-    my $tabclass = camelize($tab);
-    my $page     = $c->param('page') // 1;
-    my $data     = page("Kwalitee\::$tabclass")->load($name, $page) or return $c->reply->not_found;
-    my $format   = $c->stash('format') // '';
-    if ($format eq 'json') {
-        return $c->render(json => $data->{data});
-    }
-    $c->stash(cpants => $data);
-    $c->render("kwalitee/$tab");
+            given ($format) {
+                when ('json') {
+                    return { json => $res };
+                }
+                when ('') {
+                    return {
+                        render => $c->template_name($tab_class),
+                        stash  => $res,
+                    };
+                }
+            }
+        },
+    );
 }
 
 1;

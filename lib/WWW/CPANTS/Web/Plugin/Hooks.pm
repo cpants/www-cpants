@@ -1,19 +1,12 @@
 package WWW::CPANTS::Web::Plugin::Hooks;
 
-use WWW::CPANTS;
-use parent 'Mojolicious::Plugin';
-use Compress::Zlib;
+use Mojo::Base 'Mojolicious::Plugin', -signatures;
+use Mojo::Path;
+use Compress::Zlib ();
 
 sub register ($self, $app, $conf) {
-    if ($ENV{WWW_CPANTS_PROFILE}) {
-        $app->hook(after_build_tx => \&after_build_tx);
-    }
     $app->hook(before_dispatch => \&before_dispatch);
     $app->hook(after_dispatch  => \&after_dispatch);
-}
-
-sub after_build_tx ($tx, $app) {
-    @WWW::CPANTS::DB::Handle::Profiler::Profiles = ();
 }
 
 sub before_dispatch ($c) {
@@ -27,7 +20,7 @@ sub before_dispatch ($c) {
         my $type = $rel =~ /\.(\w+)\.gz$/ ? $c->app->types->type($1) : undef;
         $c->res->headers->content_type($type || 'text/plain');
         $c->res->headers->content_encoding('gzip');
-        $c->app->static->serve_asset($c, $file) or return undef;
+        $c->app->static->serve_asset($c, $file) or return;
         $c->stash->{'mojo.static'}++;
         return !!$c->rendered;
     }
