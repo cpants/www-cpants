@@ -3,11 +3,13 @@ requires 'Archive::Zip', '!= 1.66, != 1.67, != 1.68';
 requires 'Badge::Simple';
 requires 'CPAN::Audit';
 requires 'CPAN::Common::Index';
+requires 'Cache::FileCache';
 requires 'Class::Method::Modifiers';
 requires 'Const::Fast';
 requires 'DBD::SQLite';
 requires 'DBI';
 requires 'DBIx::TransactionManager';
+requires 'Data::Binary';
 requires 'Data::Dump';
 requires 'Digest::FNV::XS';
 requires 'Digest::MD5';
@@ -20,6 +22,7 @@ requires 'File::Which';
 requires 'Gravatar::URL';
 requires 'HTML::Entities';
 requires 'HTTP::Status';
+requires 'HTTP::Tiny::Mech';
 requires 'Hash::Merge::Simple';
 requires 'IO::Socket::SSL';
 requires 'Imager';
@@ -32,9 +35,11 @@ requires 'List::Util', '1.45';
 requires 'Log::Handler';
 requires 'Log::Handler::Output::File::Stamper';
 requires 'Menlo::CLI::Compat';
+requires 'MetaCPAN::Client';
 requires 'Module::CoreList';
 requires 'Module::Find';
 requires 'Module::Runtime';
+requires 'Module::Version';
 requires 'Mojo::JSON::Pointer';
 requires 'Mojolicious', '8.00';
 requires 'Mojolicious::Plugin::OpenAPI';
@@ -61,11 +66,13 @@ requires 'Time::HiRes';
 requires 'Time::Moment';
 requires 'Time::Zone';
 requires 'URI';
+requires 'WWW::Mechanize::Cached';
 requires 'WorePAN', '0.16';
 requires 'XML::Atom::SimpleFeed';
 requires 'XML::LibXML::SAX';
 requires 'perl', '5.028';
 requires 'version';
+recommends 'Module::CPANfile';
 
 on test => sub {
     requires 'Mojo::Base';
@@ -112,7 +119,6 @@ on develop => sub {
     requires 'Text::Sass::XS';
     recommends 'DBD::mysql';
 };
-
 feature 'acme', 'acme' => sub {
     requires 'Acme::CPANAuthors';
 };
