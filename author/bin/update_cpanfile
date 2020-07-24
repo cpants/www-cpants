@@ -26,6 +26,7 @@ my $app = Perl::PrereqScanner::NotQuiteLite::App->new(
             paths       => [glob "$root/extlib/*"],
         },
     },
+    ignore_re => qr/\blocal\b/,
     cpanfile => 1,
 );
 my $cpanfile = $app->run;
