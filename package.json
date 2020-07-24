@@ -1,0 +1,21 @@
+{
+  "name": "cpants",
+  "version": "5.0.0",
+  "description": "CPAN Testing Service",
+  "author": "Kenichi Ishigaki",
+  "license": "Artistic-1.0-Perl",
+  "repository": "https://github.com/cpants/www-cpants",
+  "dependencies": {
+    "bootstrap": "^3.4.1",
+    "datatables": "^1.10.18",
+    "datatables-responsive": "^1.0.7",
+    "font-awesome": "^4.7.0",
+    "html5shiv": "^3.7.3",
+    "jquery": "^3.4.1",
+    "jquery-jsonview": "^1.2.3",
+    "respond.js": "^1.4.2",
+    "sprintf-js": "^1.1.2",
+    "strftime": "^0.10.0",
+    "swagger-ui-dist": "^3.22.3"
+  }
+}
