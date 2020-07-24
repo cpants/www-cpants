@@ -27,9 +27,4 @@ subtest 'get indicator' => sub {
     $t->get_ok('/kwalitee/use_strict')->status_is(200);
 };
 
-subtest 'get fail' => sub {
-    my $t = Test::Mojo->new('WWW::CPANTS::Web');
-    $t->get_ok('/kwalitee/use_strict/fail')->status_is(200);
-};
-
 done_testing;
