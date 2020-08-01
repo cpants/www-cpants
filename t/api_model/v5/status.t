@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 my $model = api_model('V5::Status');
 

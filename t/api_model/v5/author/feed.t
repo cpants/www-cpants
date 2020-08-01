@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -19,7 +19,7 @@ my $model = api_model('V5::Author::Feed');
 
 subtest 'mine' => sub {
     my $res = $model->load({ pause_id => 'ISHIGAKI' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'entries' => [{
                 'id'      => 'Path-Extended-0.19',
                 'link'    => '/release/ISHIGAKI/Path-Extended-0.19',

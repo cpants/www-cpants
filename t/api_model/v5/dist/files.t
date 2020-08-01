@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -25,7 +25,7 @@ for my $param (@params) {
     my $subtest = sub ($load_arg) {
         return sub {
             my $res = $model->load($load_arg);
-            eq_or_diff $res => {
+            cmp_deeply $res => {
                 'data' => {
                     'files' => {
                         'Changes' => {

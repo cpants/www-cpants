@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -18,7 +18,7 @@ my $model = api_model('V4::Table::ReleasesOf');
 
 subtest 'some of mine' => sub {
     my $res = $model->load({ name => 'JSON' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'data' => [{
                 'author'       => 'ISHIGAKI',
                 'availability' => 'CPAN',

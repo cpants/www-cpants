@@ -3,7 +3,7 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use WWW::CPANTS::Util::Datetime;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 use Test::MockTime::HiRes;
 
 fixture {
@@ -22,7 +22,7 @@ subtest 'some of mine' => sub {
     my $epoch = epoch_from_date('2019-04-30');
     mock_time {
         my $res = $model->load;
-        eq_or_diff $res => {
+        cmp_deeply $res => {
             'data' => [{
                     'date'     => '2019-06-23',
                     'name'     => 'App-jl',

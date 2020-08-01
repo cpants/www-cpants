@@ -79,7 +79,6 @@ on test => sub {
     requires 'Path::Tiny';
     requires 'Syntax::Keyword::Try';
     requires 'Test::Deep';
-    requires 'Test::Differences';
     requires 'Test::FailWarnings';
     requires 'Test::MockTime::HiRes';
     requires 'Test::More', '0.88';

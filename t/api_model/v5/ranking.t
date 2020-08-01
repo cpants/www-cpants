@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -22,7 +22,7 @@ my $model = api_model('V5::Ranking');
 
 subtest 'less_than_five' => sub {
     my $res = $model->load({ league => 'less_than_five' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'data' => [{
                 'average_core_kwalitee' => '100',
                 'cpan_dists'            => 1,

@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -18,7 +18,7 @@ my $model = api_model('V5::Kwalitee::Indicator');
 
 subtest 'some' => sub {
     my $res = $model->load({ name => 'main_module_version_matches_dist_version' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'data' => {
             'failing_latest_releases' => [{
                     'author'       => 'ISHIGAKI',

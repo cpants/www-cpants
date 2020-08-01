@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -19,7 +19,7 @@ my $model = api_model('V5::Kwalitee::Fail');
 subtest 'matches both' => sub {
     my $res = $model->load({ name => 'main_module_version_matches_dist_version' });
     note explain $res;
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'data' => [{
                 'author'       => 'ISHIGAKI',
                 'availability' => 'Latest',

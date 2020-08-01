@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
@@ -18,7 +18,7 @@ my $model = api_model('V5::Kwalitee');
 subtest 'mine' => sub {
     my $res = $model->load({});
 
-    # too big and too fragile for eq_or_diff
+    # too big and too fragile for cmp_deeply
     for my $type (qw/core extra experimental/) {
         ok exists $res->{data}{ $type . '_indicators' }, "data for $type indicator exists";
     }

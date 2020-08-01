@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my $testpan = setup_testpan(
@@ -17,7 +17,7 @@ my $model = api_model('V4::Search');
 
 subtest 'matches both' => sub {
     my $res = $model->load({ name => 'Is' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'authors' => [
             'ISAAC',
             'ISHIGAKI'

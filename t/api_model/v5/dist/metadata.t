@@ -3,7 +3,7 @@ use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use WWW::CPANTS::Util::JSON;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply);
 
 fixture {
     my @files = (
