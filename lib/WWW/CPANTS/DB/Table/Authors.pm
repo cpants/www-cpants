@@ -9,6 +9,7 @@ sub columns ($self) { (
     [recent_dists => 'smallint',   default => 0, unsigned => 1],
     [last_release_at       => '_epoch_'],
     [last_new_release_at   => '_epoch_'],
+    [last_analyzed_at      => '_epoch_'],
     [average_kwalitee      => 'float', default => 0],
     [average_core_kwalitee => 'float', default => 0],
     [rank                  => 'smallint', default => 0, unsigned => 1],
@@ -97,6 +98,14 @@ sub update_json ($self, $pause_id, $json, $updated_at) {
     WHERE pause_id = ? AND (json_updated_at IS NULL OR json_updated_at < ?)
     ;
     $self->update($sql, $json, $updated_at, uc $pause_id, $updated_at);
+}
+
+sub update_last_analyzed_at ($self, $pause_id, $last_analyzed_at) {
+    my $sql = <<~';';
+    UPDATE authors SET last_analyzed_at = ?
+    WHERE pause_id = ?
+    ;
+    $self->update($sql, $last_analyzed_at, uc $pause_id);
 }
 
 sub select_ranking_five_or_more ($self, $limit = 50, $offset = 0) {
