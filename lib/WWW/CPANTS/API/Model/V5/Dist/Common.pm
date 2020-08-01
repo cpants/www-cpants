@@ -46,6 +46,11 @@ sub _load ($self, $params = {}) {
         $dist->{resources}      = decode_json($resources->{resources}) if $resources->{resources};
     }
 
+    my $analysis = $db->table('Analysis')->select_by_uid($uid);
+    if ($analysis) {
+        $dist->{last_analyzed_at} = $analysis->{last_analyzed_at};
+    }
+
     $dist;
 }
 
