@@ -4,6 +4,7 @@ use Role::Tiny::With;
 use Mojo::Base 'WWW::CPANTS::API::Model', -signatures;
 use WWW::CPANTS::API::Util::Validate;
 use WWW::CPANTS::Util::JSON;
+use Pod::Escapes qw(e2char);
 
 with qw/WWW::CPANTS::Role::API::Model::V5::Dist::GetUid/;
 
@@ -94,6 +95,10 @@ sub _load ($self, $params = {}) {
         for my $module (@$modules, @$provides) {
             $module->{unauthorized} = 1 if $unauthorized{ $module->{name} };
         }
+    }
+
+    for my $module (@$modules) {
+        $module->{abstract} =~ s/E<([^>]+)>/e2char($1)/eg;
     }
 
     return {
