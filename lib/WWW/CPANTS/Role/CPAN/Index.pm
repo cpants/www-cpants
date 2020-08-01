@@ -70,7 +70,7 @@ sub _mirror ($self, $path, $file) {
     $file->parent->mkpath unless -d $file->parent;
 
     my $res = LWP::UserAgent->new->mirror($uri => $file);
-    Carp::croak "failed to mirror $uri: " . $res->status_line unless $res->is_success;
+    Carp::croak "failed to mirror $uri: " . $res->status_line if $res->is_error;
 }
 
 1;
