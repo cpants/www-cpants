@@ -12,7 +12,8 @@ sub index ($c) {
             my $tab_class = $c->tab_class("Dist", $tab);
             my $data      = $c->get_api($tab_class, $params) or return;
 
-            $data->{distribution} = $c->get_api("Dist::Common", $params) or return;
+            my $distribution = $c->get_api("Dist::Common", $params) or return;
+            $data->{distribution} = $distribution;
 
             given ($format) {
                 when ('json') {
@@ -22,12 +23,12 @@ sub index ($c) {
                     if ($tab eq 'Overview') {
                         my $path;
                         try {
-                            $path = badge($data->{distribution}{core_kwalitee}, $format);
+                            $path = badge($distribution->{core_kwalitee}, $format);
                         } catch {
                             my $error = $@;
                             $c->app->log(error => $error);
                         }
-                        return { static => $path };
+                        return { static => $path, mtime => $distribution->{last_analyzed_at} };
                     }
                 }
                 when ('') {

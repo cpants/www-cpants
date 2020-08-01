@@ -17,8 +17,16 @@ sub render_with ($c, $code) {
     } elsif ($res->{redirect_to}) {
         return $c->redirect_to($res->{redirect_to});
     } elsif ($res->{static}) {
-        $c->stash(format => $res->{format}) if $res->{format};
-        return $c->reply->static($res->{static});
+        if (my $asset = $c->app->static->file($res->{static})) {
+            $c->app->types->content_type($c, { file => $asset->path });
+            if ($res->{mtime}) {
+                require Mojo::Asset::Memory;
+                $asset = Mojo::Asset::Memory->new->add_chunk($asset->slurp);
+                $asset->mtime($res->{mtime});
+            }
+            return $c->reply->asset($asset);
+        }
+        return $c->reply->not_found;
     }
     $c->stash(cpants => $res->{stash}) if $res->{stash};
 

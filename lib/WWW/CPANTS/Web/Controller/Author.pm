@@ -42,7 +42,7 @@ sub index ($c) {
                         my $error = $@;
                         $c->app->log(error => $error);
                     }
-                    return { static => $path };
+                    return { static => $path, mtime => $author->{last_analyzed_at} };
                 }
                 when ('') {
                     $data->{body_class} = "pause-" . (lc $params->{pause_id});
