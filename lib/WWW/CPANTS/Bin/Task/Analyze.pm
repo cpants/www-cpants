@@ -163,7 +163,7 @@ sub analyze_file ($self, $file) {
             }
         }
 
-        my $slow = $self->slow // 300;
+        my $slow = $self->slow // 120;
         if ($slow and grep { $_ > $slow } values %elapsed) {
             my $elapsed_str = _stringify_elapsed(\%elapsed);
             $self->log(alert => "$dist: too slow ($elapsed_str)");
