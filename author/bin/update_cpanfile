@@ -27,7 +27,7 @@ my $app = Perl::PrereqScanner::NotQuiteLite::App->new(
         },
     },
     ignore_re => qr/\blocal\b/,
-    cpanfile => 1,
+    cpanfile  => 1,
 );
 my $cpanfile = $app->run;
 

@@ -16,7 +16,7 @@ sub get_uid ($self, $params) {
     if ($author) {
         my $name_version = $name;
         ($name, my $version) = distname_info($name_version);
-        return $self->bad_request("'$author' seems not a pause id") unless is_pause_id($author);
+        return $self->bad_request("'$author' seems not a pause id")                unless is_pause_id($author);
         return $self->bad_request("name contains weird characters: $name_version") unless is_alphanum($name) && is_alphanum($version);
         $dist = $distributions->select_by_name($name) or return $self->bad_request("$author/$name_version not found");
         my $uids = decode_json($dist->{uids});

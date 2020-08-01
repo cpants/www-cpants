@@ -18,7 +18,7 @@ sub _path_is_required ($self) {
 
 sub _build_root ($self) {
     my $root = Path::Tiny::path($self->path);
-    Carp::croak "$root does not exist" unless -d $root;
+    Carp::croak "$root does not exist"          unless -d $root;
     Carp::croak "$root seems not a CPAN mirror" unless -d $root->child("authors/id");
     $root;
 }

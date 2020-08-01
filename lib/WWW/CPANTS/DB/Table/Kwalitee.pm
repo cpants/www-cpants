@@ -6,11 +6,11 @@ use WWW::CPANTS::Model::Kwalitee;
 has 'kwalitee' => \&_build_kwalitee;
 
 sub columns ($self) { (
-    [uid          => '_upload_id_', primary => 1],
-    [pause_id     => '_pause_id_'],
-    [distribution => '_dist_name_'],
-    [released     => '_epoch_'],
-    [year         => '_year_'],
+    [uid           => '_upload_id_', primary => 1],
+    [pause_id      => '_pause_id_'],
+    [distribution  => '_dist_name_'],
+    [released      => '_epoch_'],
+    [year          => '_year_'],
     [latest        => '_bool_', default => 0],
     [cpan          => '_bool_', default => 1],
     [kwalitee      => 'float'],

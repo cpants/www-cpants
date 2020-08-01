@@ -11,9 +11,9 @@ sub columns ($self) { (
     [has_cpandir => '_bool_', default => 0],
     [introduced  => '_epoch_'],
     [year        => '_year_'],
-    [nologin     => '_bool_',       default       => 0],
-    [deleted     => '_bool_',       default       => 0],
-    [system      => '_bool_',       default       => 0],
+    [nologin     => '_bool_', default => 0],
+    [deleted     => '_bool_', default => 0],
+    [system      => '_bool_', default => 0],
 ) }
 
 sub select_all_by_pause_ids ($self, $pause_ids) {
