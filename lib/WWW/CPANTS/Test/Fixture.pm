@@ -23,7 +23,7 @@ sub fixture : prototype(&;$) ($code, $id = undef) {
     $id //= _fixture_id($file);
 
     my $json_file = cpants_app_path("tmp/fixture/$id.json");
-    if ($json_file->exists and !$ENV{WWW_CPANTS_UPDATE_FIXTURE}) {
+    if ($json_file->exists and !$ENV{HARNESS_IS_VERBOSE}) {
         if ($json_file->stat->mtime > stat($file)->mtime) {
             _load_fixture($json_file);
             return;
