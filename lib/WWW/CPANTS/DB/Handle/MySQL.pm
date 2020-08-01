@@ -13,7 +13,7 @@ my %VirtualTypes = (
     _version_string_ => ['varchar(20)'],
     _acme_id_        => ['varchar(40)'],
     _epoch_          => ['bigint'],
-    _year__          => ['smallint', unsigned => 1],
+    _year_           => ['smallint', unsigned => 1],
     _int_            => ['bigint'],
     _revision_       => ['integer'],
     _bool_           => ['tinyint'],
