@@ -4,6 +4,7 @@ use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
     [uid              => '_upload_id_', primary => 1],
+    [author           => '_pause_id_'],
     [path             => '_cpan_path_'],
     [json             => '_json_'],
     [cpants_revision  => '_revision_', default => 0],
@@ -11,6 +12,13 @@ sub columns ($self) { (
     [last_analyzed_at => '_epoch_'],
     [ignored          => '_bool_', default => 0],
 ) }
+
+sub select_by_uid ($self, $uid) {
+    my $sql = <<~';';
+    SELECT * FROM analysis WHERE uid = ?
+    ;
+    $self->select($sql, $uid);
+}
 
 sub select_json_by_uid ($self, $uid) {
     my $sql = <<~';';
@@ -58,6 +66,15 @@ sub count_older_revisions ($self, $cpants_revision = 1) {
     WHERE cpants_revision < ? AND ignored = 0
     ;
     $self->select_col($sql, $cpants_revision);
+}
+
+sub select_last_analyzed_at_since ($self, $started_at) {
+    my $sql = <<~';';
+    SELECT author, last_analyzed_at FROM analysis
+    WHERE last_analyzed_at > ?
+    GROUP BY author HAVING max(last_analyzed_at)
+    ;
+    $self->select_all($sql, $started_at);
 }
 
 1;
