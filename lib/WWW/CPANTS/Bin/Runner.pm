@@ -64,6 +64,7 @@ sub run_tasks ($self, @task_names) {
 
     my $pidfile = $self->create_pidfile or return;
     $self->timer->start;
+    local $ENV{CPANTS_RUNNER_STARTED_AT} = $self->timer->started_at;
     try {
         while (my $task = shift @$tasks) {
             $task->check_tables or next;
