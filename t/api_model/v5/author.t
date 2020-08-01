@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply re);
 
 fixture {
     my @files = (
@@ -22,7 +22,7 @@ my $model = api_model('V5::Author');
 
 subtest 'me' => sub {
     my $res = $model->load({ pause_id => 'ISHIGAKI' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'ascii_name'            => 'Kenichi Ishigaki',
         'average_core_kwalitee' => '100',
         'average_kwalitee'      => '153.12',
@@ -32,6 +32,7 @@ subtest 'me' => sub {
         'has_perl6'             => 0,
         'homepage'              => 'http://d.hatena.ne.jp/charsbar',
         'joined_on'             => '2005-12-17',
+        'last_analyzed_at'      => re('^[0-9]+$'),
         'last_new_release_on'   => '2011-05-31',
         'last_release_on'       => '2011-05-31',
         'name'                  => 'Kenichi Ishigaki',

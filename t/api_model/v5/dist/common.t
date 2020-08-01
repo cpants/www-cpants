@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply re);
 
 fixture {
     my @files = (
@@ -26,7 +26,7 @@ for my $param (@params) {
     my $subtest = sub ($load_arg) {
         return sub {
             my $res = $model->load($load_arg);
-            eq_or_diff $res => {
+            cmp_deeply $res => {
                 'advisories'        => undef,
                 'author'            => 'ISHIGAKI',
                 'bugtracker_url'    => 'https://github.com/makamaka/JSON/issues',
@@ -38,6 +38,7 @@ for my $param (@params) {
                 'github'            => undef,
                 'id'                => 1,
                 'kwalitee'          => '153.12',
+                'last_analyzed_at'  => re('^[0-9]+$'),
                 'last_release_at'   => 1550888787,
                 'last_release_by'   => 'ISHIGAKI',
                 'latest'            => 1,

@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Differences;
+use Test::Deep qw(cmp_deeply re);
 
 fixture {
     my @files = (
@@ -22,7 +22,7 @@ my $model = api_model('V4::Table::Ranking');
 
 subtest 'some of mine' => sub {
     my $res = $model->load({ league => 'less_than_five' });
-    eq_or_diff $res => {
+    cmp_deeply $res => {
         'data' => [{
             'average_core_kwalitee' => 100,
             'average_kwalitee'      => '153.12',
@@ -32,6 +32,7 @@ subtest 'some of mine' => sub {
             'json_updated_at'       => undef,
             'last_new_release_at'   => '1306782406',
             'last_release_at'       => '1306782406',
+            'last_analyzed_at'      => re('^[0-9]+$'),
             'pause_id'              => 'ISHIGAKI',
             'rank'                  => 1,
             'recent_dists'          => 0,
