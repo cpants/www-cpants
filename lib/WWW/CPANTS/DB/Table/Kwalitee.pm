@@ -25,7 +25,7 @@ sub _build_kwalitee ($self) {
 sub select_all_scores_for_author ($self, $pause_id) {
     my $sql = <<~';';
     SELECT kwalitee, core_kwalitee FROM kwalitee
-    WHERE pause_id = ? AND latest = 1
+    WHERE pause_id = ? AND latest = 1 AND cpan = 1
     ;
     $self->select_all($sql, $pause_id);
 }
@@ -141,7 +141,7 @@ sub count_fails_in ($self, $name, $type = 'backpan') {
     my $cond = "($name IS NOT NULL AND $name = 0)";
     $type //= 'backpan';
     if ($type eq 'latest') {
-        $cond .= " AND latest = 1";
+        $cond .= " AND latest = 1 AND cpan = 1";
     } elsif ($type eq 'cpan') {
         $cond .= " AND cpan = 1";
     }
@@ -156,12 +156,12 @@ sub count_fails ($self) {
     my @cols = (
         "SUM(1) AS backpan_total",
         "SUM(CASE WHEN cpan = 1 THEN 1 ELSE 0 END) AS cpan_total",
-        "SUM(CASE WHEN latest = 1 THEN 1 ELSE 0 END) AS latest_total",
+        "SUM(CASE WHEN latest = 1 AND cpan = 1 THEN 1 ELSE 0 END) AS latest_total",
     );
     for my $name ($self->kwalitee->names->@*) {
         push @cols, "SUM(CASE WHEN $name = 0 THEN 1 ELSE 0 END) AS backpan_$name";
         push @cols, "SUM(CASE WHEN $name = 0 AND cpan = 1 THEN 1 ELSE 0 END) AS cpan_$name";
-        push @cols, "SUM(CASE WHEN $name = 0 AND latest = 1 THEN 1 ELSE 0 END) AS latest_$name";
+        push @cols, "SUM(CASE WHEN $name = 0 AND latest = 1 AND cpan = 1 THEN 1 ELSE 0 END) AS latest_$name";
     }
     my $concat_cols = join ",\n    ", @cols;
     my $sql         = <<~";";
@@ -178,10 +178,10 @@ sub yearly_stats_for ($self, $name) {
       year,
       SUM(1) AS backpan_uploads,
       SUM(CASE WHEN cpan = 1 THEN 1 ELSE 0 END) AS cpan_uploads,
-      SUM(CASE WHEN latest = 1 THEN 1 ELSE 0 END) AS latest_uploads,
+      SUM(CASE WHEN latest = 1 AND cpan = 1 THEN 1 ELSE 0 END) AS latest_uploads,
       SUM(CASE WHEN ($name IS NOT NULL AND $name = 0) THEN 1 ELSE 0 END) AS backpan_fails,
       SUM(CASE WHEN cpan = 1 AND ($name IS NOT NULL AND $name = 0) THEN 1 ELSE 0 END) AS cpan_fails,
-      SUM(CASE WHEN latest = 1 AND ($name IS NOT NULL AND $name = 0) THEN 1 ELSE 0 END) AS latest_fails
+      SUM(CASE WHEN latest = 1 AND cpan = 1 AND ($name IS NOT NULL AND $name = 0) THEN 1 ELSE 0 END) AS latest_fails
     FROM kwalitee
     GROUP BY year
     ORDER BY year DESC
