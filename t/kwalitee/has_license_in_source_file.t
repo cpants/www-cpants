@@ -16,6 +16,15 @@ test_kwalitee(
 
     # has =head1 LICENSE followed by =head1 COPYRIGHT
     ['YSASAKI/App-pfswatch-0.08.tar.gz', 1],
+
+    # bin/ only
+    ['JONALLEN/pod2pdf-0.42.tar.gz', 1],
+
+    # script/ only
+    ['GOEVERT/RePrec-0.032.tar.gz', 1],
+
+    # scripts/ only
+    ['NKH/App-Term-Jump-0.04.32.tar.gz', 1],
 );
 
 done_testing;
