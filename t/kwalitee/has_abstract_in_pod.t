@@ -23,6 +23,7 @@ test_kwalitee(
     ['INGY/IO-All-0.40.tar.gz', 0],
 
     # script name with a dash instead of package name
-    ['SKIRMESS/App-ReportPrereqs-0.001.tar.gz', 1]);
+    ['SKIRMESS/App-ReportPrereqs-0.001.tar.gz', 1],
+);
 
 done_testing;
