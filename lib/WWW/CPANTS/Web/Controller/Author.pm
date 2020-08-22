@@ -10,6 +10,7 @@ sub index ($c) {
     $c->render_with(
         sub ($c, $params, $format) {
             my $author = $c->get_api('Author', $params) or return;
+            return unless $author->{name};
 
             my $data;
             if ($author->{deleted} or $author->{banned}) {

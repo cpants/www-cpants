@@ -13,6 +13,8 @@ sub index ($c) {
             my $data      = $c->get_api($tab_class, $params) or return;
 
             my $distribution = $c->get_api("Release::Common", $params) or return;
+            return unless $distribution->{name};
+
             $data->{distribution} = $distribution;
 
             given ($format) {
