@@ -19,7 +19,7 @@ sub index ($c) {
 
             given ($format) {
                 when ('json') {
-                    return { json => $data->{data} };
+                    return { json => $data };
                 }
                 when (/\A(?:png|svg)\z/) {
                     if ($tab eq 'Overview') {
