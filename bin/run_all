@@ -16,4 +16,5 @@ WWW::CPANTS::Bin::Runner->new->run_tasks(qw(
     Acme::UpdateModules
     Acme::UpdateStats
     Maint::Cleanup
+    Notify
 ));
