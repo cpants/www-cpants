@@ -17,14 +17,18 @@ sub get_uid ($self, $params) {
         my $name_version = $name;
         ($name, my $version) = distname_info($name_version);
         return $self->bad_request("'$author' seems not a pause id")                unless is_pause_id($author);
-        return $self->bad_request("name contains weird characters: $name_version") unless is_alphanum($name) && is_alphanum($version);
+        return $self->bad_request("name contains weird characters: $name_version") unless is_alphanum($name);
         $dist = $distributions->select_by_name($name) or return $self->bad_request("$author/$name_version not found");
         my $uids = decode_json($dist->{uids});
-        for my $info (@$uids) {
-            if ($info->{version} eq $version and $info->{author} eq $author) {
-                $uid = $info->{uid};
-                last;
+        if (defined(is_alphanum($version))) {
+            for my $info (@$uids) {
+                if ($info->{version} eq $version and $info->{author} eq $author) {
+                    $uid = $info->{uid};
+                    last;
+                }
             }
+        } else {
+            $uid = $dist->{latest_stable_uid} // $dist->{latest_dev_uid};
         }
         return $self->bad_request("$author/$name_version not found") unless $uid;
     } elsif (is_dist($name)) {
