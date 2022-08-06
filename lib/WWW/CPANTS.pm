@@ -8,6 +8,8 @@ use Path::Tiny   ();
 use Data::Dump   ();
 use Data::Binary ();    ## workaround for a Perl 5.30 regression
 
+$ENV{PERL_JSON_BACKEND} //= 'JSON::XS';
+
 our $VERSION = '5.00';
 
 our @OPTIONS = (
