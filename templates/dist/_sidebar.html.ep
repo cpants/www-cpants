@@ -35,7 +35,7 @@
     <dd><%= $distribution->{kwalitee} %></dd>
   <dt>Core Kwalitee</dt>
     <dd><%= $distribution->{core_kwalitee} %><br>
-    <img src="<%= url_with({tab => undef})->path . '.svg' %>">
+    <img src="<%= svg(url_with({tab => undef})->path) %>">
     </dd>
   <dt>LINKS</dt>
     <dd>
