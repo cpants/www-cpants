@@ -4,6 +4,7 @@
 % my $data = $stash->{data};
 % my $dist = $stash->{distribution} // $data->{distribution} // {};
 % my $tab = stash('tab') // '';
+% my $controller = stash('controller') // 'dist';
 
 <h2 class="hidden-xs"><%= $dist->{name} %> <%= $dist->{version} %>
 
@@ -20,6 +21,6 @@
 
 <ul class="nav nav-tabs">
 % for (@tabs) {
-  <li role="presentation" class="<%= $tab eq $_->[0] ? 'active' : '' %>"><a href="/release/<%= $dist->{author} %>/<%= $dist->{name_version} %><%= $_->[0] ? "/$_->[0]" : "" %>"><%= $_->[1] %></a></li>
+  <li role="presentation" class="<%= $tab eq $_->[0] ? 'active' : '' %>"><a href="<% if ($controller eq 'dist') {%>/dist/<%= $dist->{name} %><% } else {%>/release/<%= $dist->{author} %>/<%= $dist->{name_version} %><% } %><%= $_->[0] ? "/$_->[0]" : "" %>"><%= $_->[1] %></a></li>
 % }
 </ul>

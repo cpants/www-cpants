@@ -37,7 +37,7 @@ subtest 'get json' => sub {
 
     for my $path (@paths) {
         $t->get_ok("$path.json")->status_is(200);
-        $t->json_has("/$_") for @json_keys;
+        $t->json_has("/data/$_") for @json_keys;
     }
 };
 
