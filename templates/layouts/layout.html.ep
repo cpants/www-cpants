@@ -81,6 +81,9 @@
 </div>
 
 %= javascript '/jquery/jquery.min.js';
+% if ($ENV{CPANTS_WEB_DEBUG}) {
+%= javascript '/jquery-migrate/jquery-migrate.min.js';
+% }
 %= javascript '/bootstrap/js/bootstrap.min.js';
 
 % if (stash('cpants.requires_datatables')) {
