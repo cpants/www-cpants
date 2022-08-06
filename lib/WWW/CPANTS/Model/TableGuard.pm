@@ -22,7 +22,7 @@ sub check ($self, @tables) {
         my $file = $self->dir->child($table);
         if (-f $file) {
             my $pid = $file->slurp;
-            $self->log(warn => "Another task ($pid) is using $table");
+            $self->log(info => "Another task ($pid) is using $table");
             $_->remove for @files;
             return;
         }
