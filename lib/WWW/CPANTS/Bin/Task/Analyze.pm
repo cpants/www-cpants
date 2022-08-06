@@ -5,6 +5,7 @@ use WWW::CPANTS::Util::Distname;
 use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Util::PathUid;
 use WWW::CPANTS::Util::HideInternal;
+use WWW::CPANTS::Util::Diff qw(kwalitee_diff);
 use WWW::CPANTS::Model::Archive;
 use WWW::CPANTS::Model::Revision;
 use Syntax::Keyword::Try;
@@ -88,6 +89,8 @@ sub analyze ($self, $uid, $path) {
     if ($previous) {
         my $diff = json_diff($previous, $json);
         $self->log(notice => "analysis diff ($path):\n$diff") if $diff;
+        $diff = kwalitee_diff(decode_json($previous), $stash);
+        $self->log(warn => "kwalitee diff ($path):$diff") if $diff;
     }
 
     if ($self->dump) {
