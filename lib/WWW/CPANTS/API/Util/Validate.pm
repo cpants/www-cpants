@@ -16,19 +16,19 @@ sub is_int ($value, $length = 19) {
 
 sub is_alphanum ($value, $length = 255) {
     return unless defined $value;
-    return unless $value =~ /\A[0-9A-Za-z_\.\-]+\z/ && length($value) <= $length;
+    return unless $value =~ /\A[0-9A-Za-z_\.\-\+]+\z/ && length($value) <= $length;
     return $value;
 }
 
 sub is_dist ($value, $length = 255) {
     return unless defined $value;
-    return unless $value =~ /\A[0-9A-Za-z_\.\-]+\z/ && length($value) <= $length;
+    return unless $value =~ /\A[0-9A-Za-z_\.\-\+]+\z/ && length($value) <= $length;
     return $value;
 }
 
 sub is_path ($value, $length = 255) {
     return unless defined $value;
-    return unless $value =~ /\A[0-9A-Za-z_\.\-\/]+\z/ && length($value) <= $length;
+    return unless $value =~ /\A[0-9A-Za-z_\.\-\/\+]+\z/ && length($value) <= $length;
     return $value;
 }
 
