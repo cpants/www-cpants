@@ -5,6 +5,7 @@ use Mojo::Base 'WWW::CPANTS::API::Model', -signatures;
 use WWW::CPANTS::API::Util::Validate;
 use WWW::CPANTS::Util::Datetime;
 use WWW::CPANTS::Util::JSON;
+use Encode;
 
 with qw/WWW::CPANTS::Role::API::Model::V5::Author::Status/;
 
@@ -49,7 +50,7 @@ sub _load ($self, $params = {}) {
     my $author = $db->table('Authors')->find($pause_id)
         or return $self->bad_request("'$pause_id' not found");
 
-    $author->{$_} = $whois->{$_} for keys %$whois;
+    $author->{$_} = decode_utf8($whois->{$_}) for keys %$whois;
 
     my %converts = (
         last_release_at     => 'last_release_on',
