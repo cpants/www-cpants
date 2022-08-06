@@ -21,6 +21,5 @@ MYMETA.*
 .perl-version
 $~*
 /node_modules/
-/yarn.lock
 /qc.dat
 /public/img/
