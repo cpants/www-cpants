@@ -32,7 +32,7 @@ my %fixes = (
 );
 
 sub run ($self, @args) {
-    return if WWW::CPANTS->is_testing;
+    return if WWW::CPANTS->is_testing && !$ENV{TEST_ACME_MODULES};
 
     $self->_get_installed_acme_lib_versions;
 
