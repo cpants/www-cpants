@@ -98,7 +98,9 @@ sub _load ($self, $params = {}) {
     }
 
     for my $module (@$modules) {
-        $module->{abstract} =~ s/E<([^>]+)>/e2char($1)/eg;
+        if (defined $module->{abstract}) {
+            $module->{abstract} =~ s/E<([^>]+)>/e2char($1)/eg;
+        }
     }
 
     return {
