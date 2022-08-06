@@ -13,6 +13,7 @@ sub register ($self, $app, $conf) {
     $app->helper(gravatar_url         => \&gravatar_url);
     $app->helper(linkify              => \&linkify);
     $app->helper(api_url              => \&api_url);
+    $app->helper(svg                  => \&svg);
 }
 
 sub strftime ($c, @args) {
@@ -49,6 +50,11 @@ sub linkify ($c, $text) {
 
 sub api_url ($c, $path, $query = undef) {
     $c->app->ctx->api_url($path, $query);
+}
+
+sub svg ($c, $path) {
+    $path =~ s!/$!!;
+    $path .= '.svg';
 }
 
 1;
