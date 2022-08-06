@@ -11,11 +11,12 @@
     "datatables-responsive": "^1.0.7",
     "font-awesome": "^4.7.0",
     "html5shiv": "^3.7.3",
-    "jquery": "^3.4.1",
+    "jquery": "^3.6.0",
     "jquery-jsonview": "^1.2.3",
+    "jquery-migrate": "^3.3.2",
     "respond.js": "^1.4.2",
     "sprintf-js": "^1.1.2",
     "strftime": "^0.10.0",
-    "swagger-ui-dist": "^3.22.3"
+    "swagger-ui-dist": "^4.13.0"
   }
 }

@@ -20,6 +20,7 @@ my %Map = (
     html5shiv               => ["dist/*"],
     jquery                  => ["dist/*"],
     "jquery-jsonview"       => ["dist/*"],
+    "jquery-migrate"        => ["dist/*"],
     "respond.js"            => ["dest/*"],
     "sprintf-js"            => ["dist/*"],
     strftime                => ["strftime-min.js"],
