@@ -40,7 +40,7 @@ sub register_if_new ($self, $dists) {
             version_number => $version_number,
             released       => $dist->{released},
             year           => year($dist->{released}),
-            cpan           => $dist->{cpan} // 0,
+            cpan           => $dist->{cpan}   // 0,
             stable         => $dist->{stable} // 1,
             size           => $size,
         };

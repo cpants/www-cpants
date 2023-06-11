@@ -16,7 +16,7 @@ sub run ($self, @args) {
         my ($protocol, $code, $msg, $headers, $body) = $ua->post(
             $slack->{hook},
             ['Content-Type' => 'application/json'],
-            encode_json({text => "<$to> $0 has ended"}),
+            encode_json({ text => "<$to> $0 has ended" }),
         );
     }
 }

@@ -88,8 +88,8 @@ sub _load ($self, $params = {}) {
                 name              => $module,
                 version           => $requires_map->{$phase_type}{$module},
                 latest_dist       => $info->{distvname} // '',
-                latest_version    => $info->{version} // '',
-                latest_maintainer => $info->{author} // '',
+                latest_version    => $info->{version}   // '',
+                latest_maintainer => $info->{author}    // '',
             };
             if (my $core_since = core_since($module, $requires_map->{$phase_type}{$module})) {
                 $item->{core_since} = $core_since;

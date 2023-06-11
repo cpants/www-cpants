@@ -33,7 +33,7 @@ sub valid_distinfo ($file) {
         name      => $info->{name},
         version   => $info->{version},
         maturity  => ($info->{is_dev} ? 'developer' : 'released'),
-        stable    => ($info->{is_dev} ? 0 : 1),
+        stable    => ($info->{is_dev} ? 0           : 1),
         distvname => $info->{name_and_version},
         extension => substr($info->{extension} // '.', 1),
         uid       => $uid,

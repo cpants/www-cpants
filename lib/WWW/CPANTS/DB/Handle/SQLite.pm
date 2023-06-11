@@ -127,7 +127,7 @@ sub migrate ($self, $table) {
     return if !@should_add && !@should_delete;
 
     $self->log(warn => "$table_name schema is outdated; updating");
-    $self->log(warn => "add: " . join(',', @should_add)) if @should_add;
+    $self->log(warn => "add: " . join(',', @should_add))       if @should_add;
     $self->log(warn => "delete: " . join(',', @should_delete)) if @should_delete;
 
     my $dbh = $self->dbh;

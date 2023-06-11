@@ -3,8 +3,8 @@ package WWW::CPANTS::DB::Table::AcmeStats;
 use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
-    [module_id => '_acme_id_'],
-    [year      => '_year_'],
+    [module_id             => '_acme_id_'],
+    [year                  => '_year_'],
     [new_authors           => 'integer', default => 0],
     [active_authors        => 'integer', default => 0],
     [releases              => 'integer', default => 0],

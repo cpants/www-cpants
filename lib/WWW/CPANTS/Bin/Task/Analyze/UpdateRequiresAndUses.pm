@@ -15,8 +15,8 @@ sub update ($self, $uid, $stash) {
     return unless exists $stash->{prereq};
 
     my $pause_id = $stash->{author};
-    my $prereq   = $stash->{prereq} // [];
-    my $uses     = $stash->{uses} // {};
+    my $prereq   = $stash->{prereq}   // [];
+    my $uses     = $stash->{uses}     // {};
     my $versions = $stash->{versions} // {};
     my %requires;
     for my $p (@$prereq) {

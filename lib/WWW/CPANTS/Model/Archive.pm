@@ -149,9 +149,9 @@ sub extract ($self) {
         # broken but some of the files may probably be extracted
         $self->stash->{extractable} = 0;
         my %errors;
-        $errors{link_errors}               = \@link_errors if @link_errors;
-        $errors{warnings}                  = \@warnings    if @warnings;
-        $self->stash->{error}{extractable} = \%errors      if %errors;
+        $errors{link_errors}                  = \@link_errors if @link_errors;
+        $errors{warnings}                     = \@warnings    if @warnings;
+        $self->stash->{error}{extractable}    = \%errors      if %errors;
         $self->stash->{kwalitee}{extractable} = 0;
     } else {
         $self->stash->{extractable} = 1;
@@ -212,7 +212,7 @@ sub is_extracted_nicely ($self) {
 }
 
 # for compatibility
-sub d ($self)    { $self->stash }
+sub d    ($self) { $self->stash }
 sub dist ($self) { $self->file }
 
 1;

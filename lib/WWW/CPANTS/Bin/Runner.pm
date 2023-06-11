@@ -105,7 +105,7 @@ sub find_task_from_argv ($self) {
     }
 }
 
-sub create_pidfile($self) {
+sub create_pidfile ($self) {
     my $id   = $self->id;
     my $file = WWW::CPANTS::Model::PidFile->new(id => $id);
     if ($file->exists and !$self->ctx->force) {

@@ -30,14 +30,14 @@ sub startup ($app) {
     $r->get('/author/<#pause_id>.svg')->to('author#index', { format => 'svg' });
     $r->get('/author/:pause_id/feed')->to('author#feed');
     $r->get('/dist/<#name>.json')->to('dist#index', { format => 'json' });
-    $r->get('/dist/<#name>.png')->to('dist#index',  { format => 'png' });
-    $r->get('/dist/<#name>.svg')->to('dist#index',  { format => 'svg' });
+    $r->get('/dist/<#name>.png')->to('dist#index', { format => 'png' });
+    $r->get('/dist/<#name>.svg')->to('dist#index', { format => 'svg' });
     $r->get('/dist/#name')->to('dist#index');
     $r->get('/dist/#name/:tab')->to('dist#index');
     $r->get('/dist/#name/<#tab>.json')->to('dist#index');
     $r->get('/release/:pause_id/<#name>.json')->to('release#index', { format => 'json' });
-    $r->get('/release/:pause_id/<#name>.png')->to('release#index',  { format => 'png' });
-    $r->get('/release/:pause_id/<#name>.svg')->to('release#index',  { format => 'svg' });
+    $r->get('/release/:pause_id/<#name>.png')->to('release#index', { format => 'png' });
+    $r->get('/release/:pause_id/<#name>.svg')->to('release#index', { format => 'svg' });
     $r->get('/release/:pause_id/#name')->to('release#index');
     $r->get('/release/:pause_id/#name/:tab')->to('release#index');
     $r->get('/release/:pause_id/#name/<#tab>.json')->to('release#index');

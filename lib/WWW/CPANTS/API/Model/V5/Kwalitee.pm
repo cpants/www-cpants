@@ -62,11 +62,11 @@ sub _load ($self, $params = {}) {
             description       => $indicator->{error},
             remedy            => $indicator->{remedy},
             defined_in        => $indicator->{defined_in},
-            latest_fails      => $fails->{"latest_$name"} // 0,
-            cpan_fails        => $fails->{"cpan_$name"} // 0,
+            latest_fails      => $fails->{"latest_$name"}  // 0,
+            cpan_fails        => $fails->{"cpan_$name"}    // 0,
             backpan_fails     => $fails->{"backpan_$name"} // 0,
-            latest_fail_rate  => percent($fails->{"latest_$name"} // 0, $fails->{latest_total}),
-            cpan_fail_rate    => percent($fails->{"cpan_$name"} // 0, $fails->{cpan_total}),
+            latest_fail_rate  => percent($fails->{"latest_$name"}  // 0, $fails->{latest_total}),
+            cpan_fail_rate    => percent($fails->{"cpan_$name"}    // 0, $fails->{cpan_total}),
             backpan_fail_rate => percent($fails->{"backpan_$name"} // 0, $fails->{backpan_total}),
         };
     }

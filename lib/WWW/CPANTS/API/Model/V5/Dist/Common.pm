@@ -30,7 +30,7 @@ sub _load ($self, $params = {}) {
         or return $self->internal_error("uid($uid) not found");
 
     $dist->{$_} //= $release->{$_} for keys %$release;
-    $dist->{latest}       = 1 if $uid eq $dist->{latest_uid};
+    $dist->{latest} = 1 if $uid eq $dist->{latest_uid};
     $dist->{name_version} = join '-', $dist->{name}, $dist->{version};
 
     $dist->{recent_releases} = decode_json($dist->{uids});

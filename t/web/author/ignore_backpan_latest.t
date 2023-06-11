@@ -14,7 +14,7 @@ fixture {
     $testpan->cpan->update_indices;
 
     $testpan->backpan->add_files(
-        'ISHIGAKI/Pod-Perldocs-0.17.tar.gz',  ## backpan latest with kwalitee issues
+        'ISHIGAKI/Pod-Perldocs-0.17.tar.gz',    ## backpan latest with kwalitee issues
     );
 
     load_task('UpdateCPANIndices')->run;

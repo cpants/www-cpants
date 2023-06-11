@@ -6,7 +6,7 @@ sub columns ($self) { (
     [id         => '_serial_'],
     [uid        => '_upload_id_', unique => 1],
     [path       => '_cpan_path_'],
-    [priority   => 'tinyint', default => 0],
+    [priority   => 'tinyint',  default => 0],
     [pid        => 'smallint', default => 0],
     [released   => '_epoch_'],
     [created_at => '_epoch_'],

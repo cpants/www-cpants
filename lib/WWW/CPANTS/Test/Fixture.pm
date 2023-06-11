@@ -33,7 +33,7 @@ sub fixture : prototype(&;$) ($code, $id = undef) {
     _save_fixture($json_file);
 }
 
-sub _load_fixture($file) {
+sub _load_fixture ($file) {
     my $fixture = slurp_json($file);
     my $db      = WWW::CPANTS::DB->new;
 
@@ -50,7 +50,7 @@ sub _load_fixture($file) {
     }
 }
 
-sub _save_fixture($file) {
+sub _save_fixture ($file) {
     my %fixture;
     my $json_dir = cpants_path("tmp/json");
     if (-d $json_dir) {

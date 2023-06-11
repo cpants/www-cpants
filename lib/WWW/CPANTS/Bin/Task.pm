@@ -41,11 +41,11 @@ sub _build_timer ($self) {
     WWW::CPANTS::Model::Timer->new(name => $self->name);
 }
 
-sub db ($self)      { $self->ctx->db }
-sub new_db ($self)  { $self->ctx->new_db }
-sub cpan ($self)    { $self->ctx->cpan }
+sub db      ($self) { $self->ctx->db }
+sub new_db  ($self) { $self->ctx->new_db }
+sub cpan    ($self) { $self->ctx->cpan }
 sub backpan ($self) { $self->ctx->backpan }
-sub force ($self)   { $self->ctx->force }
+sub force   ($self) { $self->ctx->force }
 sub dry_run ($self) { $self->ctx->dry_run }
 
 sub trace ($self, $value = undef) {

@@ -4,14 +4,14 @@ use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 use WWW::CPANTS::Util::Datetime;
 
 sub columns ($self) { (
-    [pause_id     => '_pause_id_', primary => 1],
-    [cpan_dists   => 'smallint',   default => 0, unsigned => 1],
-    [recent_dists => 'smallint',   default => 0, unsigned => 1],
+    [pause_id              => '_pause_id_', primary => 1],
+    [cpan_dists            => 'smallint',   default => 0, unsigned => 1],
+    [recent_dists          => 'smallint',   default => 0, unsigned => 1],
     [last_release_at       => '_epoch_'],
     [last_new_release_at   => '_epoch_'],
     [last_analyzed_at      => '_epoch_'],
-    [average_kwalitee      => 'float', default => 0],
-    [average_core_kwalitee => 'float', default => 0],
+    [average_kwalitee      => 'float',    default => 0],
+    [average_core_kwalitee => 'float',    default => 0],
     [rank                  => 'smallint', default => 0, unsigned => 1],
     [json                  => '_json_'],
     [json_updated_at       => '_epoch_'],

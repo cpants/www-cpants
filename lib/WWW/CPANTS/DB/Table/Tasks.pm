@@ -3,7 +3,7 @@ package WWW::CPANTS::DB::Table::Tasks;
 use Mojo::Base 'WWW::CPANTS::DB::Table', -signatures;
 
 sub columns ($self) { (
-    [id => '_serial_'],
+    [id         => '_serial_'],
     [name       => 'varchar(255)', unique  => 1],
     [priority   => 'tinyint',      default => 0],
     [pid        => 'smallint',     default => 0],

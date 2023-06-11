@@ -51,7 +51,7 @@ sub update_uids ($self, $info) {
     );
     if ($info->{id}) {
         my $placeholders = join ',', map { "$_ = ?" } @fields;
-        my $sql          = <<~";";
+        my $sql = <<~";";
       UPDATE distributions
       SET $placeholders
       WHERE id = ?

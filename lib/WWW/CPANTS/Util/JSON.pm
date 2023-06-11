@@ -52,7 +52,7 @@ sub decode_if_json ($maybe_json) {
 
 sub json_file ($path) {
     $path = camelize($path =~ s|::|/|gr) if $path =~ /::/;
-    return $path if blessed $path and $path->isa('Path::Tiny');
+    return $path                         if blessed $path and $path->isa('Path::Tiny');
     cpants_path($path =~ /\.json$/ ? $path : "tmp/json/$path.json");
 }
 

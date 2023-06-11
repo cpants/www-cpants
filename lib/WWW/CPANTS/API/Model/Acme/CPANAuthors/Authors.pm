@@ -34,10 +34,10 @@ sub operation ($self) {
                                     items => {
                                         type       => 'object',
                                         properties => {
-                                            pause_id             => { type => 'string' },
-                                            name                 => { type => 'string' },
-                                            distributions        => { type => 'integer' },
-                                            recent_distributions => { type => 'integer' },
+                                            pause_id              => { type => 'string' },
+                                            name                  => { type => 'string' },
+                                            distributions         => { type => 'integer' },
+                                            recent_distributions  => { type => 'integer' },
                                             last_release          => { type => 'string', format => 'date',  nullable => json_true },
                                             last_new_release      => { type => 'string', format => 'date',  nullable => json_true },
                                             average_kwalitee      => { type => 'number', format => 'float', nullable => json_true },
@@ -96,7 +96,7 @@ sub _load ($self, $params = {}) {
         my $whois = $whois_map{ $row->{pause_id} };
         $row->{name}       = decode_utf8($whois->{name});
         $row->{registered} = ymd($whois->{introduced}) if $whois->{introduced};
-        $row->{deleted}    = $whois->{deleted} if $whois->{deleted};
+        $row->{deleted}    = $whois->{deleted}         if $whois->{deleted};
     }
 
     return {

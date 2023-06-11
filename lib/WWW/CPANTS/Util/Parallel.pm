@@ -55,9 +55,9 @@ sub run ($self, $code) {
         WWW::CPANTS->instance->logger->log(error => $error);
     }
 }
-sub pid ($self)           { $$ }
+sub pid     ($self)       { $$ }
 sub killall ($self, $sig) { kill $sig, $$ }
-sub finish ($self)        { }
-sub max ($self)           { 1 }
+sub finish  ($self)       { }
+sub max     ($self)       { 1 }
 
 1;
