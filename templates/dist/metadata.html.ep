@@ -12,7 +12,7 @@
   <section>
   <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Metadata</h3>
-  <pre id="json-collapsed" data="<%= $data->{metadata} %>" class="small"></pre>
+  <pre id="json-collapsed" data="<%= encode_json($data->{metadata}) %>" class="small"></pre>
   </div>
   </section>
 

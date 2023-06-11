@@ -28,8 +28,8 @@ for my $param (@params) {
             my $res = $model->load($load_arg);
             # too big and fragile to compare
             ok my $metadata = $res->{data}{metadata};
-            ok eval { $metadata && decode_json($metadata) };
-            note $@ if $@;
+            ok ref $metadata;
+            note explain $metadata;
         };
     };
     subtest $name => $subtest->($load_arg);

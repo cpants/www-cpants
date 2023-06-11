@@ -54,7 +54,7 @@ sub operation ($self) {
                                 data => {
                                     type       => 'object',
                                     properties => {
-                                        metadata => { type => 'string' },
+                                        metadata => { type => 'object' },
                                     },
                                 },
                             },

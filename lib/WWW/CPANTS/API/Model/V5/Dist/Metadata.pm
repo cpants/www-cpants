@@ -51,7 +51,7 @@ sub operation ($self) {
                                 data => {
                                     type       => 'object',
                                     properties => {
-                                        metadata => { type => 'string' },
+                                        metadata => { type => 'object' },
                                     },
                                 },
                             },
@@ -71,7 +71,7 @@ sub _load ($self, $params = {}) {
 
     return {
         data => {
-            metadata => $json // '{}',
+            metadata => decode_json($json // '{}'),
         },
     };
 }
