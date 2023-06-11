@@ -2,11 +2,11 @@ package WWW::CPANTS::Web::Plugin::Hooks;
 
 use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use Mojo::Path;
-use Compress::Zlib ();
+use IO::Compress::Gzip qw(gzip $GzipError);
 
 sub register ($self, $app, $conf) {
     $app->hook(before_dispatch => \&before_dispatch);
-    $app->hook(after_dispatch  => \&after_dispatch);
+    $app->hook(after_render    => \&after_render);
 }
 
 sub before_dispatch ($c) {
@@ -26,18 +26,16 @@ sub before_dispatch ($c) {
     }
 }
 
-sub after_dispatch ($c) {
+sub after_render ($c, $output, $format) {
     return if $c->stash->{'mojo.static'};
     return if $c->req->headers->header('X-Forwarded-For');
     return if $c->req->is_xhr;
     return unless ($c->req->headers->accept_encoding || '') =~ /gzip/i;
     return if $c->res->content->is_multipart || $c->res->content->is_dynamic;
 
-    my $asset = $c->res->content->asset;
-    return if $asset->is_file || $asset->is_range;
-    my $content = $asset->slurp;
     $c->res->headers->content_encoding('gzip');
-    $c->res->body(Compress::Zlib::memGzip($content));
+    gzip $output, \my $compressed or die $GzipError;
+    $$output = $compressed;
 }
 
 1;
