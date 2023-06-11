@@ -111,7 +111,7 @@ sub create_pidfile($self) {
     if ($file->exists and !$self->ctx->force) {
         my $pid = $file->slurp;
         if (kill 0, $pid) {
-            $self->log(warn => "Another $id ($pid) is running");
+            $self->log(info => "Another $id ($pid) is running");
             return;
         }
 
