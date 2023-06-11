@@ -1,6 +1,7 @@
 package WWW::CPANTS::Test;
 
 use Mojo::Base -strict, -signatures;
+use if $] >= 5.036, qw(experimental args_array_with_signatures);
 use WWW::CPANTS;
 use WWW::CPANTS::Util::Distname;
 use WWW::CPANTS::Util::JSON;
