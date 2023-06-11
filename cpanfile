@@ -17,6 +17,7 @@ requires 'Email::Sender', '1.300028';
 requires 'Encode';
 requires 'Exporter', '5.57';
 requires 'File::Copy::Recursive';
+requires 'File::Path::Tiny', '1.0';
 requires 'File::Temp';
 requires 'File::Which';
 requires 'Gravatar::URL';
