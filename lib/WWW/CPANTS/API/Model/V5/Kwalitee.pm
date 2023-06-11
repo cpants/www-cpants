@@ -22,9 +22,18 @@ sub operation ($self) {
                                 data => {
                                     type       => 'object',
                                     properties => {
-                                        core_indicators         => { type => 'object' },
-                                        extra_indicators        => { type => 'object' },
-                                        experimental_indicators => { type => 'object' },
+                                        core_indicators => {
+                                            type  => 'array',
+                                            items => { type => 'object' },
+                                        },
+                                        extra_indicators => {
+                                            type  => 'array',
+                                            items => { type => 'object' },
+                                        },
+                                        experimental_indicators => {
+                                            type  => 'array',
+                                            items => { type => 'object' },
+                                        },
                                     },
                                 },
                             },
