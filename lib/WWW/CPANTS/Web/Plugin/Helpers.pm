@@ -3,6 +3,7 @@ package WWW::CPANTS::Web::Plugin::Helpers;
 use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use WWW::CPANTS::Util::Datetime ();
 use WWW::CPANTS::Web::Util::URL ();
+use WWW::CPANTS::Util::JSON     ();
 
 sub register ($self, $app, $conf) {
     $app->helper(strftime             => \&strftime);
@@ -14,6 +15,7 @@ sub register ($self, $app, $conf) {
     $app->helper(linkify              => \&linkify);
     $app->helper(api_url              => \&api_url);
     $app->helper(svg                  => \&svg);
+    $app->helper(encode_json          => \&encode_json);
 }
 
 sub strftime ($c, @args) {
@@ -55,6 +57,10 @@ sub api_url ($c, $path, $query = undef) {
 sub svg ($c, $path) {
     $path =~ s!/$!!;
     $path .= '.svg';
+}
+
+sub encode_json ($c, $data) {
+    WWW::CPANTS::Util::JSON::encode_json($data);
 }
 
 1;
