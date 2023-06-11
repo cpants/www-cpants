@@ -104,6 +104,7 @@ on develop => sub {
     requires 'Menlo::CLI::Compat';
     requires 'Mojo::Base';
     requires 'Params::Validate';
+    requires 'Path::Extended::Tiny';
     requires 'Path::Tiny';
     requires 'Perl::PrereqScanner::NotQuiteLite', '0.9911';
     requires 'Perl::PrereqScanner::NotQuiteLite::App';
@@ -158,6 +159,7 @@ feature 'performance', 'performance' => sub {
 };
 
 feature 'production', 'production' => sub {
+    requires 'Config::Crontab';
     requires 'Fluent::Logger';
     requires 'Starman';
     requires 'Text::Diff::Unified::XS';
