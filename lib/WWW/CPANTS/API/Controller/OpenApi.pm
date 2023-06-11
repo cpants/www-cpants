@@ -66,15 +66,6 @@ sub dispatch ($c) {
     my $model  = $module->new(ctx => $c->app->ctx);
     my ($res, $errors) = $model->load($params, 'validated');
 
-    if ($res and defined $params->{draw}) {    # for jQuery.DataTables
-        $res->{draw} = $params->{draw};
-        $res->{recordsFiltered} //= $res->{recordsTotal};
-    }
-
-    if (DEBUG) {
-        $c->app->log->debug("DATA for $c: " . Data::Dump::dump($res));
-    }
-
     if ($errors) {
         $c->stash(status => $errors->{status});
         return $c->render(
@@ -83,6 +74,18 @@ sub dispatch ($c) {
                 path   => $c->req->url->path_query,
             },
         );
+    }
+    if (!$res) {
+        return $c->reply->not_found;
+    }
+
+    if (defined $params->{draw}) {    # for jQuery.DataTables
+        $res->{draw} = $params->{draw};
+        $res->{recordsFiltered} //= $res->{recordsTotal};
+    }
+
+    if (DEBUG) {
+        $c->app->log->debug("DATA for $c: " . Data::Dump::dump($res));
     }
 
     $c->res->headers->access_control_allow_origin('*');
