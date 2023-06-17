@@ -13,7 +13,16 @@ sub _load ($self, $params = {}) {
     my ($uid, $dist) = $self->get_uid($params);
     return unless $uid;
 
-    my $db = $self->db;
+    my $db      = $self->db;
+    my $release = $db->table('Uploads')->select_by_uid($uid)
+        or return $self->internal_error("uid($uid) not found");
+
+    $dist->{$_} //= $release->{$_} for keys %$release;
+    $dist->{latest}       = 1 if $uid eq $dist->{latest_uid};
+    $dist->{name_version} = join '-', $dist->{name}, $dist->{version};
+
+    $dist->{recent_releases} = decode_json($dist->{uids});
+
     if ($dist->{advisories}) {
         my $advisories = decode_json($dist->{advisories});
         my @affected_advisories;
@@ -25,15 +34,6 @@ sub _load ($self, $params = {}) {
         }
         $dist->{affected_advisories} = \@affected_advisories;
     }
-
-    my $release = $db->table('Uploads')->select_by_uid($uid)
-        or return $self->internal_error("uid($uid) not found");
-
-    $dist->{$_} //= $release->{$_} for keys %$release;
-    $dist->{latest} = 1 if $uid eq $dist->{latest_uid};
-    $dist->{name_version} = join '-', $dist->{name}, $dist->{version};
-
-    $dist->{recent_releases} = decode_json($dist->{uids});
 
     my $kwalitee = $db->table('Kwalitee')->select_scores_by_uid($uid);
     $dist->{core_kwalitee} = kwalitee_score($kwalitee->{core_kwalitee});
