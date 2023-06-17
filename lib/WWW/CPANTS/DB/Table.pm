@@ -2,7 +2,7 @@ package WWW::CPANTS::DB::Table;
 
 use Mojo::Base -base, -signatures;
 use String::CamelCase qw/decamelize/;
-use DBI qw/:sql_types/;
+use DBI               qw/:sql_types/;
 use Const::Fast;
 
 has 'handle';

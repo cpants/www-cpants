@@ -4,9 +4,9 @@ use 5.028;
 use Role::Tiny::With;
 use Mojo::Base -base, -signatures;
 use List::Util 1.29 qw/pairs/;
-use Path::Tiny   ();
-use Data::Dump   ();
-use Data::Binary ();    ## workaround for a Perl 5.30 regression
+use Path::Tiny      ();
+use Data::Dump      ();
+use Data::Binary    ();          ## workaround for a Perl 5.30 regression
 
 $ENV{PERL_JSON_BACKEND} //= 'JSON::XS';
 

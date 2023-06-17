@@ -4,7 +4,7 @@ use Role::Tiny::With;
 use Mojo::Base -base, -signatures;
 use Archive::Any::Lite;
 use File::Copy::Recursive qw/rcopy/;
-use Path::Tiny ();
+use Path::Tiny            ();
 use WWW::CPANTS::Model::TempDir;
 use WWW::CPANTS::Util::Distname;
 use Syntax::Keyword::Try;
@@ -158,7 +158,7 @@ sub extract ($self) {
     }
 
     if (@pax_headers) {
-        $self->stash->{no_pax_headers} = 0;
+        $self->stash->{no_pax_headers}        = 0;
         $self->stash->{error}{no_pax_headers} = join ',', @pax_headers;
     } else {
         $self->stash->{no_pax_headers} = 1;
@@ -197,7 +197,7 @@ sub is_extracted_nicely ($self) {
             }
         } else {
             $self->distdir($tmpdir->path_str);
-            $self->stash->{extracts_nicely} = 0;
+            $self->stash->{extracts_nicely}        = 0;
             $self->stash->{error}{extracts_nicely} = 'More than one top directories are found: ' . join ';', @entities;
         }
     } else {

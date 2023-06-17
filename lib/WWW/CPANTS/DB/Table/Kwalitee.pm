@@ -164,7 +164,7 @@ sub count_fails ($self) {
         push @cols, "SUM(CASE WHEN $name = 0 AND latest = 1 AND cpan = 1 THEN 1 ELSE 0 END) AS latest_$name";
     }
     my $concat_cols = join ",\n    ", @cols;
-    my $sql = <<~";";
+    my $sql         = <<~";";
     SELECT
       $concat_cols
     FROM kwalitee

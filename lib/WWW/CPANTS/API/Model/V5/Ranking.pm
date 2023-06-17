@@ -54,8 +54,8 @@ sub operation ($self) {
                                     items => {
                                         type       => 'object',
                                         properties => {
-                                            rank     => { type => 'integer' },
-                                            pause_id => { type => 'string' },
+                                            rank                  => { type => 'integer' },
+                                            pause_id              => { type => 'string' },
                                             average_core_kwalitee => {
                                                 type   => 'number',
                                                 format => 'float',

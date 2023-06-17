@@ -1,7 +1,7 @@
 package WWW::CPANTS::Web::Controller::Ranking;
 
 use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
-use experimental qw/switch/;
+use experimental      qw/switch/;
 use String::CamelCase qw/decamelize/;
 
 sub index ($c) {

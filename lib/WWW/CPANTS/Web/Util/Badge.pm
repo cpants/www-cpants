@@ -6,7 +6,7 @@ use Badge::Simple;
 use Imager;
 use Imager::Font;
 use Imager::Filter::RoundedCorner;
-use Exporter qw/import/;
+use Exporter     qw/import/;
 use experimental qw/switch/;
 
 our @EXPORT = qw/badge/;

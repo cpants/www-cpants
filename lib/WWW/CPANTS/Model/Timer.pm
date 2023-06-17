@@ -2,8 +2,8 @@ package WWW::CPANTS::Model::Timer;
 
 use Role::Tiny::With;
 use Mojo::Base -base, -signatures;
-use Time::Duration qw/duration/;
-use Time::HiRes qw/time/;
+use Time::Duration              qw/duration/;
+use Time::HiRes                 qw/time/;
 use WWW::CPANTS::Util::Datetime qw/strftime/;
 
 with qw/WWW::CPANTS::Role::Logger/;

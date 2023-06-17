@@ -2,9 +2,9 @@ package WWW::CPANTS::Util::JSON;
 
 use Mojo::Base -strict, -signatures;
 use Mojo::JSON::Pointer;
-use Exporter qw/import/;
-use JSON::XS ();
-use Scalar::Util qw/blessed/;
+use Exporter          qw/import/;
+use JSON::XS          ();
+use Scalar::Util      qw/blessed/;
 use String::CamelCase qw/camelize/;
 use Syntax::Keyword::Try;
 use WWW::CPANTS::Util::Path;

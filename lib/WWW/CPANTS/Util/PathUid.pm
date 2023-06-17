@@ -1,7 +1,7 @@
 package WWW::CPANTS::Util::PathUid;
 
 use Mojo::Base -strict, -signatures;
-use Exporter qw/import/;
+use Exporter        qw/import/;
 use Digest::FNV::XS ();
 
 our @EXPORT = qw/path_uid/;

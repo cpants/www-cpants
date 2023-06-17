@@ -48,7 +48,7 @@ sub run ($self, @args) {
                     while (my $target = $inner_queue->next) {
                         my ($uid, $path) = @$target{qw/uid path/};
                         $subtask->analyze($uid, $path) or next;
-                        $inner_queue->dequeue($uid) or $self->log(warn => "Failed to dequeue $uid");
+                        $inner_queue->dequeue($uid)    or $self->log(warn => "Failed to dequeue $uid");
                         if (++$ct >= $self->max_per_process) {
                             if (!$self->ctx->quiet) {
                                 my $left = $inner_queue->count;

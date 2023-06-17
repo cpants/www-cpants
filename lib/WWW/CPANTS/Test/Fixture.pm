@@ -6,7 +6,7 @@ use WWW::CPANTS::Util::JSON;
 use WWW::CPANTS::Util::Path;
 use File::Path qw/mkpath/;
 use File::stat qw/stat/;
-use Exporter qw/import/;
+use Exporter   qw/import/;
 
 our @EXPORT = qw( fixture );
 

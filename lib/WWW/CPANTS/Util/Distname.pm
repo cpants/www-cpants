@@ -2,7 +2,7 @@ package WWW::CPANTS::Util::Distname;
 
 use Mojo::Base -strict, -signatures;
 use Parse::Distname qw/parse_distname/;
-use Exporter qw/import/;
+use Exporter        qw/import/;
 use WWW::CPANTS::Util::PathUid;
 
 our @EXPORT = qw/valid_distinfo distinfo distname_info/;

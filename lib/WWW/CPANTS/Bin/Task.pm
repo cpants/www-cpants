@@ -2,8 +2,8 @@ package WWW::CPANTS::Bin::Task;
 
 use Role::Tiny::With;
 use Mojo::Base -base, -signatures;
-use WWW::CPANTS::Util::JSON qw/slurp_json save_json/;
-use WWW::CPANTS::Util::Loader qw/use_module/;
+use WWW::CPANTS::Util::JSON     qw/slurp_json save_json/;
+use WWW::CPANTS::Util::Loader   qw/use_module/;
 use WWW::CPANTS::Util::Datetime qw/strftime/;
 use WWW::CPANTS::Model::TableGuard;
 use WWW::CPANTS::Model::Timer;
