@@ -103,7 +103,7 @@ sub _load ($self, $params = {}) {
             date         => ymd($release->{released}),
             author       => $release->{author},
             availability => release_availability($release),
-            score        => $scores{ $release->{uid} },
+            score        => $scores{ $release->{uid} } // 0,
         };
     }
     return {

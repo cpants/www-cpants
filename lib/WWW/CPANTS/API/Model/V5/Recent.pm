@@ -83,7 +83,7 @@ sub _load ($self, $params = {}) {
             version  => $release->{version},
             pause_id => $release->{author},
             date     => ymd($release->{released}),
-            score    => $scores{ $release->{uid} },
+            score    => $scores{ $release->{uid} } // 0,
         };
     }
     return {
