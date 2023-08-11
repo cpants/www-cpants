@@ -64,12 +64,24 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
 
     my $required_perl = $self->required_perl($stash, $uses);
 
-    my (%wanted, %seen, %unindexed);
+    my (%wanted, %recommended, %suggested, %seen, %seen_as_recommends, %seen_as_suggests, %unindexed);
     my $declared_runtime_requires = $requires->{runtime_requires} // {};
     for my $module (keys %$declared_runtime_requires) {
         next if is_core($module, $required_perl);
         my $path = $cpan->packages->indexed_path_for($module) or next;
         $seen{$path} = 1;
+    }
+    my $declared_runtime_recommends = $requires->{runtime_recommends} // {};
+    for my $module (keys %$declared_runtime_recommends) {
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen_as_recommends{$path} = 1;
+    }
+    my $declared_runtime_suggests = $requires->{runtime_suggests} // {};
+    for my $module (keys %$declared_runtime_suggests) {
+        next if is_core($module, $required_perl);
+        my $path = $cpan->packages->indexed_path_for($module) or next;
+        $seen_as_suggests{$path} = 1;
     }
     my $actual_runtime_requires = $uses->{runtime}{requires} // {};
     for my $module (keys %$actual_runtime_requires) {
@@ -87,6 +99,19 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
                 next;
             }
         }
+        # maybe used in an "optional" module
+        if (exists $declared_runtime_recommends->{$module}) {
+            my $version = $actual_runtime_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_runtime_recommends->{$module})) {
+                $seen_as_recommends{$path} = 1;
+            }
+        }
+        if (exists $declared_runtime_suggests->{$module}) {
+            my $version = $actual_runtime_requires->{$module};
+            if (!$version or numify_version($version) <= numify_version($declared_runtime_recommends->{$module})) {
+                $seen_as_suggests{$path} = 1;
+            }
+        }
         next if $seen{$path};
         push @{ $wanted{$path} //= [] }, $module;
     }
@@ -94,6 +119,12 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
         my $distinfo = valid_distinfo($path);
         if ($seen{$path} or !$distinfo or $distinfo->{name} eq $stash->{dist}) {
             delete $wanted{$path};
+        }
+        elsif ($seen_as_recommends{$path}) {
+            $recommended{$path} = delete $wanted{$path};
+        }
+        elsif ($seen_as_suggests{$path}) {
+            $suggested{$path} = delete $wanted{$path};
         }
     }
 
@@ -104,6 +135,12 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
         $stash->{kwalitee}{prereq_matches_use} = ($stash->{dynamic_config}) ? 1 : 0;
     } else {
         $stash->{kwalitee}{prereq_matches_use} = 1;
+    }
+    if (%recommended) {
+        $stash->{uses_modified}{runtime}{recommends} = [sort map { @{ $recommended{$_} } } keys %recommended];
+    }
+    if (%suggested) {
+        $stash->{uses_modified}{runtime}{suggests} = [sort map { @{ $suggested{$_} } } keys %suggested];
     }
 }
 

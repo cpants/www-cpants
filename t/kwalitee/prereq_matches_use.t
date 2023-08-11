@@ -9,6 +9,7 @@ test_kwalitee(
     ['PVIGIER/XML-Compile-SOAP-Daemon-Dancer2-0.07.tar.gz', 0],    # Log::Report etc
     ['MICKEY/PONAPI-Server-0.003002.tar.gz',                0],    # URI::Escape
     ['TEAM/Net-Async-Pusher-0.004.tar.gz',                  0],    # Syntax::Keyword::Try
+    ['DORNER/UI-Various-0.39.tar.gz',                       1],    # Curses::UI and Tk are declared as recommends
 );
 
 done_testing;
