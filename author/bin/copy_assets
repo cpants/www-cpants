@@ -24,7 +24,14 @@ my %Map = (
     "respond.js"            => ["dest/*"],
     "sprintf-js"            => ["dist/*"],
     strftime                => ["strftime-min.js"],
-    "swagger-ui-dist"       => ["swagger-ui-bundle.js", "swagger-ui-standalone-preset.js", "swagger-ui.css"],
+    "swagger-ui-dist"       => [
+        "swagger-ui-bundle.js",
+        "swagger-ui-bundle.js.map",
+        "swagger-ui-standalone-preset.js",
+        "swagger-ui-standalone-preset.js.map",
+        "swagger-ui.css",
+        "swagger-ui.css.map",
+    ],
 );
 
 my %Alias = (
