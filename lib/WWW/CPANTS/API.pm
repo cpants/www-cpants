@@ -5,6 +5,9 @@ use Digest::MD5 qw/md5_hex/;
 use WWW::CPANTS::Util::Loader;
 use WWW::CPANTS::API::Context;
 use String::CamelCase qw/camelize/;
+use Mock::MonkeyPatch;
+use JSON::Validator;
+use JSON::Validator::Schema::OpenAPIv3;
 
 has 'ctx' => \&_build_ctx;
 
@@ -17,6 +20,13 @@ sub startup ($app) {
         $app->log->level('error');
     }
     $app->secrets([md5_hex($$ . time)]);
+
+    $app->{mock} = Mock::MonkeyPatch->patch(
+        'JSON::Validator::Schema::OpenAPIv3::base_url' => sub ($self, $url = undef) {
+            # No need to modify on the fly
+            return Mojo::URL->new($self->get('/servers/0/url') || '');
+        },
+    );
 
     my $r = $app->routes->under('/')->to('root#check_maintenance');
 
