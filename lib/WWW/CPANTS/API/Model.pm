@@ -4,7 +4,6 @@ use Role::Tiny::With;
 use Mojo::Base -base, -signatures;
 use JSON::Validator;
 use String::CamelCase qw/decamelize/;
-use JSON::Validator;
 use WWW::CPANTS::Util::Loader;
 
 with qw(
