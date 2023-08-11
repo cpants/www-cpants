@@ -10,6 +10,7 @@ sub check_maintenance ($c) {
         $c->stash("cpants.notice_maintenance" => 1);
     }
     $c->stash('last_analyzed', $status->{last_analyzed});
+    $c->stash('tracking_id', WWW::CPANTS->instance->config->{tracking_id});
     return 1;
 }
 
