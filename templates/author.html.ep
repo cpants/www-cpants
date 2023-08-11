@@ -34,7 +34,7 @@
           <td><%= $release->{name} %></td>
           <td><%= $release->{version} %></td>
           <td><%= $release->{date} %></td>
-          <td><%= $release->{score} %></td>
+          <td><%= $release->{score} || '-' %></td>
           <td><%= join ',', @{$release->{fails}} %></td>
         </tr>
       % }
@@ -125,7 +125,7 @@
           <td><%= $distribution->{version} %></td>
           <td class="hidden"><%= $distribution->{latest} ? 'latest' : '' %></td>
           <td><%= $distribution->{date} %></td>
-          <td><%= $distribution->{score} %></td>
+          <td><%= $distribution->{score} || '-' %></td>
           <td><%= join ',', @{$distribution->{fails}} %></td>
         </tr>
       % }

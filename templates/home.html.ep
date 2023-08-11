@@ -38,7 +38,7 @@
         <td><%= $release->{version} %></td>
         <td><%= $release->{pause_id} %></td>
         <td><%= $release->{date} %></td>
-        <td><%= $release->{score} %></td>
+        <td><%= $release->{score} || '-' %></td>
       </tr>
     % }
     </tbody>
