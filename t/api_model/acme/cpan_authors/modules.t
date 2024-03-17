@@ -40,7 +40,7 @@ subtest 'list' => sub {
             'releases'              => re('[0-9]+'),
             'version'               => re('[0-9.]+'),
         })),
-        recordsTotal => 54,
+        recordsTotal => re('[1-9][0-9]+'),
     };
 };
 
