@@ -71,8 +71,8 @@ sub run ($self, @args) {
         my $dist_used = $used{$name};
         $self->distributions->update_used_by(
             $name, [
-                map      { [$_, $dist_used->{$_}] }
-                    sort { $last_release{$b} <=> $last_release{$a} }
+                map  { [$_, $dist_used->{$_}] }
+                sort { $last_release{$b} <=> $last_release{$a} }
                     keys %$dist_used
             ],
         );

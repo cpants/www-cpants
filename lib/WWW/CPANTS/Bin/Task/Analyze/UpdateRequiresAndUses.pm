@@ -119,11 +119,9 @@ sub runtime_requires_matches_use ($self, $uid, $stash, $requires, $uses) {
         my $distinfo = valid_distinfo($path);
         if ($seen{$path} or !$distinfo or $distinfo->{name} eq $stash->{dist}) {
             delete $wanted{$path};
-        }
-        elsif ($seen_as_recommends{$path}) {
+        } elsif ($seen_as_recommends{$path}) {
             $recommended{$path} = delete $wanted{$path};
-        }
-        elsif ($seen_as_suggests{$path}) {
+        } elsif ($seen_as_suggests{$path}) {
             $suggested{$path} = delete $wanted{$path};
         }
     }
