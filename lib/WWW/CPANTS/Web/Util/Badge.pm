@@ -15,7 +15,7 @@ our @EXPORT = qw/badge/;
 our %FontConfig = (
       ($^O eq 'MSWin32') ? (face => 'Meiryo UI')
     : ($^O eq 'darwin')  ? (file => '/Library/Fonts/Verdana.tff')
-    :                      (file => '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf'));
+    :                      (file => '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'));
 
 sub badge ($score, $format) {
     return unless $score && $score =~ /\A[0-9.]+\z/;
