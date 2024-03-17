@@ -2,6 +2,7 @@ package WWW::CPANTS::Web::Controller::Search;
 
 use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 use experimental qw/switch/;
+no warnings qw/deprecated/;
 
 sub search ($c) {
     $c->render_with(

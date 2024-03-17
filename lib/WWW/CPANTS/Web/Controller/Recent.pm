@@ -2,6 +2,7 @@ package WWW::CPANTS::Web::Controller::Recent;
 
 use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 use experimental qw/switch/;
+no warnings qw/deprecated/;
 
 sub index ($c) {
     $c->render_with(

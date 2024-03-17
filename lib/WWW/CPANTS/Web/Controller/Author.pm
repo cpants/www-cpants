@@ -5,6 +5,7 @@ use WWW::CPANTS::Web::Util::Badge;
 use experimental qw/switch/;
 use Syntax::Keyword::Try;
 use XML::Atom::SimpleFeed;
+no warnings qw/deprecated/;
 
 sub index ($c) {
     $c->render_with(

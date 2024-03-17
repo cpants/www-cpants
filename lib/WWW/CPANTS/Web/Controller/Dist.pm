@@ -4,6 +4,7 @@ use Mojo::Base 'WWW::CPANTS::Web::Controller', -signatures;
 use WWW::CPANTS::Web::Util::Badge;
 use experimental qw/switch/;
 use Syntax::Keyword::Try;
+no warnings qw/deprecated/;
 
 sub index ($c) {
     $c->render_with(

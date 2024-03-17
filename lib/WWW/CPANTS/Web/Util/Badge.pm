@@ -8,6 +8,7 @@ use Imager::Font;
 use Imager::Filter::RoundedCorner;
 use Exporter     qw/import/;
 use experimental qw/switch/;
+no warnings qw/deprecated/;
 
 our @EXPORT = qw/badge/;
 
