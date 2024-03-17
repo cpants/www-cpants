@@ -37,6 +37,7 @@ requires 'Log::Handler';
 requires 'Log::Handler::Output::File::Stamper';
 requires 'Menlo::CLI::Compat';
 requires 'MetaCPAN::Client';
+requires 'Mock::MonkeyPatch';
 requires 'Module::CoreList';
 requires 'Module::Find';
 requires 'Module::Runtime';
