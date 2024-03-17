@@ -11,10 +11,8 @@ has 'ctx' => \&_build_ctx;
 sub startup ($app) {
     if ($ENV{CPANTS_WEB_DEBUG} or $^O eq 'MSWin32') {
         $app->mode('development');
-        $app->log->level('debug');
     } else {
         $app->mode('production');
-        $app->log->level('error');
     }
     $app->secrets([md5_hex($$ . time)]);
 

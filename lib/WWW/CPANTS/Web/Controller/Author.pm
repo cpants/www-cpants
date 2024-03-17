@@ -41,7 +41,7 @@ sub index ($c) {
                         $path = badge($data->{author}{average_core_kwalitee}, $format);
                     } catch {
                         my $error = $@;
-                        $c->app->log(error => $error);
+                        WWW::CPANTS->instance->logger->log(error => $error);
                     }
                     return { static => $path, mtime => $author->{last_analyzed_at} };
                 }

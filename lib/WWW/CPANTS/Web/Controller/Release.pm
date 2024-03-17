@@ -26,7 +26,7 @@ sub index ($c) {
                             $path = badge($distribution->{core_kwalitee}, $format);
                         } catch {
                             my $error = $@;
-                            $c->app->log(error => $error);
+                            WWW::CPANTS->instance->logger->log(error => $error);
                         }
                         return { static => $path, mtime => $distribution->{last_analyzed_at} };
                     }

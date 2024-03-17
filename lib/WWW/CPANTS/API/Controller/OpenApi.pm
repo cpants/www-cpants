@@ -59,7 +59,7 @@ sub dispatch ($c) {
             map { $_ => $params->{$_} }
             grep !/openapi/, keys %$params
         });
-        $c->app->log->debug("PARAMS for $c: $dump");
+        WWW::CPANTS->instance->logger->log(debug => "PARAMS for $c: $dump");
     }
 
     my $module = $c->stash('module') or return;
@@ -85,7 +85,7 @@ sub dispatch ($c) {
     }
 
     if (DEBUG) {
-        $c->app->log->debug("DATA for $c: " . Data::Dump::dump($res));
+        WWW::CPANTS->instance->logger->log(debug => "DATA for $c: " . Data::Dump::dump($res));
     }
 
     $c->res->headers->access_control_allow_origin('*');
