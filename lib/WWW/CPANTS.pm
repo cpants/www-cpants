@@ -48,7 +48,7 @@ sub is_under_maintenance ($self) {
 }
 
 sub is_testing ($self) {
-    $ENV{HARNESS_ACTIVE} ? 1 : 0;
+    $ENV{TEST_ACTIVE} ? 1 : 0;
 }
 
 sub _build_app_root ($self) {
