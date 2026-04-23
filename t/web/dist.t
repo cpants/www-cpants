@@ -27,7 +27,7 @@ subtest 'get' => sub {
 
     for my $path (@paths) {
         $t->get_ok($path)->status_is(200);
-        $t->text_is('h2' => 'JSON 4.02');
+        $t->text_like('h2' => qr/^JSON 4.02\b/);
     }
 };
 

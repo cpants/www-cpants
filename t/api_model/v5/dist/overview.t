@@ -2,7 +2,7 @@ use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
 use WWW::CPANTS::Test::Fixture;
 use Test::More;
-use Test::Deep qw(cmp_deeply);
+use Test::Deep qw(cmp_deeply re);
 
 fixture {
     my @files = (
@@ -29,13 +29,31 @@ for my $param (@params) {
                 'data' => {
                     'issues' => {
                         'core'         => [],
-                        'count'        => 2,
+                        'count'        => 5,
                         'experimental' => [{
                             'defined_in'      => 'Module::CPANTS::Kwalitee::MetaYML',
                             'error'           => undef,
                             'is_experimental' => 1,
                             'name'            => 'meta_yml_has_provides',
-                            'remedy'          => 'Add all modules contained in this distribution to the META.yml field \'provides\'. Module::Build or Dist::Zilla::Plugin::MetaProvides do this automatically for you.'
+                            'remedy'          => 'Add all modules contained in this distribution to the META.yml field \'provides\'. Module::Build or Dist::Zilla::Plugin::MetaProvides do this automatically for you.',
+                        }, {
+                            'defined_in'      => 'Module::CPANTS::Kwalitee::Security',
+                            'error'           => undef,
+                            'is_experimental' => 1,
+                            'name'            => 'has_security_doc',
+                            'remedy'          => re('.+'),
+                        }, {
+                            'defined_in'      => 'Module::CPANTS::Kwalitee::Security',
+                            'error'           => undef,
+                            'is_experimental' => 1,
+                            'name'            => 'security_doc_contains_contact',
+                            'remedy'          => re('.+'),
+                        }, {
+                            'defined_in'      => 'Module::CPANTS::Kwalitee::Security',
+                            'error'           => undef,
+                            'is_experimental' => 1,
+                            'name'            => 'has_contributing_doc',
+                            'remedy'          => re('.+'),
                         }],
                         'extra' => [{
                             'defined_in' => 'Module::CPANTS::Kwalitee::MetaYML',
