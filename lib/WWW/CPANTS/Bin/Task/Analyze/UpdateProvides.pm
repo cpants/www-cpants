@@ -22,6 +22,8 @@ my $SpecialFilesRe = join '|', (
     map({ "\\b" . quotemeta($_) . '$' } @SpecialFiles),
     '^(?:Changes|ChangeLog)',
     '^README',
+    '^SECURITY',
+    '^CONTRIBUTING',
 );
 
 sub update ($self, $uid, $stash) {
