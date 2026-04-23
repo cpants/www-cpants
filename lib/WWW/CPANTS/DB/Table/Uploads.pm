@@ -244,4 +244,12 @@ sub author_stats_of_the_year ($self, $year, $authors) {
     $self->select($sql, $start, $year, [authors => $authors]);
 }
 
+sub select_distv ($self, $name, $version = 0) {
+    my $col = $version ? 'version' : 'latest';
+    my $sql = <<~";";
+    SELECT path FROM uploads WHERE name = ? AND $col = ?
+    ;
+    $self->select_col($sql, $name, $version ? $version : 1);
+}
+
 1;

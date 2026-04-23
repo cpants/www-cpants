@@ -20,6 +20,13 @@ sub columns ($self) { (
 
 sub indices ($self) { (['cpan_dists desc']) }
 
+sub select_by_pause_id ($self, $pause_id) {
+    my $sql = <<~';';
+    SELECT * FROM authors WHERE pause_id = ?
+    ;
+    $self->select($sql, $pause_id);
+}
+
 sub select_all_by_pause_ids ($self, $pause_ids) {
     my $sql = <<~';';
     SELECT * FROM authors WHERE pause_id IN (:pause_ids)
