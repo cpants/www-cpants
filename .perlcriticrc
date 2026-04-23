@@ -1,0 +1,7 @@
+# Perl::Critic can't tell subroutine signatures from prototypes
+[-Subroutines::ProhibitSubroutinePrototypes]
+
+# We use these sometimes
+[-TestingAndDebugging::ProhibitNoStrict]
+[-TestingAndDebugging::ProhibitNoWarnings]
+[-BuiltinFunctions::ProhibitStringyEval]
