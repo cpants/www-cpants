@@ -5,11 +5,12 @@ use Mojo::Base -base, -signatures;
 
 has 'path'  => 'modules/06perms.txt';
 has 'perms' => \&_build_perms;
+has 'last_loaded' => sub { time };
 
 with qw/WWW::CPANTS::Role::CPAN::Index/;
 
 sub _build_perms ($self) {
-    my $file = $self->fetch;
+    my $file = WWW::CPANTS->instance->is_testing ? $self->fetch : $self->unzipped_file;
     my $fh   = $file->openr;
     my %perms;
     my $seen_header;
@@ -35,6 +36,7 @@ sub _build_perms ($self) {
             type     => $type,
         };
     }
+    $self->last_loaded(time);
     \%perms;
 }
 
@@ -46,6 +48,10 @@ sub list ($self) {
 sub can_upload ($self, $pause_id, $module) {
     $pause_id = uc $pause_id;
     $module   = lc $module;
+
+    if (time > $self->last_loaded + 3600) {
+        $self->perms($self->_build_perms);
+    }
 
     return 1 if !exists $self->perms->{$module};
     return 1 if exists $self->perms->{$module}{$pause_id};

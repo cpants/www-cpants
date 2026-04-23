@@ -50,6 +50,7 @@ sub unzipped_file ($self) {
     my $file   = $self->file;
     my $gzfile = $self->gzfile;
     if ($gzfile && -f $gzfile) {
+        return $file if -f $file and abs($file->stat->mtime - $gzfile->stat->mtime) < 60;
         return $self->_gunzip($gzfile => $file);
     }
     return $file if -f $file;
