@@ -6,21 +6,21 @@
 % my $tab = stash('tab') // '';
 % my $controller = stash('controller') // 'dist';
 
-<h2 class="hidden-xs"><%= $dist->{name} %> <%= $dist->{version} %>
+<h2><%= $dist->{name} %> <%= $dist->{version} %>
 
 % if (!$dist->{cpan}) {
-<small><span class="label label-danger" data-toggle="tooltip" title="This release has already been deleted from CPAN!">Deleted</span></small>
+<span class="badge bg-danger" data-bs-toggle="tooltip" title="This release has already been deleted from CPAN!">Deleted</span>
 % } elsif ($dist->{latest_stable_uid} and $dist->{latest_stable_uid} eq $dist->{uid}) {
-<small><span class="label label-success" data-toggle="tooltip" title="This is the latest stable release most of users should be using">Latest</span></small>
+<span class="badge bg-success" data-bs-toggle="tooltip" title="This is the latest stable release most of users should be using">Latest</span>
 % } elsif ($dist->{latest_dev_uid} and $dist->{latest_dev_uid} eq $dist->{uid}) {
-<small><span class="label label-success" data-toggle="tooltip" title="This is the latest developer release">Latest Dev</span></small>
+<span class="badge bg-success" data-bs-toggle="tooltip" title="This is the latest developer release">Latest Dev</span>
 % }
 </h2>
 
 % # latest? avaliability? score? badge? feeds?
 
-<ul class="nav nav-tabs">
+<nav class="nav nav-tabs">
 % for (@tabs) {
-  <li role="presentation" class="<%= $tab eq $_->[0] ? 'active' : '' %>"><a href="<% if ($controller eq 'dist') {%>/dist/<%= $dist->{name} %><% } else {%>/release/<%= $dist->{author} %>/<%= $dist->{name_version} %><% } %><%= $_->[0] ? "/$_->[0]" : "" %>"><%= $_->[1] %></a></li>
+  <a <% if ($tab eq $_->[0]) { %>class="nav-link active" aria-current="page"<% } else { %>class="nav-link"<% } %> href="<% if ($controller eq 'dist') {%>/dist/<%= $dist->{name} %><% } else {%>/release/<%= $dist->{author} %>/<%= $dist->{name_version} %><% } %><%= $_->[0] ? "/$_->[0]" : "" %>"><%= $_->[1] %></a>
 % }
-</ul>
+</nav>

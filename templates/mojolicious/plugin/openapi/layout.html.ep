@@ -8,7 +8,7 @@
 <meta name="viewpoint" content="width=device-width, initial-scale=1">
 <title>CPANTS API</title>
 
-%= stylesheet "/swagger-ui/swagger-ui.css";
+%= css "/swagger-ui/swagger-ui.css";
 
 </head>
 
@@ -27,10 +27,10 @@
   <div id="swagger-ui"></div>
 </div>
 
-%= javascript "/swagger-ui/swagger-ui-bundle.js";
-%= javascript "/swagger-ui/swagger-ui-standalone-preset.js";
+%= script "/swagger-ui/swagger-ui-bundle.js";
+%= script "/swagger-ui/swagger-ui-standalone-preset.js";
 
-%= javascript begin
+%= script begin
     window.onload = function() {
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({

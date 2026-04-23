@@ -1,11 +1,10 @@
-% my $timestamp = app->mode eq 'development' ? '?ts='.time : '';
 % my $stash = stash('cpants');
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewpoint" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CPANTS</title>
 % if (my $tracking_id = stash('tracking_id')) {
 <!-- Google tag (gtag.js) -->
@@ -19,70 +18,57 @@
 </script>
 % }
 
-%= stylesheet '/bootstrap/css/bootstrap.min.css' . $timestamp;
-
 % if (stash('cpants.requires_datatables')) {
-%= stylesheet '/datatables/css/jquery.dataTables.min.css' . $timestamp;
-%= stylesheet '/datatables-responsive/css/responsive.dataTables.css' . $timestamp;
+%= css '/datatables/css/dataTables.dataTables.min.css';
+%= css '/datatables-responsive/css/responsive.dataTables.min.css';
 % }
 
 % if (stash('cpants.requires_jsonview')) {
-%= stylesheet '/jquery-jsonview/jquery.jsonview.css' . $timestamp;
+%= css '/jquery-jsonview/jquery.jsonview.css';
 % }
 
-%= stylesheet '/font-awesome/css/font-awesome.min.css' . $timestamp;
-%= stylesheet '/cpants/css/cpants.css' . $timestamp;
-
-<!--[if lt IE 9]>
-%= javascript '/html5shiv/html5shiv.min.js' . $timestamp;
-%= javascript '/respond-js/respond.min.js' . $timestamp;
-<![endif]-->
+%= css '/cpants/css/cpants.css';
 
 <%== content 'stylesheet' %>
 
 </head>
 
-% my $body_class = $stash->{body_class};
-<body class="<%= $body_class ? $body_class : "" %>">
+% my $theme_class = $stash->{theme_class} // 'cpants';
+<body class="theme-<%= $theme_class %>">
 
-<div id="navbar" class="navbar navbar-default navbar-static-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <h1><a href="/" class="navbar-brand">CPANTS</a></h1>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav navbar-right">
-%#        <li><a href="<%= api_url('') %>">API</a></li>
-        <li><a href="/kwalitee">Kwalitee</a></li>
-        <li><a href="/ranking">Ranking</a></li>
-        <li><a href="/recent">Recent</a></li>
-%#<!--        <li><a href="/stats">Statistics</a></li>-->
-%#<!--        <li><a href="/about">About CPANTS</a></li>-->
+<nav class="navbar navbar-expand-md navbar-<%= $theme_class %>">
+  <div class="container-fluid">
+    <a href="/" class="navbar-brand">CPANTS</a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+%#        <li class="nav-item"><a class="nav-link" href="<%= api_url('') %>">API</a></li>
+        <li class="nav-item"><a class="nav-link" href="/kwalitee">Kwalitee</a></li>
+        <li class="nav-item"><a class="nav-link" href="/ranking">Ranking</a></li>
+        <li class="nav-item"><a class="nav-link" href="/recent">Recent</a></li>
+%#<!--        <li class="nav-item"><a class="nav-link" href="/stats">Statistics</a></li>-->
+%#<!--        <li class="nav-item"><a class="nav-link" href="/about">About CPANTS</a></li>-->
       </ul>
     </div>
   </div>
-</div>
+</nav>
 
 % if (stash('cpants.has_notice')) {
 %= include '_notice'
 % }
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="main" class="col">
 
       <%== content %>
 
     </div>
   </div>
   <div class="row">
-    <div id="footer" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="footer" class="col">
       <address>Maintained by Kenichi Ishigaki &lt;ishigaki@cpan.org&gt;. If you find anything, submit it on <a href="https://github.com/cpants/www-cpants/issues">GitHub</a>.</address>
 %   if (my $last_analyzed = stash('last_analyzed')) {
       <p>Last analyzed: <%= strftime('%Y-%m-%d %H:%M:%S', $last_analyzed) %></p>
@@ -91,19 +77,18 @@
   </div>
 </div>
 
-%= javascript '/jquery/jquery.min.js';
+%= script '/jquery/jquery.min.js';
 % if ($ENV{CPANTS_WEB_DEBUG}) {
-%= javascript '/jquery-migrate/jquery-migrate.min.js';
+%= script '/jquery-migrate/jquery-migrate.min.js';
 % }
-%= javascript '/bootstrap/js/bootstrap.min.js';
+%= script '/bootstrap/js/bootstrap.bundle.min.js';
 
 % if (stash('cpants.requires_datatables')) {
-%# = javascript '/datatables/js/jquery.dataTables.min.js';
-%= javascript '/datatables/js/jquery.dataTables.js';
-%= javascript '/datatables-responsive/js/dataTables.responsive.js';
-%= javascript '/sprintf-js/sprintf.min.js';
-%= javascript '/strftime/strftime-min.js';
-%= javascript begin
+%= script '/datatables/js/dataTables.min.js';
+%= script '/datatables-responsive/js/responsive.dataTables.min.js';
+%= script '/sprintf-js/sprintf.min.js';
+%= script '/strftime/strftime-min.js';
+%= script begin
 $(function() {
   $.extend($.fn.dataTable.defaults, {
       "processing": true,
@@ -120,26 +105,26 @@ $(function() {
 % }
 
 % if (stash('cpants.requires_jsonview')) {
-%= javascript '/jquery-jsonview/jquery.jsonview.js';
-%= javascript begin
+%= script '/jquery-jsonview/jquery.jsonview.js';
+%= script begin
 $(function(){
   var target = $('#json-collapsed');
-  var json = target.attr('data');
+  var json = target.attr('data-metadata');
   target.JSONView(json, {collapsed: true, recursive_collapser: true});
 });
 % end
 % }
 
-<%== content 'javascript' %>
+<%== content 'script' %>
 
-
-<hr>
 
 % if ($ENV{CPANTS_WEB_DEBUG}) {
 %   require Data::Dump;
-<div class="container">
+<hr>
+
+<div class="container-fluid">
   <div class="row">
-    <div id="debug" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="debug" class="col-12">
       <pre><%= Data::Dump::dump(stash('cpants') // {}) %></pre>
   </div>
 </div>

@@ -8,27 +8,28 @@
 % my $special_files = $data->{special_files} // [];
 % layout 'layout', 'cpants.requires_datatables' => 1;
 
+<div class="row">
+
 %= include 'dist/_sidebar';
 
-<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+<div class="col-md-10">
 
 %= include 'dist/_tab';
 
 % if (@{ $distribution->{affected_advisories} // []}) {
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
     <h3>Security Advisories</h3>
   % for my $advisory (@{$distribution->{affected_advisories}}) {
     <div class="alert alert-warning" role="alert">
       <p><%= join '/', @{$advisory->{cves} // []} %></p>
       <p><%= $advisory->{description} %></p>
       % if ($advisory->{references}) {
-        <p><ul>
+        <div><ul>
         % for my $url (@{$advisory->{references}}) {
           % next if $url =~ /(?:search\.cpan|metacpan)\.org/;
           <li><a href="<%= $url %>"><%= $url %></a></li>
         % }
-        </ul></p>
+        </ul></div>
       % }
       % if ($advisory->{fixed_versions}) {
         <p>Fixed version: <%= $advisory->{fixed_versions} %></p>
@@ -39,13 +40,11 @@
       <p>Reported: <%= $advisory->{reported} %></p>
     </div>
   % }
-  </div>
   </section>
 % }
 
 % if ($issues->{count}) {
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Kwalitee Issues</h3>
 
   % if (!$distribution->{latest}) {
@@ -59,10 +58,10 @@
     <dl>
     % for my $issue (@$my_issues) {
       <dt><a href="/kwalitee/<%= $issue->{name} %>"><%= $issue->{name} %></a></dt>
-      <dd>
-        <p class="small"><%= $issue->{remedy} %></p>
+      <dd class="remedy">
+        <p><%= $issue->{remedy} %></p>
         % if ($issue->{error}) {
-          <p class="small">
+          <div>
           % my $reftype = ref $issue->{error};
           % if (!$reftype) {
             Error: <%= $issue->{error} %>
@@ -81,7 +80,7 @@
             % }
             </ul>
           % }
-          </p>
+          </div>
         % }
       </dd>
     % }
@@ -95,29 +94,27 @@
   % }
 
   % if (@{$extra_issues // []}) {
-    <p class="small"><a href="#collapse_extra_issues" data-toggle="collapse" aria-expanded="false" aria-controls="collapse_extra_issues"><%= scalar @$extra_issues %> Extra Issue<%= @$extra_issues > 1 ? "s" : "" %></p>
+    <p><a class="collapse-link" href="#collapse_extra_issues" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse_extra_issues"><%= scalar @$extra_issues %> Extra Issue<%= @$extra_issues > 1 ? "s" : "" %></a></p>
     <div id="collapse_extra_issues" class="collapse"><%= $issue_block->($extra_issues) %></div>
   % }
 
   % if (@{$experimental_issues // []}) {
-    <p class="small"><a href="#collapse_experimental_issues" data-toggle="collapse" aria-expanded="false" aria-controls="collapse_experimental_issues"><%= scalar @$experimental_issues %> Experimental Issue<%= @$experimental_issues > 1 ? "s" : "" %></a></p>
+    <p><a class="collapse-link" href="#collapse_experimental_issues" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse_experimental_issues"><%= scalar @$experimental_issues %> Experimental Issue<%= @$experimental_issues > 1 ? "s" : "" %></a></p>
     <div id="collapse_experimental_issues" class="collapse"><%= $issue_block->($experimental_issues) %></div>
   % }
-  </div>
   </section>
 % }
 
 % if (@$modules) {
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Modules</h3>
   <table id="modules" class="display compact small">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Abstract</th>
-        <th>Version</th>
-        <th class="dt-right">View</th>
+        <th scope="col">Name</th>
+        <th scope="col">Abstract</th>
+        <th scope="col">Version</th>
+        <th scope="col" class="dt-right">View</th>
       </tr>
     </thead>
     <tbody>
@@ -131,11 +128,10 @@
     % }
     </tbody>
   </table>
-  </div>
   </section>
 
-  % content_for javascript => begin
-  %= javascript begin
+  % content_for script => begin
+  %= script begin
   $(function(){
     $('#modules').dataTable({
     });
@@ -146,14 +142,13 @@
 
 % if (@$provides) {
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Provides</h3>
   <table id="provides" class="display compact small">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>File</th>
-        <th>View</th>
+        <th scope="col">Name</th>
+        <th scope="col">File</th>
+        <th scope="col">View</th>
       </tr>
     </thead>
     <tbody>
@@ -166,11 +161,10 @@
     % }
     </tbody>
   </table>
-  </div>
   </section>
 
-  % content_for javascript => begin
-  %= javascript begin
+  % content_for script => begin
+  %= script begin
   $(function(){
     $('#provides').dataTable({
     });
@@ -181,13 +175,12 @@
 
 % if (@$special_files) {
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Other Files</h3>
   <table id="special_files" class="display compact small">
     <thead>
       <tr>
-        <th></th>
-        <th></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
@@ -199,11 +192,10 @@
     % }
     </tbody>
   </table>
-  </div>
   </section>
 
-  % content_for javascript => begin
-  %= javascript begin
+  % content_for script => begin
+  %= script begin
   $(function(){
     $('#special_files').dataTable({
     });
@@ -212,4 +204,5 @@
   % end
 % }
 
+</div>
 </div>
