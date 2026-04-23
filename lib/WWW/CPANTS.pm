@@ -7,6 +7,7 @@ use List::Util 1.29 qw/pairs/;
 use Path::Tiny      ();
 use Data::Dump      ();
 use Data::Binary    ();          ## workaround for a Perl 5.30 regression
+use Term::ANSIColor ();
 
 $ENV{PERL_JSON_BACKEND} //= 'JSON::XS';
 
@@ -18,6 +19,8 @@ our @OPTIONS = (
     ['cpan_path|cpan=s'       => \&_build_cpan_path],
     ['backpan_path|backpan=s' => \&_build_backpan_path],
 );
+
+my %LogColor = (ERROR => 'red', WARNING => 'yellow', NOTICE => 'green');
 
 with qw(
     MooX::Singleton
@@ -117,6 +120,12 @@ sub _build_logger ($self) {
                 log_to   => 'STDERR',
                 minlevel => 'emergency',
                 maxlevel => 'info',
+                message_pattern => [qw(%L %m)],
+                prepare_message => sub {
+                    my $m = shift;
+                    return if $m->{level} eq 'INFO';
+                    $m->{message} = Term::ANSIColor::colored($m->{message}, $LogColor{$m->{level}}) || 'red';
+                },
             },
         );
     }
