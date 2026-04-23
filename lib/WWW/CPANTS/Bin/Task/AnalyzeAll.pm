@@ -8,7 +8,7 @@ our @WRITE   = qw/Queue/;
 our @OPTIONS = (
     'workers=i',
     'timeout=i',
-    'slows=i',
+    'slow=i',
 );
 
 has 'task_id';
