@@ -2,27 +2,24 @@
 % my $data = $stash->{data} // {};
 % my $distribution = $stash->{distribution} // $data->{distribution} // {};
 
-<div class="sidebar col-xs-12 col-sm-2 col-sm-push-10 col-md-2 col-md-push-10 col-lg-2 col-lg-push-10">
+<div class="sidebar col-md-2 order-last">
 
-<h2 class="visible-xs-block"><%= $distribution->{name} %> <%= $distribution->{version} %></h2>
-
-<img src="<%= gravatar_url($distribution->{author}) %>" class="hidden-xs">
-<dl class="small">
+<img src="<%= gravatar_url($distribution->{author}) %>" alt="gravatar image of <%= $distribution->{author} %>">
+<dl>
   <dt>Released by</dt>
     <dd><a href="/author/<%= $distribution->{author} %>"><%= $distribution->{author} %></a></dd>
   <dt>Version</dt>
     <dd>
       <div class="dropdown">
-        <a href="#" class="dropdown-toggle" id="sidebar_version_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a href="#" class="dropdown-toggle" id="sidebar_version_list" data-bs-toggle="dropdown" aria-expanded="false">
           <%= $distribution->{version} %>
-          <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu" aria-labelledby="sidebar_version_list">
+        <ul class="dropdown-menu menu-list" aria-labelledby="sidebar_version_list">
         % my $release_ct = 0;
         % for my $release (@{$distribution->{recent_releases} // []}) {
-          <li><a class="small" href="/release/<%= $release->{author} %>/<%= $distribution->{name}.'-'.$release->{version} %>"><%= $release->{version} %> <span class="small">(<%= release_availability($release) %>)</span></a></li>
+          <li><a class="dropdown-item" href="/release/<%= $release->{author} %>/<%= $distribution->{name}.'-'.$release->{version} %>"><%= $release->{version} %> (<%= release_availability($release) %>)</a></li>
         %   if ($release_ct++ > 10) {
-          <li><a class="small" href="/release/<%= $distribution->{author} %>/<%= $distribution->{name_version} %>/releases">more...</a></li>
+          <li><a class="dropdown-item" href="/release/<%= $distribution->{author} %>/<%= $distribution->{name_version} %>/releases">more...</a></li>
         %     last;
         %   }
         % }
@@ -35,7 +32,7 @@
     <dd><%= $distribution->{kwalitee} %></dd>
   <dt>Core Kwalitee</dt>
     <dd><%= $distribution->{core_kwalitee} %><br>
-    <img src="<%= svg(url_with({tab => undef})->path) %>">
+    <img src="<%= svg(url_with({tab => undef})->path) %>" alt="score badge">
     </dd>
   <dt>LINKS</dt>
     <dd>
@@ -49,15 +46,6 @@
         % }
       </ul>
     </dd>
-
-
-% if ($^O eq 'MSWin32') {
-    <dt>DEBUG</dt>
-    <dd>
-      DIST ID: <%= $distribution->{id} %>
-    </dd>
-% }
-
 </dl>
 
 </div>

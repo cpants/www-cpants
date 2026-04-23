@@ -13,10 +13,10 @@ sub check_whois_status ($self, $pause_id) {
     }
 
     # Hide spammers too
-    if ($whois->{nologin} and !$whois->{system}) {
-        return unless wantarray;
-        return (undef, { pause_id => $pause_id, banned => 1 });
-    }
+    #if ($whois->{nologin} and !$whois->{system}) {
+    #    return unless wantarray;
+    #    return (undef, { pause_id => $pause_id, banned => 1 });
+    #}
 
     return 1 unless wantarray;
     return (1, $whois);

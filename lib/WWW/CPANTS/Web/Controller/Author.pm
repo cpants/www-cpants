@@ -7,6 +7,8 @@ use Syntax::Keyword::Try;
 use XML::Atom::SimpleFeed;
 no warnings qw/deprecated/;
 
+my %has_theme = map {$_ => 1} qw( barbie book lbrocard pjcj rjbs vpit );
+
 sub index ($c) {
     $c->render_with(
         sub ($c, $params, $format) {
@@ -47,7 +49,8 @@ sub index ($c) {
                     return { static => $path, mtime => $author->{last_analyzed_at} };
                 }
                 when ('') {
-                    $data->{body_class} = "pause-" . (lc $params->{pause_id});
+                    my $lc_pause_id = lc $params->{pause_id};
+                    $data->{theme_class} = "pause-$lc_pause_id" if $has_theme{$lc_pause_id};
                     return { render => 'author', stash => $data };
                 }
             }

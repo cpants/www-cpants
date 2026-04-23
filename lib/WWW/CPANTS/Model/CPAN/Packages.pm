@@ -7,6 +7,7 @@ use WWW::CPANTS::Util::PathUid;
 
 has 'path'     => 'modules/02packages.details.txt';
 has 'packages' => \&_build_packages;
+has 'last_loaded' => sub { time };
 
 with qw/WWW::CPANTS::Role::CPAN::Index/;
 
@@ -30,7 +31,7 @@ sub _build_packages ($self) {
         next if /\A\s*\z/;
         my ($module, $version, $path) = split /\s+/;
         if (!$module or !defined $version or !$path) {    ## Broken for whatever reasons
-            $self->log(warn => "02packages is broken");
+            $self->log(warn => "02packages is broken: $_");
             close $fh;
             unlink $self->file;
             return $self->_build_packages;
@@ -46,10 +47,14 @@ sub _build_packages ($self) {
             dist    => $info->{name},
         };
     }
+    $self->last_loaded(time);
     \%packages;
 }
 
 sub find ($self, $module) {
+    if (time > $self->last_loaded + 3600) {
+        $self->packages($self->_build_packages);
+    }
     $self->packages->{ lc $module };
 }
 

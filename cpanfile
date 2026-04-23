@@ -2,6 +2,7 @@ requires 'Archive::Any::Lite';
 requires 'Archive::Zip', '!= 1.66, != 1.67, != 1.68';
 requires 'Badge::Simple';
 requires 'CPAN::Audit';
+requires 'CPAN::Audit::DB';
 requires 'CPAN::Common::Index';
 requires 'Cache::FileCache';
 requires 'Class::Method::Modifiers';
@@ -20,6 +21,7 @@ requires 'File::Copy::Recursive';
 requires 'File::Path::Tiny', '1.0';
 requires 'File::Temp';
 requires 'File::Which';
+requires 'Furl::HTTP';
 requires 'Gravatar::URL';
 requires 'HTML::Entities';
 requires 'HTTP::Status';
@@ -90,7 +92,6 @@ on test => sub {
 
 on develop => sub {
     requires 'CPAN::Common::Index';
-    requires 'CSS::LESS::Filter';
     requires 'DBI';
     requires 'Data::Dump';
     requires 'Devel::Cover';
@@ -100,17 +101,16 @@ on develop => sub {
     requires 'File::Copy::Recursive';
     requires 'File::pushd';
     requires 'Furl';
-    requires 'Hash::Diff';
     requires 'JSON::XS';
     requires 'Menlo::CLI::Compat';
     requires 'Mojo::Base';
     requires 'Params::Validate';
+    requires 'Parse::Distname';
     requires 'Path::Extended::Tiny';
     requires 'Path::Tiny';
     requires 'Perl::PrereqScanner::NotQuiteLite', '0.9911';
     requires 'Perl::PrereqScanner::NotQuiteLite::App';
     requires 'Perl::Tidy';
-    requires 'Regexp::Trie';
     requires 'Role::Tiny::With';
     requires 'Software::License';
     requires 'String::CamelCase';
@@ -118,7 +118,6 @@ on develop => sub {
     requires 'Test::CPANfile', '0.07';
     requires 'Test::Perl::Critic';
     requires 'Text::Diff';
-    requires 'Text::Sass::XS';
     recommends 'DBD::mysql';
 };
 feature 'acme', 'acme' => sub {
@@ -134,6 +133,7 @@ feature 'extlib', 'extlib' => sub {
     requires 'Class::Accessor::Fast';
     requires 'Config::INI::Reader';
     requires 'Data::Binary';
+    requires 'Email::Address::XS';
     requires 'Email::Sender';
     requires 'Email::Simple';
     requires 'File::Find::Object';
@@ -147,7 +147,6 @@ feature 'extlib', 'extlib' => sub {
     requires 'Perl::PrereqScanner::NotQuiteLite', '0.9902';
     requires 'Pod::Simple';
     requires 'Software::License', '0.103012';
-    requires 'Software::LicenseUtils';
     requires 'perl', '5.008001';
 };
 

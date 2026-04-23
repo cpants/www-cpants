@@ -8,25 +8,26 @@
 
 % layout 'layout';
 
+<div class="row">
+
 %= include 'dist/_sidebar';
 
-<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+<div class="col-md-10">
 
 %= include 'dist/_tab';
 
 % my $table_block = begin
   % my ($list, $id) = @_;
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3><%= ucfirst $id %> Requires</h3>
   <table id="<%= $id %>_requires" class="display compact small">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Required Version</th>
-        <th>Latest Indexed Distribution</th>
-        <th>Latest Indexed Version</th>
-        <th>Core Since</th>
+        <th scope="col">Name</th>
+        <th scope="col">Required Version</th>
+        <th scope="col">Latest Indexed Distribution</th>
+        <th scope="col">Latest Indexed Version</th>
+        <th scope="col">Core Since</th>
       </tr>
     </thead>
     <tbody>
@@ -65,11 +66,10 @@
     % }
     </tbody>
   </table>
-  </div>
   </section>
 
-  % content_for javascript => begin
-  %= javascript begin
+  % content_for script => begin
+  %= script begin
   $(function(){
     $('#<%= $id %>_requires').dataTable({
     });
@@ -90,4 +90,5 @@
   <%= $table_block->($configure_requires, 'configure') %>
 % }
 
+</div>
 </div>

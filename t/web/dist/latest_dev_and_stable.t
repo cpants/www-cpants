@@ -26,27 +26,27 @@ subtest "/dist shows the latest stable if there's a newer dev" => sub {
     my $t = Test::Mojo->new('WWW::CPANTS::Web');
 
     $t->get_ok("/dist/Text-CSV")->status_is(200);
-    $t->text_is('h2' => 'Text-CSV 1.33');
+    $t->text_like('h2' => qr/^Text-CSV 1.33\b/);
 };
 
 subtest "/dist shows the latest dev if there's no stable" => sub {
     my $t = Test::Mojo->new('WWW::CPANTS::Web');
 
     $t->get_ok("/dist/Text-CSV")->status_is(200);
-    $t->text_is('h2' => 'Text-CSV 1.33');
+    $t->text_like('h2' => qr/^Text-CSV 1.33\b/);
 };
 
 subtest "check /releases" => sub {
     my $t = Test::Mojo->new('WWW::CPANTS::Web');
 
     $t->get_ok("/release/MAKAMAKA/Text-CSV-1.33")->status_is(200);
-    $t->text_is('h2' => 'Text-CSV 1.33');
+    $t->text_like('h2' => qr/^Text-CSV 1.33\b/);
 
     $t->get_ok("/release/ISHIGAKI/Text-CSV-1.90_01")->status_is(200);
-    $t->text_is('h2' => 'Text-CSV 1.90_01');
+    $t->text_like('h2' => qr/^Text-CSV 1.90_01\b/);
 
     $t->get_ok("/release/ISHIGAKI/Module-CPANTS-Analyse-0.97_11")->status_is(200);
-    $t->text_is('h2' => 'Module-CPANTS-Analyse 0.97_11');
+    $t->text_like('h2' => qr/^Module-CPANTS-Analyse 0.97_11\b/);
 };
 
 done_testing;

@@ -7,25 +7,26 @@
 % my $cpan_distributions = $data->{cpan_distributions} // [];
 % layout 'layout', 'cpants.requires_datatables' => 1;
 
+<div class="row">
+
 %= include 'author/_sidebar';
 
-<div class="col-xs-12 col-sm-10 col-sm-pull-2 col-md-10 col-md-pull-2 col-lg-10 col-lg-pull-2">
+<div class="col-md-9">
 
 % # links from author.json? or other info from metacpan? or other leaderboards? badge?
 
 % if ($has_data) {
   % if (@$recent_releases) {
     <section>
-    <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
     <h2>Recent Releases by <%= $pause_id %></h2>
     <table id="recent_releases" class="display compact small">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Version</th>
-          <th>Released</th>
-          <th>Kwalitee</th>
-          <th>Core Fails</th>
+          <th scope="col">Name</th>
+          <th scope="col">Version</th>
+          <th scope="col">Released</th>
+          <th scope="col">Kwalitee</th>
+          <th scope="col">Core Fails</th>
         </tr>
       </thead>
       <tbody>
@@ -40,11 +41,10 @@
       % }
       </tbody>
     </table>
-    </div>
     </section>
 
-    % content_for 'javascript' => begin
-    %= javascript begin
+    % content_for 'script' => begin
+    %= script begin
     $(function(){
       $('#recent_releases').dataTable({
         "ajax": "<%= api_url("v5/author/$pause_id/recent_releases", { days => 90 }) %>",
@@ -67,7 +67,7 @@
           {"data": "score",
            "render": function(data,type,row){
             return type === 'display'
-              ? data ? sprintf('%.02f', data) : '-'
+              ? data && (typeof(data) === 'number' || data.match(/^[0-9.]+$/)) ? sprintf('%.02f', data) : '-'
               : data;
           }},
           {"data": "fails",
@@ -99,26 +99,22 @@
     % end
   % }
 
-  % if (@$recent_releases and @$cpan_distributions) {
-  <hr>
-  % }
-
   % if (@$cpan_distributions) {
     <section>
-    <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
     <h2>CPAN Distributions by <%= $pause_id %></h2>
     <table id="cpan_distributions" class="display compact small">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Version</th>
-          <th class="hidden">Latest</th>
-          <th>Released</th>
-          <th>Kwalitee</eth>
-          <th>Core Fails</th>
+          <th scope="col">Name</th>
+          <th scope="col">Version</th>
+          <th scope="col" class="hidden">Latest</th>
+          <th scope="col">Released</th>
+          <th scope="col">Kwalitee</th>
+          <th scope="col">Core Fails</th>
         </tr>
       </thead>
       <tbody>
+    %# if ($ENV{CPANTS_WEB_DEBUG}) {
       % for my $distribution (@$cpan_distributions) {
         <tr>
           <td><%= $distribution->{name} %></td>
@@ -129,13 +125,13 @@
           <td><%= join ',', @{$distribution->{fails}} %></td>
         </tr>
       % }
+    %# }
       </tbody>
     </table>
-    </div>
     </section>
 
-    % content_for 'javascript' => begin
-    %= javascript begin
+    % content_for 'script' => begin
+    %= script begin
     $(function(){
       $('#cpan_distributions').dataTable({
         "ajax": "<%= api_url("v5/author/$pause_id/cpan_distributions") %>",
@@ -167,7 +163,7 @@
           {"data": "score",
            "render": function(data,type,row){
             return type === 'display'
-              ? data ? sprintf('%.02f', data) : '-'
+              ? data && (typeof(data) === 'number' || data.match(/^[0-9.]+$/)) ? sprintf('%.02f', data) : '-'
               : data;
           }},
           {"data": "fails",
@@ -182,7 +178,7 @@
                 }
               }
               if (items.length) {
-                return '<a href="/kwalitee/'+items[0]+'">'+items[0]+'</a>' + ((items.length > 1) ? ' and others' : '');
+                return '<a href="/kwalitee/'+items[0]+'">'+items[0].replace(/_/g, ' ')+'</a>' + ((items.length > 1) ? ' and others' : '');
               } else {
                 return 'none';
               }
@@ -200,4 +196,5 @@
   % }
 % }
 
+</div>
 </div>

@@ -132,7 +132,7 @@ sub set_results ($self, $stash) {
                 $stash->{error}{$name} = "$error [ignored]";
             }
             my $path = $stash->{path};
-            $self->log(warn => "$path ignored $name via x_cpants");
+            $self->log(info => "$path ignored $name via x_cpants");
         }
 
         $kwalitee{$name} = $ret;

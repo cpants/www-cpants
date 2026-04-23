@@ -78,7 +78,7 @@ sub traverse ($self, $cpan, $is_cpan, $pause_ids) {
         my $iter = $cpan->author_dir_iterator($pause_id) or next;
 
         my $whois = $self->cpan->whois->authors->{$pause_id};
-        next if $whois->{deleted} or ($whois->{nologin} && !$whois->{system});
+        next if $whois->{deleted};
 
         $self->log(info => "$pause_id");
 

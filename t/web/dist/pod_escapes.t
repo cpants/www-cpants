@@ -27,7 +27,7 @@ subtest 'no E<>' => sub {
 
     for my $path (@paths) {
         $t->get_ok($path)->status_is(200);
-        $t->text_is('h2' => 'podlators 4.14');
+        $t->text_like('h2' => qr/^podlators 4.14\b/);
         my $tbody = $t->tx->res->dom->at('#modules tbody');
         for my $tr ($tbody->find('tr')->each) {
             for my $td ($tr->find('td')->each) {

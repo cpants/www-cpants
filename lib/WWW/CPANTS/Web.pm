@@ -32,13 +32,13 @@ sub startup ($app) {
     $r->get('/dist/<#name>.svg')->to('dist#index', { format => 'svg' });
     $r->get('/dist/#name')->to('dist#index');
     $r->get('/dist/#name/:tab')->to('dist#index');
-    $r->get('/dist/#name/<#tab>.json')->to('dist#index');
+    $r->get('/dist/#name/<#tab>.json')->to('dist#index', { format => 'json' });
     $r->get('/release/:pause_id/<#name>.json')->to('release#index', { format => 'json' });
     $r->get('/release/:pause_id/<#name>.png')->to('release#index', { format => 'png' });
     $r->get('/release/:pause_id/<#name>.svg')->to('release#index', { format => 'svg' });
     $r->get('/release/:pause_id/#name')->to('release#index');
     $r->get('/release/:pause_id/#name/:tab')->to('release#index');
-    $r->get('/release/:pause_id/#name/<#tab>.json')->to('release#index');
+    $r->get('/release/:pause_id/#name/<#tab>.json')->to('release#index', { format => 'json' });
     $r->get('/ranking')->to('ranking#index');
     $r->get('/ranking/:tab')->to('ranking#index');
     $r->get('/kwalitee')->to('kwalitee#index');

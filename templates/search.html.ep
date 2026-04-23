@@ -4,15 +4,19 @@
 
 % layout 'layout';
 
-<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+<div class="row">
+<div class="col">
 
-<form method="GET" id="search_form" autocomplete="off" class="form-inline" role="form">
-  <input type="text" name="name" id="search" value="<%= param('name') %>" class="form-control"> <input type="submit" class="btn" name="submit" value="Search" />
-</form>
-
+<form method="GET" id="search_form" autocomplete="off" role="form">
+<div class="row g-1">
+<div class="col">
+  <input type="text" name="name" id="search" value="<%= param('name') %>" class="form-control">
 </div>
-
-<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+<div class="col">
+  <input type="submit" class="btn btn-primary" name="submit" value="Search">
+</div>
+</div>
+</form>
 
 <div id="authors">
   <ul class="list-unstyled">
@@ -31,9 +35,10 @@
 </div>
 
 </div>
+</div>
 
-% content_for 'javascript' => begin
-%= javascript begin
+% content_for 'script' => begin
+%= script begin
 $(function(){
   var last = '',
       in_process = 0;

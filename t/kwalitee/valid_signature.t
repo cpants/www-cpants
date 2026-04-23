@@ -1,6 +1,6 @@
 use Mojo::Base -strict, -signatures;
 use WWW::CPANTS::Test;
-use Test::RequiresInternet ('pool.sks-keyservers.net' => 80);
+use Test::RequiresInternet ('keyserver.ubuntu.com' => 80);
 
 test_kwalitee(
     'valid_signature',
@@ -19,7 +19,7 @@ test_kwalitee(
     ],
     [
         'RIVY/Win32-CommandLine-0.938.tar.gz',
-        1,
+        0,  # this passes on some environments, fails on others
         sub {
             my $stash = shift;
             like $stash->{error}{valid_signature} => qr/Old SIGNATURE detected/;

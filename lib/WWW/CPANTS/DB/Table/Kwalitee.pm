@@ -22,6 +22,14 @@ sub _build_kwalitee ($self) {
     WWW::CPANTS::Model::Kwalitee->new;
 }
 
+sub select_all_latest_for_author ($self, $pause_id) {
+    my $sql = <<~';';
+    SELECT * FROM kwalitee
+    WHERE pause_id = ? AND latest = 1 AND cpan = 1
+    ;
+    $self->select_all($sql, $pause_id);
+}
+
 sub select_all_scores_for_author ($self, $pause_id) {
     my $sql = <<~';';
     SELECT kwalitee, core_kwalitee FROM kwalitee

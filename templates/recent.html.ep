@@ -2,21 +2,21 @@
 % my $releases = $stash->{data} // [];
 % layout 'layout', 'cpants.requires_datatables' => 1;
 
-<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+<div class="row">
+<div class="col">
 
   <section>
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
   <h3>Recent CPAN releases</h3>
 
 % if (@$releases) {
   <table id="releases" class="display compact small">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Version</th>
-        <th>Released by</th>
-        <th>Released on</th>
-        <th>Kwalitee</th>
+        <th scope="col">Name</th>
+        <th scope="col">Version</th>
+        <th scope="col">Released by</th>
+        <th scope="col">Released on</th>
+        <th scope="col">Kwalitee</th>
       </tr>
     </thead>
     <tbody>
@@ -32,8 +32,8 @@
     </tbody>
   </table>
 
-  % content_for javascript => begin
-  %= javascript begin
+  % content_for script => begin
+  %= script begin
   $(function(){
     $('#releases').dataTable({
       "ajax": "<%= api_url("v5/recent", { days => 30 }) %>",
@@ -65,7 +65,7 @@
         {"data": "score",
          "render": function(data,type,row){
           return type === 'display'
-            ? data ? sprintf('%.02f', data) : '-'
+            ? data && (typeof(data) === 'number' || data.match(/^[0-9.]+$/)) ? sprintf('%.02f', data) : '-'
             : data;
         }}
       ]
@@ -76,7 +76,7 @@
 % } else {
   <p>No new releases.</p>
 % }
-  </div>
   </section>
 
+</div>
 </div>

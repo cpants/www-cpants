@@ -1,6 +1,7 @@
 package WWW::CPANTS::Role::Options;
 
 use Mojo::Base -role, -signatures;
+use Mojo::Util;
 
 my @SeenOptions;
 

@@ -20,7 +20,7 @@ our %SYSTEM_USER = map { $_ => 1 } qw(
 );
 
 sub _build_authors ($self) {
-    my $file = $self->fetch;
+    my $file = WWW::CPANTS->instance->is_testing ? $self->fetch : $self->file;
 
     $XML::SAX::ParserPackage = "XML::LibXML::SAX";
     my %authors;

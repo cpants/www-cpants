@@ -38,6 +38,10 @@ sub startup ($app) {
         $app->plugin(OpenAPI => \%conf);
     }
 
+    # not to break my modules
+    $r->get('/uploads/dist')->to('v1#uploads');         # for WorePAN
+    $r->get('/kwalitee/:pause_id')->to('v1#kwalitee');  # for Acme::CPANAuthors
+
     $r->get('/')->to('open_api#root');
 
     $app->plugin('WWW::CPANTS::API::Plugin::DoesAccept');

@@ -4,6 +4,9 @@ use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use WWW::CPANTS::Util::Datetime ();
 use WWW::CPANTS::Web::Util::URL ();
 use WWW::CPANTS::Util::JSON     ();
+use Scalar::Util                qw(blessed);
+use Mojo::DOM::HTML             qw(tag_to_html);
+use Mojo::ByteStream;
 
 sub register ($self, $app, $conf) {
     $app->helper(strftime             => \&strftime);
@@ -16,6 +19,8 @@ sub register ($self, $app, $conf) {
     $app->helper(api_url              => \&api_url);
     $app->helper(svg                  => \&svg);
     $app->helper(encode_json          => \&encode_json);
+    $app->helper(script               => \&script);
+    $app->helper(css                  => \&css);
 }
 
 sub strftime ($c, @args) {
@@ -61,6 +66,31 @@ sub svg ($c, $path) {
 
 sub encode_json ($c, $data) {
     WWW::CPANTS::Util::JSON::encode_json($data);
+}
+
+# adopted Mojolicious::Plugin::TagHelpers::_javascript not to add CDATA
+sub script ($c, @args) {
+    my $content = ref $args[-1] eq 'CODE' ? pop(@args)->() : '';
+    my @src;
+    if (@args % 2) {
+        my $url = shift @args;
+        my $src  = blessed $url && $url->isa('Mojo::URL') ? $url : $c->url_for_file($url);
+        $src->query([$c->app->mode eq 'development' ? (ts => time) : (v => $WWW::CPANTS::VERSION)]);
+        @src = (src => $src);
+    }
+    return Mojo::ByteStream->new(tag_to_html('script', @src, @args, sub { $content }));
+}
+
+# adopted Mojolicious::Plugin::TagHelpers::_stylesheet not to add CDATA
+sub css ($c, @args) {
+    my $content = ref $args[-1] eq 'CODE' ? pop(@args)->() : '';
+    return Mojo::ByteStream->new(tag_to_html('style', @args, sub {$content})) unless @args % 2;
+
+    my $url = shift @args;
+    my $link = blessed $url && $url->isa('Mojo::URL') ? $url : $c->url_for_file($url);
+    $link->query([$c->app->mode eq 'development' ? (ts => time) : (v => $WWW::CPANTS::VERSION)]);
+
+    return Mojo::ByteStream->new(tag_to_html('link', rel => 'stylesheet', href => $link, @args));
 }
 
 1;

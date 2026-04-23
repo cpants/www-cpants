@@ -35,7 +35,7 @@ sub _build_file ($self) {
 }
 
 sub _build_distributions ($self) {
-    my $file = $self->fetch;
+    my $file = WWW::CPANTS->instance->is_testing ? $self->fetch : $self->file;
 
     decode_json($file->slurp_utf8)->{recent};
 }
